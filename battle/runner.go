@@ -39,10 +39,9 @@ func (r *Runner) Init(scene *ge.Scene) {
 		2.00,
 	}[r.config.GameSpeed]
 
-	r.world = &worldState{
-		Camera:      r.camera,
-		PlayerInput: r.config.PlayerInput,
-	}
+	r.world = newWorldState()
+	r.world.Camera = r.camera
+	r.world.PlayerInput = r.config.PlayerInput
 
 	r.players = append(r.players, newHumanPlayer(r.world))
 }
