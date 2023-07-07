@@ -6,6 +6,8 @@ import (
 
 type Stage struct {
 	bg *ge.TiledBackground
+
+	LayerContainer
 }
 
 func NewStage() *Stage {
@@ -16,4 +18,9 @@ func (stage *Stage) SetBackground(bg *ge.TiledBackground) {
 	stage.bg = bg
 }
 
-func (stage *Stage) Update() {}
+func (stage *Stage) Update() {
+	stage.belowObjects.filter()
+	stage.objects.filter()
+	stage.slightlyAboveObjects.filter()
+	stage.aboveObjects.filter()
+}

@@ -50,6 +50,10 @@ func (c *Camera) Draw(screen *ebiten.Image) {
 		Y: -c.Offset.Y,
 	}
 	c.Stage.bg.DrawPartialWithOffset(c.screen, c.globalRect, drawOffset)
+	c.drawLayer(c.screen, &c.Stage.belowObjects, drawOffset)
+	c.drawLayer(c.screen, &c.Stage.objects, drawOffset)
+	c.drawLayer(c.screen, &c.Stage.slightlyAboveObjects, drawOffset)
+	c.drawLayer(c.screen, &c.Stage.aboveObjects, drawOffset)
 
 	var options ebiten.DrawImageOptions
 	screen.DrawImage(c.screen, &options)
@@ -87,4 +91,39 @@ func (c *Camera) CenterOn(pos gmath.Vec) {
 func (c *Camera) SetOffset(pos gmath.Vec) {
 	c.Offset = pos
 	c.checkBounds()
+}
+
+func (c *Camera) drawLayer(screen *ebiten.Image, l *layer, drawOffset gmath.Vec) {
+	for _, s := range l.sprites {
+		if c.isVisible(s.BoundsRect()) {
+			s.DrawWithOffset(screen, drawOffset)
+		}
+	}
+
+	if len(l.objects) != 0 {
+		for _, o := range l.objects {
+			if c.isVisible(o.BoundsRect()) {
+				o.DrawWithOffset(screen, drawOffset)
+			}
+		}
+	}
+}
+
+func (c *Camera) isVisible(objectRect gmath.Rect) bool {
+	cameraRect := c.globalRect
+
+	if objectRect.Max.X < cameraRect.Min.X {
+		return false
+	}
+	if objectRect.Min.X > cameraRect.Max.X {
+		return false
+	}
+	if objectRect.Max.Y < cameraRect.Min.Y {
+		return false
+	}
+	if objectRect.Min.Y > cameraRect.Max.Y {
+		return false
+	}
+
+	return true
 }
