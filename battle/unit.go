@@ -18,6 +18,8 @@ type unit struct {
 	pos       gmath.Vec
 	spritePos gmath.Vec
 
+	waypoint gmath.Vec
+
 	sprite *ge.Sprite
 	anim   *ge.Animation
 
@@ -71,4 +73,27 @@ func (u *unit) Update(delta float64) {
 
 	u.spritePos.X = math.Round(u.pos.X)
 	u.spritePos.Y = math.Round(u.pos.Y)
+
+	if !u.waypoint.IsZero() {
+		u.moveToWaypoint(delta)
+	}
+}
+
+func (u *unit) SendTo(pos gmath.Vec) {
+	u.waypoint = pos
+}
+
+func (u *unit) calcSpeed() float64 {
+	return u.stats.Speed
+}
+
+func (u *unit) moveToWaypoint(delta float64) {
+	travelled := u.calcSpeed() * delta
+	switch u.stats.Movement {
+	case gamedata.UnitMovementHover:
+		u.pos = u.pos.MoveTowards(u.waypoint, travelled)
+		if u.pos == u.waypoint {
+			u.waypoint = gmath.Vec{}
+		}
+	}
 }

@@ -16,8 +16,9 @@ type humanPlayer struct {
 
 	camera *viewport.Camera
 
-	droneSelector *ge.Sprite
-	selectedUnit  *unit
+	droneSelector    *ge.Sprite
+	selectedUnit     *unit
+	selectedUnitPath *ge.Line
 
 	cameraPanSpeed    float64
 	cameraPanBoundary float64
@@ -36,6 +37,12 @@ func newHumanPlayer(world *worldState) *humanPlayer {
 func (p *humanPlayer) Init() {
 	p.droneSelector = p.world.Scene().NewSprite(assets.ImageUIDroneSelector)
 	p.droneSelector.Visible = false
+	p.camera.Stage.AddSpriteSlightlyAbove(p.droneSelector)
+
+	p.selectedUnitPath = ge.NewLine(ge.Pos{}, ge.Pos{})
+	p.selectedUnitPath.SetColorScaleRGBA(0x4b, 0xc2, 0x75, 150)
+	p.selectedUnitPath.Visible = false
+	p.camera.Stage.AddGraphicsSlightlyAbove(p.selectedUnitPath)
 }
 
 func (p *humanPlayer) Update(scaledDelta, delta float64) {
@@ -51,14 +58,29 @@ func (p *humanPlayer) handleInput() {
 			p.setSelectedUnit(u)
 		}
 	}
+
+	if p.selectedUnit != nil {
+		if info, ok := p.input.JustPressedActionInfo(controls.ActionSendUnit); ok {
+			worldPos := p.camera.AbsPos(info.Pos)
+			p.selectedUnit.SendTo(worldPos)
+			p.updateUnitPath()
+		}
+	}
+}
+
+func (p *humanPlayer) updateUnitPath() {
+	p.selectedUnitPath.BeginPos.Base = &p.selectedUnit.spritePos
+	p.selectedUnitPath.EndPos.Offset = p.selectedUnit.waypoint
+	p.selectedUnitPath.Visible = !p.selectedUnit.waypoint.IsZero()
 }
 
 func (p *humanPlayer) setSelectedUnit(u *unit) {
 	p.selectedUnit = u
 
+	p.updateUnitPath()
+
 	p.droneSelector.Visible = true
 	p.droneSelector.Pos.Base = &p.selectedUnit.spritePos
-	p.camera.Stage.AddSpriteSlightlyAbove(p.droneSelector)
 }
 
 func (p *humanPlayer) panCamera(delta float64) {

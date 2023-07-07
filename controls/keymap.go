@@ -14,6 +14,7 @@ const (
 	ActionPanUp
 
 	ActionSelectUnit
+	ActionSendUnit
 )
 
 func MakeHandler(ctx *ge.Context) *input.Handler {
@@ -31,6 +32,7 @@ func MakeHandler(ctx *ge.Context) *input.Handler {
 		ActionPanLeft:    {input.KeyA, input.KeyLeft},
 		ActionPanUp:      {input.KeyW, input.KeyUp},
 		ActionSelectUnit: {input.KeyMouseLeft},
+		ActionSendUnit:   {input.KeyMouseRight},
 	}
 
 	combinedKeymap := input.Keymap{}

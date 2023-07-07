@@ -11,6 +11,8 @@ type UnitStats struct {
 	Selectable bool
 	Creep      bool
 
+	Speed float64
+
 	Image resource.ImageID
 }
 
@@ -29,4 +31,5 @@ var CommanderUnitStats = initUnitStats(&UnitStats{
 	Movement:   UnitMovementHover,
 	Image:      assets.ImageDroneCommander,
 	Selectable: true,
+	Speed:      40,
 })
