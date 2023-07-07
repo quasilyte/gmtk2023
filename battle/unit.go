@@ -23,6 +23,14 @@ type unit struct {
 	sprite *ge.Sprite
 	anim   *ge.Animation
 
+	turret *turret
+
+	leader *unit
+	group  []*unit
+
+	hp    float64
+	maxHP float64
+
 	disposed bool
 
 	EventDestroyed gsignal.Event[*unit]
@@ -34,19 +42,29 @@ type unitConfig struct {
 }
 
 func newUnit(world *worldState, config unitConfig) *unit {
-	return &unit{
+	u := &unit{
 		stats: config.Stats,
 		world: world,
 		pos:   config.Pos,
 	}
+	if config.Stats.Body != nil {
+		u.maxHP = config.Stats.Body.HP + config.Stats.Turret.HP
+	}
+	u.maxHP += config.Stats.HP
+	u.hp = u.maxHP
+	u.hp *= world.Scene().Rand().FloatRange(0.2, 0.9)
+	return u
 }
 
 func (u *unit) IsDisposed() bool {
 	return u.disposed
 }
 
+func (u *unit) IsCommander() bool { return u.stats == gamedata.CommanderUnitStats }
+
 func (u *unit) Dispose() {
 	u.disposed = true
+	u.sprite.Dispose()
 }
 
 func (u *unit) Init(scene *ge.Scene) {
@@ -60,9 +78,17 @@ func (u *unit) Init(scene *ge.Scene) {
 			u.anim = ge.NewRepeatedAnimation(u.sprite, -1)
 			u.anim.SetAnimationSpan(0.5)
 		}
-		u.world.Stage().AddSprite(u.sprite)
+		u.world.Stage().AddSpriteSlightlyAbove(u.sprite)
 	} else {
-		// TODO: a tank texture?
+		u.sprite = ge.NewSprite(scene.Context())
+		u.sprite.SetImage(u.stats.Body.Texture)
+		u.sprite.Pos.Base = &u.spritePos
+		u.world.Stage().AddSprite(u.sprite)
+		u.turret = newTurret(u.world, turretConfig{
+			Image: u.stats.Turret.Texture,
+			Pos:   &u.spritePos,
+		})
+		u.world.runner.AddObject(u.turret)
 	}
 }
 

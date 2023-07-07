@@ -8,9 +8,13 @@ import (
 type UnitStats struct {
 	Movement UnitMovementKind
 
+	Body   *BodyStats
+	Turret *TurretStats
+
 	Selectable bool
 	Creep      bool
 
+	HP    float64
 	Speed float64
 
 	Image resource.ImageID
@@ -28,4 +32,5 @@ var CommanderUnitStats = &UnitStats{
 	Image:      assets.ImageDroneCommander,
 	Selectable: true,
 	Speed:      40,
+	HP:         30,
 }

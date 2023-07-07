@@ -67,10 +67,45 @@ func (r *Runner) Init(scene *ge.Scene) {
 		Pos:   gmath.Vec{X: 160, Y: 160},
 		Stats: gamedata.CommanderUnitStats,
 	}))
+
+	tankStats := &gamedata.UnitStats{
+		Movement: gamedata.UnitMovementGround,
+		Body:     gamedata.DestroyerBodyStats,
+		Turret:   gamedata.LightCannonStats,
+		Speed:    25,
+	}
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: 240, Y: 240},
+		Stats: tankStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: 300, Y: 300},
+		Stats: tankStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: 100, Y: 200},
+		Stats: tankStats,
+	}))
 }
 
 func (r *Runner) Update(delta float64) {
 	scaledDelta := delta * r.gameSpeedMultiplier
+
+	for _, u := range r.world.playerUnits.selectable {
+		if !u.IsCommander() {
+			continue
+		}
+		u.group = u.group[:0]
+	}
+	for _, u := range r.world.playerUnits.nonSelectable {
+		if u.leader != nil {
+			if u.leader.IsDisposed() {
+				u.leader = nil
+			} else {
+				u.leader.group = append(u.leader.group, u)
+			}
+		}
+	}
 
 	for _, p := range r.players {
 		p.Update(scaledDelta, delta)

@@ -20,17 +20,22 @@ type humanPlayer struct {
 	selectedUnit     *unit
 	selectedUnitPath *ge.Line
 
+	inactiveTankSelectors []*tankSelector
+	activeTankSelectors   []*tankSelector
+
 	cameraPanSpeed    float64
 	cameraPanBoundary float64
 }
 
 func newHumanPlayer(world *worldState) *humanPlayer {
 	return &humanPlayer{
-		world:             world,
-		input:             world.PlayerInput,
-		camera:            world.Camera,
-		cameraPanSpeed:    8,
-		cameraPanBoundary: 8,
+		world:                 world,
+		input:                 world.PlayerInput,
+		camera:                world.Camera,
+		cameraPanSpeed:        8,
+		cameraPanBoundary:     8,
+		inactiveTankSelectors: make([]*tankSelector, 0, 32),
+		activeTankSelectors:   make([]*tankSelector, 0, 32),
 	}
 }
 
@@ -48,6 +53,20 @@ func (p *humanPlayer) Init() {
 func (p *humanPlayer) Update(scaledDelta, delta float64) {
 	p.panCamera(delta)
 	p.handleInput()
+
+	if len(p.activeTankSelectors) != 0 {
+		stillActive := p.activeTankSelectors[:0]
+		for _, sel := range p.activeTankSelectors {
+			sel.Update()
+			if sel.IsActive() {
+				stillActive = append(stillActive, sel)
+			} else {
+				sel.SetUnit(nil)
+				p.inactiveTankSelectors = append(p.inactiveTankSelectors, sel)
+			}
+		}
+		p.activeTankSelectors = stillActive
+	}
 }
 
 func (p *humanPlayer) handleInput() {
@@ -65,6 +84,27 @@ func (p *humanPlayer) handleInput() {
 			p.selectedUnit.SendTo(worldPos)
 			p.updateUnitPath()
 		}
+
+		if p.selectedUnit.IsCommander() {
+			if info, ok := p.input.JustPressedActionInfo(controls.ActionAddToGroup); ok {
+				worldPos := p.camera.AbsPos(info.Pos)
+				u := p.world.FindAssignable(worldPos)
+				if u != nil {
+					if u.leader == p.selectedUnit {
+						u.leader = nil
+						for _, sel := range p.activeTankSelectors {
+							if sel.GetUnit() == u {
+								sel.SetUnit(nil)
+								break
+							}
+						}
+					} else {
+						u.leader = p.selectedUnit
+						p.activeTankSelectors = append(p.activeTankSelectors, p.createTankSelector(u))
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -81,6 +121,33 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 
 	p.droneSelector.Visible = true
 	p.droneSelector.Pos.Base = &p.selectedUnit.spritePos
+
+	if len(p.activeTankSelectors) != 0 {
+		for _, sel := range p.activeTankSelectors {
+			sel.SetUnit(nil)
+			p.inactiveTankSelectors = append(p.inactiveTankSelectors, sel)
+		}
+		p.activeTankSelectors = p.activeTankSelectors[:0]
+	}
+
+	p.activeTankSelectors = append(p.activeTankSelectors, p.createTankSelector(u))
+	for _, gu := range u.group {
+		p.activeTankSelectors = append(p.activeTankSelectors, p.createTankSelector(gu))
+	}
+}
+
+func (p *humanPlayer) createTankSelector(u *unit) *tankSelector {
+	if len(p.inactiveTankSelectors) != 0 {
+		sel := p.inactiveTankSelectors[len(p.inactiveTankSelectors)-1]
+		p.inactiveTankSelectors = p.inactiveTankSelectors[:len(p.inactiveTankSelectors)-1]
+		sel.SetUnit(u)
+		return sel
+	}
+
+	sel := newTankSelector()
+	sel.Init(p.world.Scene(), p.camera.Stage)
+	sel.SetUnit(u)
+	return sel
 }
 
 func (p *humanPlayer) panCamera(delta float64) {

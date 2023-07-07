@@ -13,8 +13,6 @@ import (
 )
 
 func InitState(ctx *ge.Context, state *session.State) {
-	res := state.Resources
-
 	type textureConfig struct {
 		src        resource.ImageID
 		depth      int
@@ -23,9 +21,9 @@ func InitState(ctx *ge.Context, state *session.State) {
 	}
 
 	tankTextureTasks := []textureConfig{
-		{assets.ImageTankBodyDestroyer, 3, 0, &res.TankBodyDestroyer},
+		{assets.ImageTankBodyDestroyer, 3, 0, &gamedata.DestroyerBodyStats.Texture},
 
-		{assets.ImageTankTurretLightCannon, 2, 1, &res.TankTurretLightCannon},
+		{assets.ImageTankTurretLightCannon, 2, 1, &gamedata.LightCannonStats.Texture},
 	}
 
 	s := ge.NewSprite(ctx)
