@@ -1,3 +1,11 @@
 package gamedata
 
-type BattleConfig struct{}
+import (
+	"github.com/quasilyte/ge/input"
+)
+
+type BattleConfig struct {
+	PlayerInput *input.Handler
+
+	GameSpeed int
+}

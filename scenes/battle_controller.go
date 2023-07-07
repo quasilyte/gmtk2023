@@ -28,8 +28,6 @@ func NewBattleController(config *gamedata.BattleConfig) *BattleController {
 func (c *BattleController) Init(scene *ge.Scene) {
 	c.scene = scene
 
-	c.runner = battle.NewRunner(c.config)
-
 	worldRect := gmath.Rect{
 		Max: gmath.Vec{
 			X: 1920,
@@ -45,8 +43,9 @@ func (c *BattleController) Init(scene *ge.Scene) {
 
 	c.camera = viewport.NewCamera(c.stage, worldRect, 1920.0/2, 1080.0/2)
 	scene.AddGraphics(c.camera)
+
+	c.runner = battle.NewRunner(c.config, c.camera)
+	scene.AddObject(c.runner)
 }
 
-func (c *BattleController) Update(delta float64) {
-	c.camera.Offset.X += delta * 32
-}
+func (c *BattleController) Update(delta float64) {}

@@ -5,6 +5,7 @@ import (
 
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmtk2023/assets"
+	"github.com/quasilyte/gmtk2023/controls"
 	"github.com/quasilyte/gmtk2023/gamedata"
 	"github.com/quasilyte/gmtk2023/scenes"
 )
@@ -21,7 +22,12 @@ func main() {
 	ctx.Loader.OpenAssetFunc = assets.MakeOpenAssetFunc(ctx)
 	assets.RegisterResources(ctx)
 
-	config := &gamedata.BattleConfig{}
+	playerInput := controls.MakeHandler(ctx)
+
+	config := &gamedata.BattleConfig{
+		PlayerInput: playerInput,
+		GameSpeed:   1,
+	}
 
 	if err := ge.RunGame(ctx, scenes.NewBattleController(config)); err != nil {
 		panic(err)
