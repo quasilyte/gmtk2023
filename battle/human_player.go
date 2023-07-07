@@ -40,7 +40,7 @@ func (p *humanPlayer) Init() {
 	p.camera.Stage.AddSpriteSlightlyAbove(p.droneSelector)
 
 	p.selectedUnitPath = ge.NewLine(ge.Pos{}, ge.Pos{})
-	p.selectedUnitPath.SetColorScaleRGBA(0x4b, 0xc2, 0x75, 150)
+	p.selectedUnitPath.SetColorScaleRGBA(0x4b, 0xc2, 0x75, 100)
 	p.selectedUnitPath.Visible = false
 	p.camera.Stage.AddGraphicsSlightlyAbove(p.selectedUnitPath)
 }

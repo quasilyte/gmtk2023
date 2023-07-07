@@ -23,13 +23,9 @@ const (
 	UnitMovementHover
 )
 
-func initUnitStats(stats *UnitStats) *UnitStats {
-	return stats
-}
-
-var CommanderUnitStats = initUnitStats(&UnitStats{
+var CommanderUnitStats = &UnitStats{
 	Movement:   UnitMovementHover,
 	Image:      assets.ImageDroneCommander,
 	Selectable: true,
 	Speed:      40,
-})
+}
