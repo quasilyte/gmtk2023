@@ -8,6 +8,7 @@ import (
 	"github.com/quasilyte/gmtk2023/controls"
 	"github.com/quasilyte/gmtk2023/gamedata"
 	"github.com/quasilyte/gmtk2023/scenes"
+	"github.com/quasilyte/gmtk2023/session"
 )
 
 func main() {
@@ -22,6 +23,8 @@ func main() {
 	ctx.Loader.OpenAssetFunc = assets.MakeOpenAssetFunc(ctx)
 	assets.RegisterResources(ctx)
 
+	state := session.NewState()
+
 	playerInput := controls.MakeHandler(ctx)
 
 	config := &gamedata.BattleConfig{
@@ -29,7 +32,7 @@ func main() {
 		GameSpeed:   1,
 	}
 
-	if err := ge.RunGame(ctx, scenes.NewBattleController(config)); err != nil {
+	if err := ge.RunGame(ctx, scenes.NewBattleController(state, config)); err != nil {
 		panic(err)
 	}
 }

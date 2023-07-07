@@ -3,11 +3,14 @@ package battle
 import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmtk2023/gamedata"
+	"github.com/quasilyte/gmtk2023/session"
 	"github.com/quasilyte/gmtk2023/viewport"
 )
 
 type Runner struct {
 	scene *ge.Scene
+
+	state *session.State
 
 	world *worldState
 
@@ -20,8 +23,9 @@ type Runner struct {
 	config *gamedata.BattleConfig
 }
 
-func NewRunner(config *gamedata.BattleConfig, cam *viewport.Camera) *Runner {
+func NewRunner(state *session.State, config *gamedata.BattleConfig, cam *viewport.Camera) *Runner {
 	return &Runner{
+		state:  state,
 		config: config,
 		camera: cam,
 	}

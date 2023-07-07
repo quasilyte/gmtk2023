@@ -5,12 +5,16 @@ import (
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gmtk2023/assets"
 	"github.com/quasilyte/gmtk2023/battle"
+	"github.com/quasilyte/gmtk2023/bootstrap"
 	"github.com/quasilyte/gmtk2023/gamedata"
+	"github.com/quasilyte/gmtk2023/session"
 	"github.com/quasilyte/gmtk2023/viewport"
 )
 
 type BattleController struct {
 	scene *ge.Scene
+
+	state *session.State
 
 	config *gamedata.BattleConfig
 	camera *viewport.Camera
@@ -19,14 +23,18 @@ type BattleController struct {
 	runner *battle.Runner
 }
 
-func NewBattleController(config *gamedata.BattleConfig) *BattleController {
+func NewBattleController(state *session.State, config *gamedata.BattleConfig) *BattleController {
 	return &BattleController{
 		config: config,
+		state:  state,
 	}
 }
 
 func (c *BattleController) Init(scene *ge.Scene) {
 	c.scene = scene
+
+	// TODO: this should be done in a scene before battle scene.
+	bootstrap.InitState(scene.Context(), c.state)
 
 	worldRect := gmath.Rect{
 		Max: gmath.Vec{
@@ -44,7 +52,7 @@ func (c *BattleController) Init(scene *ge.Scene) {
 	c.camera = viewport.NewCamera(c.stage, worldRect, 1920.0/2, 1080.0/2)
 	scene.AddGraphics(c.camera)
 
-	c.runner = battle.NewRunner(c.config, c.camera)
+	c.runner = battle.NewRunner(c.state, c.config, c.camera)
 	scene.AddObject(c.runner)
 }
 
