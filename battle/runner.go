@@ -72,7 +72,6 @@ func (r *Runner) Init(scene *ge.Scene) {
 		Movement: gamedata.UnitMovementGround,
 		Body:     gamedata.DestroyerBodyStats,
 		Turret:   gamedata.LightCannonStats,
-		Speed:    25,
 	}
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: 240, Y: 240},
@@ -85,6 +84,28 @@ func (r *Runner) Init(scene *ge.Scene) {
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: 100, Y: 200},
 		Stats: tankStats,
+	}))
+
+	bunkerStats := &gamedata.UnitStats{
+		Movement: gamedata.UnitMovementNone,
+		Body:     gamedata.BunkerBodyStats,
+		Turret:   gamedata.LightCannonStats,
+	}
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 8) - 20, Y: (40 * 5) - 20},
+		Stats: bunkerStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 9) - 20, Y: (40 * 5) - 20},
+		Stats: bunkerStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 8) - 20, Y: (40 * 4) - 20},
+		Stats: bunkerStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 9) - 20, Y: (40 * 4) - 20},
+		Stats: bunkerStats,
 	}))
 }
 

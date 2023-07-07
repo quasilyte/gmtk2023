@@ -1,7 +1,6 @@
 package gamedata
 
 import (
-	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/gmtk2023/assets"
 )
 
@@ -13,11 +12,6 @@ type UnitStats struct {
 
 	Selectable bool
 	Creep      bool
-
-	HP    float64
-	Speed float64
-
-	Image resource.ImageID
 }
 
 type UnitMovementKind int
@@ -25,12 +19,15 @@ type UnitMovementKind int
 const (
 	UnitMovementGround UnitMovementKind = iota
 	UnitMovementHover
+	UnitMovementNone
 )
 
 var CommanderUnitStats = &UnitStats{
-	Movement:   UnitMovementHover,
-	Image:      assets.ImageDroneCommander,
+	Movement: UnitMovementHover,
+	Body: &BodyStats{
+		HP:    30,
+		Speed: 60,
+		Image: assets.ImageDroneCommander,
+	},
 	Selectable: true,
-	Speed:      40,
-	HP:         30,
 }

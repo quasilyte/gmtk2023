@@ -25,6 +25,7 @@ type worldState struct {
 type playerUnits struct {
 	selectable    []*unit
 	nonSelectable []*unit
+	towers        []*unit
 }
 
 func newWorldState() *worldState {
@@ -32,6 +33,7 @@ func newWorldState() *worldState {
 		playerUnits: playerUnits{
 			selectable:    make([]*unit, 0, 16),
 			nonSelectable: make([]*unit, 0, 96),
+			towers:        make([]*unit, 0, 10),
 		},
 		enemyUnits: make([]*unit, 0, 64),
 	}
@@ -89,6 +91,9 @@ func (w *worldState) findUnitSlice(u *unit) *[]*unit {
 	}
 	if u.stats.Selectable {
 		return &w.playerUnits.selectable
+	}
+	if u.IsTower() {
+		return &w.playerUnits.towers
 	}
 	return &w.playerUnits.nonSelectable
 }
