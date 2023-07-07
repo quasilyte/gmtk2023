@@ -19,6 +19,7 @@ func main() {
 	ctx.FullScreen = true
 
 	ctx.Loader.OpenAssetFunc = assets.MakeOpenAssetFunc(ctx)
+	assets.RegisterResources(ctx)
 
 	config := &gamedata.BattleConfig{}
 

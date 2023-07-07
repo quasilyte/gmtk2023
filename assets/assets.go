@@ -19,3 +19,8 @@ func MakeOpenAssetFunc(ctx *ge.Context) func(path string) io.ReadCloser {
 		return f
 	}
 }
+
+func RegisterResources(ctx *ge.Context) {
+	registerRawResources(ctx)
+	registerImageResources(ctx)
+}
