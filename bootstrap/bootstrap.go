@@ -1,7 +1,6 @@
 package bootstrap
 
 import (
-	"fmt"
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -38,7 +37,6 @@ func InitState(ctx *ge.Context, state *session.State) {
 			DefaultFrameWidth:  s.FrameWidth,
 			DefaultFrameHeight: s.FrameHeight,
 		}
-		fmt.Println("loaded")
 	}
 }
 

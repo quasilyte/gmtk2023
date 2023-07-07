@@ -2,6 +2,7 @@ package battle
 
 import (
 	"github.com/quasilyte/ge"
+	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gmtk2023/gamedata"
 	"github.com/quasilyte/gmtk2023/session"
 	"github.com/quasilyte/gmtk2023/viewport"
@@ -13,6 +14,9 @@ type Runner struct {
 	state *session.State
 
 	world *worldState
+
+	objects      []ge.SceneObject
+	addedObjects []ge.SceneObject
 
 	gameSpeedMultiplier float64
 
@@ -28,6 +32,9 @@ func NewRunner(state *session.State, config *gamedata.BattleConfig, cam *viewpor
 		state:  state,
 		config: config,
 		camera: cam,
+
+		objects:      make([]ge.SceneObject, 0, 512),
+		addedObjects: make([]ge.SceneObject, 0, 32),
 	}
 }
 
@@ -44,10 +51,22 @@ func (r *Runner) Init(scene *ge.Scene) {
 	}[r.config.GameSpeed]
 
 	r.world = newWorldState()
+	r.world.runner = r
 	r.world.Camera = r.camera
 	r.world.PlayerInput = r.config.PlayerInput
 
-	r.players = append(r.players, newHumanPlayer(r.world))
+	p := newHumanPlayer(r.world)
+	r.players = append(r.players, p)
+	p.Init()
+
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: 96, Y: 96},
+		Stats: gamedata.CommanderUnitStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: 160, Y: 160},
+		Stats: gamedata.CommanderUnitStats,
+	}))
 }
 
 func (r *Runner) Update(delta float64) {
@@ -56,4 +75,21 @@ func (r *Runner) Update(delta float64) {
 	for _, p := range r.players {
 		p.Update(scaledDelta, delta)
 	}
+
+	liveObjects := r.objects[:0]
+	for _, o := range r.objects {
+		if o.IsDisposed() {
+			continue
+		}
+		o.Update(scaledDelta)
+		liveObjects = append(liveObjects, o)
+	}
+	r.objects = liveObjects
+	r.objects = append(r.objects, r.addedObjects...)
+	r.addedObjects = r.addedObjects[:0]
+}
+
+func (r *Runner) AddObject(o ge.SceneObject) {
+	r.addedObjects = append(r.addedObjects, o)
+	o.Init(r.scene)
 }

@@ -59,6 +59,10 @@ func (c *Camera) Draw(screen *ebiten.Image) {
 	screen.DrawImage(c.screen, &options)
 }
 
+func (c *Camera) AbsPos(screenPos gmath.Vec) gmath.Vec {
+	return screenPos.Add(c.Offset)
+}
+
 func (c *Camera) ContainsPos(pos gmath.Vec) bool {
 	globalRect := c.Rect
 	globalRect.Min = c.Offset
