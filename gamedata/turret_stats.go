@@ -42,9 +42,10 @@ type TurretStats struct {
 
 	Damage DamageValue
 
-	FireOffset gmath.Vec
-	ArcPower   float64
-	Accuracy   float64
+	FireOffset    gmath.Vec
+	ArcPower      float64
+	Accuracy      float64
+	MaxAngleDelta gmath.Rad
 }
 
 type DamageValue struct {
@@ -59,13 +60,14 @@ func FinalizeTurretStats(stats *TurretStats) *TurretStats {
 }
 
 var LightCannonStats = FinalizeTurretStats(&TurretStats{
-	AttackSound:         assets.AudioShotLightCannon,
+	AttackSound:         assets.AudioShotLightCannon1,
 	HP:                  10,
 	RotationSpeed:       2.0,
 	Range:               9 * CellSize,
 	Accuracy:            0.8,
+	MaxAngleDelta:       0.05,
 	ImpactArea:          8,
-	ProjectileImage:     assets.ImageProjectileGatling,
+	ProjectileImage:     assets.ImageProjectileLightCannon,
 	ProjectileExplosion: ExplosionNormal,
 	ProjectileSpeed:     250,
 	Reload:              1.5,
@@ -79,6 +81,7 @@ var GatlingStats = FinalizeTurretStats(&TurretStats{
 	RotationSpeed:   1.2,
 	Range:           7 * CellSize,
 	Accuracy:        0.5,
+	MaxAngleDelta:   0.1,
 	ImpactArea:      4,
 	ProjectileImage: assets.ImageProjectileGatling,
 	ProjectileSpeed: 320,

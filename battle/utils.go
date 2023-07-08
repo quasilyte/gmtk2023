@@ -69,14 +69,19 @@ func randIterate[T any](rand *gmath.Rand, slice []T, f func(x T) bool) T {
 
 func playSound(world *worldState, id resource.AudioID, pos gmath.Vec) {
 	if world.Camera.ContainsPos(pos) {
-		world.scene.Audio().PlaySound(id)
+		numSamples := assets.NumSamples(id)
+		if numSamples == 1 {
+			world.scene.Audio().PlaySound(id)
+		} else {
+			soundIndex := world.Rand().IntRange(0, numSamples-1)
+			sound := resource.AudioID(int(id) + soundIndex)
+			world.scene.Audio().PlaySound(sound)
+		}
 	}
 }
 
 func playExplosionSound(world *worldState, pos gmath.Vec) {
-	explosionSoundIndex := world.Rand().IntRange(0, 4)
-	explosionSound := resource.AudioID(int(assets.AudioExplosion1) + explosionSoundIndex)
-	playSound(world, explosionSound, pos)
+	playSound(world, assets.AudioExplosion1, pos)
 }
 
 func spriteRect(pos gmath.Vec, width, height float64) gmath.Rect {

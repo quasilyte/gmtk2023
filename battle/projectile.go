@@ -44,12 +44,12 @@ func initProjectile(p *projectile, config projectileConfig) {
 	*p = projectile{
 		weapon:    config.Weapon,
 		attacker:  config.Attacker,
-		pos:       config.Attacker.pos.Add(config.FireOffset),
 		toPos:     config.ToPos,
 		target:    config.Target,
 		fireDelay: config.FireDelay,
 		world:     config.World,
 	}
+	p.initPos()
 }
 
 func (p *projectile) Init(scene *ge.Scene) {
@@ -106,16 +106,21 @@ func (p *projectile) playFireSound() {
 	playSound(p.world, p.weapon.AttackSound, p.pos)
 }
 
+func (p *projectile) initPos() {
+	p.pos = p.attacker.pos.Add(p.weapon.FireOffset)
+	p.pos = p.pos.MoveInDirection(20, p.attacker.turret.rotation)
+}
+
 func (p *projectile) Update(delta float64) {
 	if p.fireDelay > 0 {
-		if p.attacker.IsDisposed() {
+		if p.attacker.IsDisposed() || p.attacker.turret.target != p.target {
 			p.Dispose()
 			return
 		}
 		p.fireDelay -= delta
 		if p.fireDelay <= 0 {
 			p.sprite.Visible = true
-			p.pos = p.attacker.pos.Add(p.weapon.FireOffset)
+			p.initPos()
 			p.arcStart = p.pos
 			if p.weapon.ProjectilePlaysSound {
 				p.playFireSound()

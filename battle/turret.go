@@ -151,6 +151,13 @@ func (t *turret) updateInDangerMode(delta float64) {
 		return
 	}
 	t.fireAttemptDelay = 0.15
+	angleToTarget := t.owner.pos.AngleToPoint(t.target.pos).Normalized()
+	canFire := t.rotation.AngleDelta2(angleToTarget) <= t.stats.MaxAngleDelta
+	if !canFire {
+		t.setDstRotation(angleToTarget)
+		return
+	}
+
 	t.reload = t.stats.Reload * t.world.Rand().FloatRange(0.9, 1.1)
 	if !t.stats.ProjectilePlaysSound {
 		playSound(t.world, t.stats.AttackSound, t.owner.pos)
