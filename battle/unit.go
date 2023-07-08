@@ -72,13 +72,15 @@ func (u *unit) IsDisposed() bool {
 
 func (u *unit) IsCommander() bool { return u.stats == gamedata.CommanderUnitStats }
 
-func (u *unit) IsTower() bool { return u.stats.Movement == gamedata.UnitMovementNone }
+func (u *unit) IsConstructor() bool { return u.stats == gamedata.ConstructorUnitStats }
+
+func (u *unit) IsBuilding() bool { return u.stats.Movement == gamedata.UnitMovementNone }
 
 func (u *unit) Dispose() {
 	u.disposed = true
 	u.sprite.Dispose()
 
-	if u.IsTower() {
+	if u.IsBuilding() {
 		u.world.UnmarkPos(u.pos)
 	}
 }
@@ -92,7 +94,7 @@ func (u *unit) updatePos() {
 func (u *unit) Init(scene *ge.Scene) {
 	u.updatePos()
 
-	if u.IsTower() {
+	if u.IsBuilding() {
 		u.world.MarkPos(u.pos)
 	}
 

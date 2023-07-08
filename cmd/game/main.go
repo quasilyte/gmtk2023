@@ -27,9 +27,30 @@ func main() {
 
 	playerInput := controls.MakeHandler(ctx)
 
+	playerDesigns := gamedata.NewPlayerDesigns()
+	for i := range playerDesigns.Tanks {
+		// playerDesigns.Tanks[i] = &gamedata.UnitStats{
+		// 	Movement: gamedata.UnitMovementGround,
+		// 	Body:     gamedata.FighterBodyStats,
+		// 	Turret:   gamedata.LightCannonStats,
+		// }
+		playerDesigns.Tanks[i] = &gamedata.UnitStats{
+			Movement: gamedata.UnitMovementGround,
+			Body:     gamedata.ScoutBodyStats,
+			Turret:   gamedata.LightCannonStats,
+		}
+	}
+	for i := range playerDesigns.Towers {
+		playerDesigns.Towers[i] = &gamedata.UnitStats{
+			Movement: gamedata.UnitMovementNone,
+			Body:     gamedata.BunkerBodyStats,
+			Turret:   gamedata.LightCannonStats,
+		}
+	}
 	config := &gamedata.BattleConfig{
-		PlayerInput: playerInput,
-		GameSpeed:   1,
+		PlayerInput:   playerInput,
+		GameSpeed:     1,
+		PlayerDesigns: playerDesigns,
 	}
 
 	if err := ge.RunGame(ctx, scenes.NewBattleController(state, config)); err != nil {

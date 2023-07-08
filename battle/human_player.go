@@ -24,13 +24,16 @@ type humanPlayer struct {
 	inactiveTankSelectors []*tankSelector
 	activeTankSelectors   []*tankSelector
 
+	designs *gamedata.PlayerDesigns
+
 	cameraPanSpeed    float64
 	cameraPanBoundary float64
 }
 
-func newHumanPlayer(world *worldState) *humanPlayer {
+func newHumanPlayer(world *worldState, designs *gamedata.PlayerDesigns) *humanPlayer {
 	return &humanPlayer{
 		world:                 world,
+		designs:               designs,
 		input:                 world.PlayerInput,
 		camera:                world.Camera,
 		cameraPanSpeed:        8,
@@ -50,6 +53,15 @@ func (p *humanPlayer) Init() {
 	p.selectedUnitPath.Width = 2
 	p.selectedUnitPath.Visible = false
 	p.camera.Stage.AddGraphicsSlightlyAbove(p.selectedUnitPath)
+
+	p.renderIcons()
+}
+
+func (p *humanPlayer) renderIcons() {
+	// TODO: this should be done somewhere else, before the battle starts.
+
+	// icon := p.designs.Icons[0]
+	// renderTowerIcon(p.world.scene, icon, p.designs.Towers[0])
 }
 
 func (p *humanPlayer) Update(scaledDelta, delta float64) {
@@ -85,6 +97,7 @@ func (p *humanPlayer) handleInput() {
 			worldPos := p.camera.AbsPos(info.Pos)
 			p.selectedUnit.SendTo(worldPos)
 			p.updateUnitPath(p.selectedUnit)
+			playGlobalSound(p.world, assets.AudioUnitAck1)
 		}
 
 		if p.selectedUnit.IsCommander() {
@@ -133,6 +146,16 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 
 	p.droneSelector.Visible = u != nil
 	p.updateUnitPath(u)
+
+	if u != nil {
+		img := assets.ImageUIDroneSelector
+		if u.stats.Large {
+			img = assets.ImageUILargeSelector
+		}
+		if p.droneSelector.ImageID() != img {
+			p.droneSelector.SetImage(p.world.scene.LoadImage(img))
+		}
+	}
 
 	if len(p.activeTankSelectors) != 0 {
 		for _, sel := range p.activeTankSelectors {

@@ -21,9 +21,10 @@ type BodyStats struct {
 }
 
 var (
-	unitSizeSmall  = gmath.Vec{X: 26, Y: 26}
-	unitSizeMedium = gmath.Vec{X: 32, Y: 32}
-	unitSizeBig    = gmath.Vec{X: 48, Y: 48}
+	unitSizeSmall   = gmath.Vec{X: 26, Y: 26}
+	unitSizeMedium  = gmath.Vec{X: 32, Y: 32}
+	unitSizeBig     = gmath.Vec{X: 48, Y: 48}
+	unitSizeVeryBig = gmath.Vec{X: 60, Y: 60}
 )
 
 var ScoutBodyStats = &BodyStats{
@@ -59,7 +60,7 @@ var DestroyerBodyStats = &BodyStats{
 }
 
 var BunkerBodyStats = &BodyStats{
-	TurretOffset: -4,
+	TurretOffset: -5,
 	Size:         unitSizeBig,
 	HP:           100,
 	Image:        assets.ImageTowerBodyBunker,

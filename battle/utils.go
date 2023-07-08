@@ -67,16 +67,20 @@ func randIterate[T any](rand *gmath.Rand, slice []T, f func(x T) bool) T {
 	return result
 }
 
+func playGlobalSound(world *worldState, id resource.AudioID) {
+	numSamples := assets.NumSamples(id)
+	if numSamples == 1 {
+		world.scene.Audio().PlaySound(id)
+	} else {
+		soundIndex := world.Rand().IntRange(0, numSamples-1)
+		sound := resource.AudioID(int(id) + soundIndex)
+		world.scene.Audio().PlaySound(sound)
+	}
+}
+
 func playSound(world *worldState, id resource.AudioID, pos gmath.Vec) {
 	if world.Camera.ContainsPos(pos) {
-		numSamples := assets.NumSamples(id)
-		if numSamples == 1 {
-			world.scene.Audio().PlaySound(id)
-		} else {
-			soundIndex := world.Rand().IntRange(0, numSamples-1)
-			sound := resource.AudioID(int(id) + soundIndex)
-			world.scene.Audio().PlaySound(sound)
-		}
+		playGlobalSound(world, id)
 	}
 }
 

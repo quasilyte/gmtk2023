@@ -60,10 +60,14 @@ func (r *Runner) Init(scene *ge.Scene) {
 	r.world.pathgrid = pathing.NewGrid(gamedata.CellSize*gamedata.NumSegmentCells, r.camera.Rect.Height())
 	r.world.bfs = pathing.NewGreedyBFS(r.world.pathgrid.Size())
 
-	p := newHumanPlayer(r.world)
+	p := newHumanPlayer(r.world, r.config.PlayerDesigns)
 	r.players = append(r.players, p)
 	p.Init()
 
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 4) - 20, Y: (40 * 1) - 20},
+		Stats: gamedata.ConstructorUnitStats,
+	}))
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: 96, Y: 96},
 		Stats: gamedata.CommanderUnitStats,
@@ -71,6 +75,11 @@ func (r *Runner) Init(scene *ge.Scene) {
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: 160, Y: 160},
 		Stats: gamedata.CommanderUnitStats,
+	}))
+
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 6) - 20, Y: (40 * 4) - 20},
+		Stats: gamedata.TankFactoryUnitStats,
 	}))
 
 	tankStats := &gamedata.UnitStats{

@@ -103,7 +103,7 @@ var GatlingStats = FinalizeTurretStats(&TurretStats{
 	MaxAngleDelta:   0.1,
 	ImpactArea:      4,
 	ProjectileImage: assets.ImageProjectileGatling,
-	ProjectileSpeed: 360,
+	ProjectileSpeed: 400,
 	Reload:          2.0,
 	MaxTargets:      1,
 	BurstSize:       3,

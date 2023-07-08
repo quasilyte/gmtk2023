@@ -9,11 +9,11 @@ import (
 
 func registerAudioResources(ctx *ge.Context) {
 	audioResources := map[resource.AudioID]resource.AudioInfo{
-		AudioExplosion1: {Path: "audio/explosion1.wav", Volume: -0.5},
-		AudioExplosion2: {Path: "audio/explosion2.wav", Volume: -0.5},
-		AudioExplosion3: {Path: "audio/explosion3.wav", Volume: -0.5},
-		AudioExplosion4: {Path: "audio/explosion4.wav", Volume: -0.5},
-		AudioExplosion5: {Path: "audio/explosion5.wav", Volume: -0.5},
+		AudioExplosion1: {Path: "audio/explosion1.wav", Volume: -0.65},
+		AudioExplosion2: {Path: "audio/explosion2.wav", Volume: -0.65},
+		AudioExplosion3: {Path: "audio/explosion3.wav", Volume: -0.65},
+		AudioExplosion4: {Path: "audio/explosion4.wav", Volume: -0.65},
+		AudioExplosion5: {Path: "audio/explosion5.wav", Volume: -0.65},
 
 		AudioUnitAck1: {Path: "audio/unit_ack1.wav", Volume: -0.55},
 		AudioUnitAck2: {Path: "audio/unit_ack2.wav", Volume: -0.55},
@@ -26,7 +26,7 @@ func registerAudioResources(ctx *ge.Context) {
 		AudioShotLightCannon2: {Path: "audio/shot_light_cannon2.wav", Volume: -0.3},
 		AudioShotLightCannon3: {Path: "audio/shot_light_cannon3.wav", Volume: -0.3},
 
-		AudioShotGatling: {Path: "audio/shot_gatling.wav", Volume: -0.3},
+		AudioShotGatling: {Path: "audio/shot_gatling.wav", Volume: -0.8},
 	}
 
 	for id, res := range audioResources {

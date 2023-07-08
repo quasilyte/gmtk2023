@@ -186,7 +186,7 @@ func (w *worldState) findUnitSlice(u *unit) *[]*unit {
 	if u.stats.Selectable {
 		return &w.playerUnits.selectable
 	}
-	if u.IsTower() {
+	if u.IsBuilding() {
 		return &w.playerUnits.towers
 	}
 	return &w.playerUnits.nonSelectable
