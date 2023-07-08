@@ -24,6 +24,7 @@ type worldState struct {
 
 	gridCounters map[int]uint8
 	pathgrid     *pathing.Grid
+	bfs          *pathing.GreedyBFS
 }
 
 type playerUnits struct {
@@ -111,6 +112,10 @@ func (w *worldState) NewUnit(config unitConfig) *unit {
 		*slice = xslices.Remove(*slice, u)
 	})
 	return u
+}
+
+func (w *worldState) BuildPath(from, to gmath.Vec) pathing.BuildPathResult {
+	return w.bfs.BuildPath(w.pathgrid, w.pathgrid.PosToCoord(from), w.pathgrid.PosToCoord(to))
 }
 
 func (w *worldState) MarkPos(pos gmath.Vec) {

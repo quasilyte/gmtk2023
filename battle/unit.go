@@ -7,6 +7,7 @@ import (
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gmtk2023/assets"
 	"github.com/quasilyte/gmtk2023/gamedata"
+	"github.com/quasilyte/gmtk2023/pathing"
 	"github.com/quasilyte/gsignal"
 )
 
@@ -19,7 +20,11 @@ type unit struct {
 	spritePos gmath.Vec
 	turretPos gmath.Vec
 
-	waypoint gmath.Vec
+	path pathing.GridPath
+
+	waypoint    gmath.Vec
+	rotation    gmath.Rad
+	dstRotation gmath.Rad
 
 	sprite *ge.Sprite
 	anim   *ge.Animation
@@ -32,7 +37,8 @@ type unit struct {
 	hp    float64
 	maxHP float64
 
-	disposed bool
+	needRotate bool
+	disposed   bool
 
 	EventDestroyed gsignal.Event[*unit]
 }
@@ -68,6 +74,10 @@ func (u *unit) IsTower() bool { return u.stats.Movement == gamedata.UnitMovement
 func (u *unit) Dispose() {
 	u.disposed = true
 	u.sprite.Dispose()
+
+	if u.IsTower() {
+		u.world.UnmarkPos(u.pos)
+	}
 }
 
 func (u *unit) updatePos() {
@@ -78,6 +88,10 @@ func (u *unit) updatePos() {
 
 func (u *unit) Init(scene *ge.Scene) {
 	u.updatePos()
+
+	if u.IsTower() {
+		u.world.MarkPos(u.pos)
+	}
 
 	if u.stats.Body.Image != assets.ImageNone {
 		u.sprite = scene.NewSprite(u.stats.Body.Image)
@@ -119,8 +133,49 @@ func (u *unit) Update(delta float64) {
 	}
 }
 
+func (u *unit) setRotation(v gmath.Rad) {
+	u.rotation = v
+	spriteAngle := u.rotation.Normalized() - (gamedata.TankFrameAngleStep / 2)
+	u.sprite.FrameOffset.X = 48 * math.Trunc(float64(spriteAngle/gamedata.TankFrameAngleStep))
+}
+
 func (u *unit) SendTo(pos gmath.Vec) {
-	u.waypoint = pos
+	if u.IsCommander() {
+		u.sendCommanderTo(pos)
+		return
+	}
+
+	switch u.stats.Movement {
+	case gamedata.UnitMovementGround:
+		p := u.world.BuildPath(u.pos, pos)
+		u.path = p.Steps
+		alignedPos := u.world.pathgrid.AlignPos(u.pos)
+		if alignedPos.DistanceSquaredTo(u.pos) < 1 {
+			u.waypoint = posMove(u.pos, u.path.Next())
+		} else {
+			u.waypoint = alignedPos
+		}
+		u.setDstRotation(u.pos.AngleToPoint(u.waypoint).Normalized())
+	}
+}
+
+func (u *unit) setDstRotation(v gmath.Rad) {
+	u.needRotate = true
+	u.dstRotation = v
+}
+
+func (u *unit) sendCommanderTo(pos gmath.Vec) {
+	u.waypoint = u.world.pathgrid.AlignPos(pos)
+
+	alignedPos := u.world.pathgrid.AlignPos(pos)
+	var slider gmath.Slider
+	slider.SetBounds(0, len(groupOffsets)-1)
+	slider.TrySetValue(u.world.Scene().Rand().IntRange(0, len(groupOffsets)-1))
+	for _, gu := range u.group {
+		offset := groupOffsets[slider.Value()]
+		slider.Inc()
+		gu.SendTo(alignedPos.Add(offset))
+	}
 }
 
 func (u *unit) calcSpeed() float64 {
@@ -128,12 +183,35 @@ func (u *unit) calcSpeed() float64 {
 }
 
 func (u *unit) moveToWaypoint(delta float64) {
-	travelled := u.calcSpeed() * delta
 	switch u.stats.Movement {
 	case gamedata.UnitMovementHover:
+		travelled := u.calcSpeed() * delta
 		u.pos = u.pos.MoveTowards(u.waypoint, travelled)
 		if u.pos == u.waypoint {
 			u.waypoint = gmath.Vec{}
+		}
+
+	case gamedata.UnitMovementGround:
+		if u.needRotate {
+			u.setRotation(u.rotation.RotatedTowards(u.dstRotation, u.stats.Body.RotationSpeed*gmath.Rad(delta)))
+			if u.rotation == u.dstRotation {
+				u.needRotate = false
+			}
+		}
+		if u.needRotate {
+			return
+		}
+		travelled := u.calcSpeed() * delta
+		u.pos = u.pos.MoveTowards(u.waypoint, travelled)
+		if u.pos == u.waypoint {
+			if u.path.HasNext() {
+				d := u.path.Next()
+				aligned := u.world.pathgrid.AlignPos(u.pos)
+				u.waypoint = posMove(aligned, d)
+				u.setDstRotation(u.pos.AngleToPoint(u.waypoint).Normalized())
+			} else {
+				u.waypoint = gmath.Vec{}
+			}
 		}
 	}
 }

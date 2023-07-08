@@ -6,6 +6,7 @@ import (
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gmtk2023/assets"
 	"github.com/quasilyte/gmtk2023/controls"
+	"github.com/quasilyte/gmtk2023/gamedata"
 	"github.com/quasilyte/gmtk2023/viewport"
 )
 
@@ -45,7 +46,8 @@ func (p *humanPlayer) Init() {
 	p.camera.Stage.AddSpriteSlightlyAbove(p.droneSelector)
 
 	p.selectedUnitPath = ge.NewLine(ge.Pos{}, ge.Pos{})
-	p.selectedUnitPath.SetColorScaleRGBA(0x4b, 0xc2, 0x75, 100)
+	p.selectedUnitPath.SetColorScaleRGBA(0x4b, 0xc2, 0x75, 200)
+	p.selectedUnitPath.Width = 2
 	p.selectedUnitPath.Visible = false
 	p.camera.Stage.AddGraphicsSlightlyAbove(p.selectedUnitPath)
 }
@@ -85,7 +87,7 @@ func (p *humanPlayer) handleInput() {
 			p.updateUnitPath()
 		}
 
-		if p.selectedUnit.IsCommander() {
+		if p.selectedUnit.IsCommander() && len(p.selectedUnit.group) < gamedata.MaxGroupSize {
 			if info, ok := p.input.JustPressedActionInfo(controls.ActionAddToGroup); ok {
 				worldPos := p.camera.AbsPos(info.Pos)
 				u := p.world.FindAssignable(worldPos)

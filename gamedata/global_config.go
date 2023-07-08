@@ -12,4 +12,6 @@ const (
 
 	CellSize        = 40
 	NumSegmentCells = 64
+
+	MaxGroupSize = 8
 )
