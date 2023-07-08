@@ -13,6 +13,9 @@ type UnitStats struct {
 	Selectable bool
 	Large      bool
 	Creep      bool
+
+	ConstructorsNeeded int
+	ConstructionTime   float64
 }
 
 type UnitMovementKind int
@@ -30,8 +33,10 @@ var TankFactoryUnitStats = &UnitStats{
 		Image: assets.ImageTankFactory,
 		Size:  unitSizeVeryBig,
 	},
-	Selectable: true,
-	Large:      true,
+	Selectable:         true,
+	Large:              true,
+	ConstructorsNeeded: 3,
+	ConstructionTime:   20,
 }
 
 var ConstructorUnitStats = &UnitStats{

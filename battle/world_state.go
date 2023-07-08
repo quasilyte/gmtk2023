@@ -160,6 +160,25 @@ func (w *worldState) FindSelectable(pos gmath.Vec) *unit {
 	return closestUnit
 }
 
+func (w *worldState) FindConstructor(pos gmath.Vec) *unit {
+	if len(w.playerUnits.selectable) == 0 {
+		return nil
+	}
+	minDistSqr := math.MaxFloat64
+	var closestUnit *unit
+	for _, u := range w.playerUnits.selectable {
+		distSqr := u.pos.DistanceSquaredTo(pos)
+		if distSqr > (24 * 24) {
+			continue
+		}
+		if distSqr < minDistSqr {
+			minDistSqr = distSqr
+			closestUnit = u
+		}
+	}
+	return closestUnit
+}
+
 func (w *worldState) FindAssignable(pos gmath.Vec) *unit {
 	if len(w.playerUnits.nonSelectable) == 0 {
 		return nil

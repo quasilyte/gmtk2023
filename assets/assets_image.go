@@ -15,6 +15,8 @@ func registerImageResources(ctx *ge.Context) {
 		ImageUILargeSelector: {Path: "image/battleui/large_selector.png"},
 		ImageUITankSelector:  {Path: "image/battleui/tank_selector.png"},
 
+		ImageUIDeconstuctIcon: {Path: "image/battleui/deconstruct.png"},
+
 		ImageTowerBodyBunker: {Path: "image/building/tower_body_bunker.png"},
 
 		ImageTankBodyScout:     {Path: "image/tank/body_scout.png"},
@@ -35,6 +37,7 @@ func registerImageResources(ctx *ge.Context) {
 		ImageProjectileLightCannon: {Path: "image/projectile/projectile_light_cannon.png"},
 		ImageProjectileGatling:     {Path: "image/projectile/projectile_gatling.png"},
 
+		ImageConstructorMerge:     {Path: "image/effect/constructor_merge.png", FrameWidth: 50},
 		ImageSmallExplosion:       {Path: "image/effect/small_explosion.png", FrameWidth: 32},
 		ImageBigExplosion:         {Path: "image/effect/big_explosion.png", FrameWidth: 64},
 		ImageVerticalExplosion:    {Path: "image/effect/vertical_explosion.png", FrameWidth: 50},
@@ -56,6 +59,8 @@ const (
 	ImageUILargeSelector
 	ImageUITankSelector
 
+	ImageUIDeconstuctIcon
+
 	ImageTowerBodyBunker
 
 	ImageTankBodyScout
@@ -76,6 +81,7 @@ const (
 	ImageProjectileLightCannon
 	ImageProjectileGatling
 
+	ImageConstructorMerge
 	ImageSmallExplosion
 	ImageBigExplosion
 	ImageVerticalExplosion

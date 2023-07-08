@@ -69,6 +69,19 @@ func (r *Runner) Init(scene *ge.Scene) {
 		Stats: gamedata.ConstructorUnitStats,
 	}))
 	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 5) - 20, Y: (40 * 9) - 20},
+		Stats: gamedata.ConstructorUnitStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 3) - 20, Y: (40 * 9) - 20},
+		Stats: gamedata.ConstructorUnitStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 6) - 20, Y: (40 * 9) - 20},
+		Stats: gamedata.ConstructorUnitStats,
+	}))
+
+	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: 96, Y: 96},
 		Stats: gamedata.CommanderUnitStats,
 	}))
@@ -77,10 +90,10 @@ func (r *Runner) Init(scene *ge.Scene) {
 		Stats: gamedata.CommanderUnitStats,
 	}))
 
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 6) - 20, Y: (40 * 4) - 20},
-		Stats: gamedata.TankFactoryUnitStats,
-	}))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 6) - 20, Y: (40 * 4) - 20},
+	// 	Stats: gamedata.TankFactoryUnitStats,
+	// }))
 
 	tankStats := &gamedata.UnitStats{
 		Movement: gamedata.UnitMovementGround,

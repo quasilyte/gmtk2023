@@ -37,6 +37,8 @@ type unit struct {
 	leader *unit
 	group  []*unit
 
+	extra any
+
 	hp    float64
 	maxHP float64
 
@@ -44,6 +46,25 @@ type unit struct {
 	disposed   bool
 
 	EventDestroyed gsignal.Event[*unit]
+}
+
+type tankFactoryExtra struct {
+	tankDesign *gamedata.UnitStats
+}
+
+type constructorEntryTarget struct {
+	site *unit
+}
+
+type constructionSiteExtra struct {
+	constructors int
+
+	newUnitExtra any
+
+	percentage   float64
+	progress     float64
+	maxProgress  float64
+	goalProgress float64
 }
 
 type unitConfig struct {
@@ -74,6 +95,28 @@ func (u *unit) IsCommander() bool { return u.stats == gamedata.CommanderUnitStat
 
 func (u *unit) IsConstructor() bool { return u.stats == gamedata.ConstructorUnitStats }
 
+func (u *unit) IsConstructionSite() bool {
+	_, ok := u.extra.(*constructionSiteExtra)
+	return ok
+}
+
+func (u *unit) NeedsMoreConstructors() bool {
+	extra, ok := u.extra.(*constructionSiteExtra)
+	if !ok {
+		return false
+	}
+	return extra.constructors < u.stats.ConstructorsNeeded
+}
+
+func (u *unit) IsSimpleDeconstructible() bool {
+	switch u.extra.(type) {
+	case *tankFactoryExtra, *constructionSiteExtra:
+		return true
+	default:
+		return false
+	}
+}
+
 func (u *unit) IsBuilding() bool { return u.stats.Movement == gamedata.UnitMovementNone }
 
 func (u *unit) Dispose() {
@@ -83,6 +126,8 @@ func (u *unit) Dispose() {
 	if u.IsBuilding() {
 		u.world.UnmarkPos(u.pos)
 	}
+
+	u.EventDestroyed.Emit(u)
 }
 
 func (u *unit) updatePos() {
@@ -120,6 +165,10 @@ func (u *unit) Init(scene *ge.Scene) {
 	if u.stats.Creep {
 		u.sprite.SetHue(gmath.DegToRad(80))
 	}
+	if u.IsConstructionSite() {
+		u.sprite.Shader = scene.NewShader(assets.ShaderConstructionLarge)
+		u.sprite.Shader.SetFloatValue("Time", 0.05)
+	}
 
 	if u.stats.Turret != nil {
 		u.turret = newTurret(u.world, turretConfig{
@@ -136,10 +185,77 @@ func (u *unit) Update(delta float64) {
 		u.anim.Tick(delta)
 	}
 
+	if u.IsConstructionSite() {
+		u.updateConstructionSite(delta)
+	}
+
 	u.updatePos()
 
 	if !u.waypoint.IsZero() {
 		u.moveToWaypoint(delta)
+	}
+}
+
+func (u *unit) Deconstruct() {
+	for i, gu := range u.group {
+		released := u.world.NewUnit(unitConfig{
+			Stats: gu.stats,
+			Pos:   u.pos.Add(deconstructSpawnOffsets[i]),
+		})
+		u.world.runner.AddObject(released)
+		if i != 0 {
+			released.SendTo(released.pos.Add(deconstructWaypointOffsets[i]))
+		}
+		effect := newEffectNode(u.world, released.pos, true, assets.ImageConstructorMerge)
+		effect.rotates = true
+		u.world.runner.AddObject(effect)
+	}
+	u.Dispose()
+}
+
+func (u *unit) AddConstructorToSite(constructor *unit) bool {
+	if u.IsDisposed() {
+		return false
+	}
+	extra := u.extra.(*constructionSiteExtra)
+	if extra.constructors >= u.stats.ConstructorsNeeded {
+		return false
+	}
+	extra.constructors++
+
+	effect := newEffectNode(u.world, constructor.pos, false, assets.ImageConstructorMerge)
+	effect.rotates = true
+	u.world.runner.AddObject(effect)
+
+	constructor.Dispose()
+	u.group = append(u.group, constructor)
+	if extra.constructors >= u.stats.ConstructorsNeeded {
+		extra.maxProgress = extra.goalProgress
+	} else {
+		extra.maxProgress = extra.goalProgress * (float64(extra.constructors) / float64(u.stats.ConstructorsNeeded))
+	}
+	return true
+}
+
+func (u *unit) updateConstructionSite(delta float64) {
+	extra := u.extra.(*constructionSiteExtra)
+	if extra.progress >= extra.maxProgress {
+		return // Not enough constructors to continue
+	}
+
+	extra.progress += delta
+	extra.percentage = extra.progress / extra.goalProgress
+	u.sprite.Shader.SetFloatValue("Time", extra.percentage+0.05)
+	if extra.progress >= extra.goalProgress {
+		building := u.world.NewUnit(unitConfig{
+			Stats: u.stats,
+			Pos:   u.pos,
+		})
+		u.world.runner.AddObject(building)
+		building.group = u.group
+		building.extra = extra.newUnitExtra
+		u.Dispose()
+		return
 	}
 }
 
@@ -167,8 +283,6 @@ func (u *unit) Destroy() {
 	if u.turret != nil {
 		u.turret.Dispose()
 	}
-
-	u.EventDestroyed.Emit(u)
 
 	u.Dispose()
 }
@@ -320,10 +434,23 @@ func (u *unit) groundUnitStop() {
 func (u *unit) moveToWaypoint(delta float64) {
 	switch u.stats.Movement {
 	case gamedata.UnitMovementHover:
+		if entryTarget, ok := u.extra.(*constructorEntryTarget); ok {
+			if entryTarget.site.IsDisposed() {
+				u.extra = nil
+				u.SendTo(u.world.pathgrid.AlignPos(u.pos))
+				return
+			}
+		}
 		travelled := u.calcSpeed() * delta
 		u.pos = u.pos.MoveTowards(u.waypoint, travelled)
 		if u.pos == u.waypoint {
 			u.waypoint = gmath.Vec{}
+			if entryTarget, ok := u.extra.(*constructorEntryTarget); ok {
+				if !entryTarget.site.AddConstructorToSite(u) {
+					u.extra = nil
+					u.SendTo(u.pos.Add(gmath.RandElem(u.world.Rand(), groupOffsets)))
+				}
+			}
 		}
 
 	case gamedata.UnitMovementGround:

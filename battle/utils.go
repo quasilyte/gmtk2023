@@ -8,6 +8,18 @@ import (
 	"github.com/quasilyte/gmtk2023/pathing"
 )
 
+var deconstructSpawnOffsets = []gmath.Vec{
+	{},
+	{X: -12, Y: -12},
+	{X: +12, Y: -12},
+}
+
+var deconstructWaypointOffsets = []gmath.Vec{
+	{},
+	{X: -gamedata.CellSize},
+	{X: +gamedata.CellSize},
+}
+
 var groupOffsets = []gmath.Vec{
 	{X: -gamedata.CellSize, Y: -gamedata.CellSize},
 	{Y: -gamedata.CellSize},

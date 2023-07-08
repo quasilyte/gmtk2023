@@ -1,8 +1,7 @@
 package battle
 
 import (
-	"fmt"
-
+	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/ge/input"
 	"github.com/quasilyte/gmath"
@@ -96,19 +95,49 @@ func (p *humanPlayer) Update(scaledDelta, delta float64) {
 	}
 }
 
+func (p *humanPlayer) executeDeconstructableAction(actionIndex int) bool {
+	if actionIndex != 0 {
+		panic("unreachable")
+	}
+	p.selectedUnit.Deconstruct()
+	return true
+}
+
+func (p *humanPlayer) executeConstructorAction(actionIndex int) bool {
+	site := p.world.NewUnit(unitConfig{
+		Stats: gamedata.TankFactoryUnitStats,
+		Pos:   p.selectedUnit.pos,
+	})
+	site.extra = &constructionSiteExtra{
+		newUnitExtra: &tankFactoryExtra{
+			tankDesign: p.designs.Tanks[0],
+		},
+		goalProgress: gamedata.TankFactoryUnitStats.ConstructionTime,
+	}
+	site.AddConstructorToSite(p.selectedUnit)
+	p.world.runner.AddObject(site)
+	p.setSelectedUnit(site)
+	return true
+}
+
+func (p *humanPlayer) executeUnitAction(actionIndex int) bool {
+	if p.selectedUnit.IsConstructor() {
+		return p.executeConstructorAction(actionIndex)
+	}
+	if p.selectedUnit.IsSimpleDeconstructible() {
+		return p.executeDeconstructableAction(actionIndex)
+	}
+	return true
+}
+
 func (p *humanPlayer) handleInput() {
 	if p.selectedUnit != nil && p.unitPanel.bg.Visible {
 		actionIndex := p.unitPanel.HandleInput()
 		if actionIndex != -1 {
-			fmt.Println("action", actionIndex)
-		}
-	}
-
-	if info, ok := p.input.JustPressedActionInfo(controls.ActionSelectUnit); ok {
-		worldPos := p.camera.AbsPos(info.Pos)
-		u := p.world.FindSelectable(worldPos)
-		if u != nil && p.selectedUnit != u {
-			p.setSelectedUnit(u)
+			if !p.executeUnitAction(actionIndex) {
+				playGlobalSound(p.world, assets.AudioError)
+			}
+			return
 		}
 	}
 
@@ -118,6 +147,18 @@ func (p *humanPlayer) handleInput() {
 			p.selectedUnit.SendTo(worldPos)
 			p.updateUnitPath(p.selectedUnit)
 			playGlobalSound(p.world, assets.AudioUnitAck1)
+		}
+
+		if p.selectedUnit.NeedsMoreConstructors() {
+			if info, ok := p.input.JustPressedActionInfo(controls.ActionAddToGroup); ok {
+				worldPos := p.camera.AbsPos(info.Pos)
+				u := p.world.FindConstructor(worldPos)
+				if u != nil {
+					u.SendTo(p.selectedUnit.pos)
+					u.extra = &constructorEntryTarget{site: p.selectedUnit}
+					return
+				}
+			}
 		}
 
 		if p.selectedUnit.IsCommander() {
@@ -141,6 +182,14 @@ func (p *humanPlayer) handleInput() {
 					}
 				}
 			}
+		}
+	}
+
+	if info, ok := p.input.JustPressedActionInfo(controls.ActionSelectUnit); ok {
+		worldPos := p.camera.AbsPos(info.Pos)
+		u := p.world.FindSelectable(worldPos)
+		if u != nil && p.selectedUnit != u {
+			p.setSelectedUnit(u)
 		}
 	}
 }
@@ -180,6 +229,8 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 		switch {
 		case u.IsConstructor():
 			p.unitPanel.SetButtons(p.designs.Icons[:7])
+		case u.IsSimpleDeconstructible():
+			p.unitPanel.SetButtons([]*ebiten.Image{p.world.Scene().LoadImage(assets.ImageUIDeconstuctIcon).Data})
 		}
 	}
 
