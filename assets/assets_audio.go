@@ -9,6 +9,8 @@ import (
 
 func registerAudioResources(ctx *ge.Context) {
 	audioResources := map[resource.AudioID]resource.AudioInfo{
+		AudioError: {Path: "audio/error.wav", Volume: -0.3},
+
 		AudioExplosion1: {Path: "audio/explosion1.wav", Volume: -0.65},
 		AudioExplosion2: {Path: "audio/explosion2.wav", Volume: -0.65},
 		AudioExplosion3: {Path: "audio/explosion3.wav", Volume: -0.65},
@@ -50,6 +52,8 @@ func NumSamples(a resource.AudioID) int {
 
 const (
 	AudioNone resource.AudioID = iota
+
+	AudioError
 
 	AudioExplosion1
 	AudioExplosion2

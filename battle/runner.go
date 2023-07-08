@@ -65,7 +65,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 	p.Init()
 
 	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 4) - 20, Y: (40 * 1) - 20},
+		Pos:   gmath.Vec{X: (40 * 4) - 20, Y: (40 * 9) - 20},
 		Stats: gamedata.ConstructorUnitStats,
 	}))
 	r.AddObject(r.world.NewUnit(unitConfig{

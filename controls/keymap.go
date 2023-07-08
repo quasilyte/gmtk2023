@@ -13,6 +13,7 @@ const (
 	ActionPanLeft
 	ActionPanUp
 
+	ActionSelectAction
 	ActionSelectUnit
 	ActionSendUnit
 	ActionAddToGroup
@@ -33,9 +34,10 @@ func MakeHandler(ctx *ge.Context) *input.Handler {
 		ActionPanLeft:  {input.KeyA, input.KeyLeft},
 		ActionPanUp:    {input.KeyW, input.KeyUp},
 
-		ActionSelectUnit: {input.KeyMouseLeft},
-		ActionSendUnit:   {input.KeyMouseRight},
-		ActionAddToGroup: {input.KeyWithModifier(input.KeyMouseLeft, input.ModShift)},
+		ActionSelectAction: {input.KeyMouseLeft},
+		ActionSelectUnit:   {input.KeyMouseLeft},
+		ActionSendUnit:     {input.KeyMouseRight},
+		ActionAddToGroup:   {input.KeyWithModifier(input.KeyMouseLeft, input.ModShift)},
 	}
 
 	combinedKeymap := input.Keymap{}

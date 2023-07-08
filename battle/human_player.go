@@ -1,6 +1,8 @@
 package battle
 
 import (
+	"fmt"
+
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/ge/input"
 	"github.com/quasilyte/gmath"
@@ -23,6 +25,8 @@ type humanPlayer struct {
 
 	inactiveTankSelectors []*tankSelector
 	activeTankSelectors   []*tankSelector
+
+	unitPanel *unitPanel
 
 	designs *gamedata.PlayerDesigns
 
@@ -55,21 +59,22 @@ func (p *humanPlayer) Init() {
 	p.camera.Stage.AddGraphicsSlightlyAbove(p.selectedUnitPath)
 
 	p.renderIcons()
-	unitPanel := newUnitPanel(p.camera, p.input)
-	unitPanel.Init(p.world.scene)
-	unitPanel.SetButtons(p.designs.Icons[:6])
+	p.unitPanel = newUnitPanel(p.camera, p.input)
+	p.unitPanel.Init(p.world.scene)
 }
 
 func (p *humanPlayer) renderIcons() {
 	// TODO: this should be done somewhere else, before the battle starts.
 
-	renderTowerIcon(p.world.scene, p.designs.Icons[0], p.designs.Towers[0])
-	renderTowerIcon(p.world.scene, p.designs.Icons[1], p.designs.Towers[1])
+	renderGeneratorIcon(p.world.scene, p.designs.Icons[0])
 
-	renderFactoryIcon(p.world.scene, p.designs.Icons[2], p.designs.Tanks[0])
-	renderFactoryIcon(p.world.scene, p.designs.Icons[3], p.designs.Tanks[1])
-	renderFactoryIcon(p.world.scene, p.designs.Icons[4], p.designs.Tanks[2])
-	renderFactoryIcon(p.world.scene, p.designs.Icons[5], p.designs.Tanks[3])
+	renderTowerIcon(p.world.scene, p.designs.Icons[1], p.designs.Towers[0])
+	renderTowerIcon(p.world.scene, p.designs.Icons[2], p.designs.Towers[1])
+
+	renderFactoryIcon(p.world.scene, p.designs.Icons[3], p.designs.Tanks[0])
+	renderFactoryIcon(p.world.scene, p.designs.Icons[4], p.designs.Tanks[1])
+	renderFactoryIcon(p.world.scene, p.designs.Icons[5], p.designs.Tanks[2])
+	renderFactoryIcon(p.world.scene, p.designs.Icons[6], p.designs.Tanks[3])
 }
 
 func (p *humanPlayer) Update(scaledDelta, delta float64) {
@@ -92,6 +97,13 @@ func (p *humanPlayer) Update(scaledDelta, delta float64) {
 }
 
 func (p *humanPlayer) handleInput() {
+	if p.selectedUnit != nil && p.unitPanel.bg.Visible {
+		actionIndex := p.unitPanel.HandleInput()
+		if actionIndex != -1 {
+			fmt.Println("action", actionIndex)
+		}
+	}
+
 	if info, ok := p.input.JustPressedActionInfo(controls.ActionSelectUnit); ok {
 		worldPos := p.camera.AbsPos(info.Pos)
 		u := p.world.FindSelectable(worldPos)
@@ -148,6 +160,7 @@ func (p *humanPlayer) IsDisposed() bool { return false }
 func (p *humanPlayer) setSelectedUnit(u *unit) {
 	if p.selectedUnit != nil {
 		p.selectedUnit.EventDestroyed.Disconnect(p)
+		p.unitPanel.SetButtons(nil)
 	}
 
 	p.selectedUnit = u
@@ -162,6 +175,11 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 		}
 		if p.droneSelector.ImageID() != img {
 			p.droneSelector.SetImage(p.world.scene.LoadImage(img))
+		}
+
+		switch {
+		case u.IsConstructor():
+			p.unitPanel.SetButtons(p.designs.Icons[:7])
 		}
 	}
 

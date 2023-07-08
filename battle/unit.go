@@ -178,6 +178,10 @@ func (u *unit) SendTo(pos gmath.Vec) {
 		u.sendCommanderTo(pos)
 		return
 	}
+	if u.IsConstructor() {
+		u.sendConstructorTo(pos)
+		return
+	}
 
 	switch u.stats.Movement {
 	case gamedata.UnitMovementGround:
@@ -221,6 +225,10 @@ func (u *unit) SendTo(pos gmath.Vec) {
 func (u *unit) setDstRotation(v gmath.Rad) {
 	u.needRotate = true
 	u.dstRotation = v
+}
+
+func (u *unit) sendConstructorTo(pos gmath.Vec) {
+	u.waypoint = u.world.pathgrid.AlignPos(pos)
 }
 
 func (u *unit) sendCommanderTo(pos gmath.Vec) {

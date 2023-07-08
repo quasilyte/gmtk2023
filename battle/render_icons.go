@@ -12,6 +12,23 @@ import (
 
 // TODO: these functions should go away from the battle package.
 
+func renderGeneratorIcon(scene *ge.Scene, icon *ebiten.Image) {
+	icon.Clear()
+	icon.Fill(styles.UnitPanelBgColor)
+
+	bodyTexture := scene.LoadImage(assets.ImageGenerator)
+
+	iconWidth := icon.Bounds().Dx()
+	iconHeight := icon.Bounds().Dy()
+
+	var drawOptions ebiten.DrawImageOptions
+	drawOptions.GeoM.Translate(
+		float64((iconWidth-bodyTexture.Data.Bounds().Dx())/2),
+		float64((iconHeight-bodyTexture.Data.Bounds().Dy())/2),
+	)
+	icon.DrawImage(bodyTexture.Data, &drawOptions)
+}
+
 func renderTowerIcon(scene *ge.Scene, icon *ebiten.Image, design *gamedata.UnitStats) {
 	icon.Clear()
 	icon.Fill(styles.UnitPanelBgColor)

@@ -49,7 +49,7 @@ var CommanderUnitStats = &UnitStats{
 	Movement: UnitMovementHover,
 	Body: &BodyStats{
 		HP:    30,
-		Speed: 60,
+		Speed: 40,
 		Image: assets.ImageDroneCommander,
 		Size:  unitSizeSmall,
 	},
