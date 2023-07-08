@@ -56,6 +56,10 @@ type constructorEntryTarget struct {
 	site *unit
 }
 
+type constructionOrder struct {
+	siteExtra *constructionSiteExtra
+}
+
 type constructionSiteExtra struct {
 	constructors int
 
@@ -445,11 +449,20 @@ func (u *unit) moveToWaypoint(delta float64) {
 		u.pos = u.pos.MoveTowards(u.waypoint, travelled)
 		if u.pos == u.waypoint {
 			u.waypoint = gmath.Vec{}
-			if entryTarget, ok := u.extra.(*constructorEntryTarget); ok {
-				if !entryTarget.site.AddConstructorToSite(u) {
+			switch extra := u.extra.(type) {
+			case *constructorEntryTarget:
+				if !extra.site.AddConstructorToSite(u) {
 					u.extra = nil
 					u.SendTo(u.pos.Add(gmath.RandElem(u.world.Rand(), groupOffsets)))
 				}
+			case *constructionOrder:
+				site := u.world.NewUnit(unitConfig{
+					Stats: gamedata.TankFactoryUnitStats,
+					Pos:   u.pos,
+				})
+				site.extra = extra.siteExtra
+				site.AddConstructorToSite(u)
+				u.world.runner.AddObject(site)
 			}
 		}
 

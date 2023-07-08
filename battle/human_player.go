@@ -104,19 +104,19 @@ func (p *humanPlayer) executeDeconstructableAction(actionIndex int) bool {
 }
 
 func (p *humanPlayer) executeConstructorAction(actionIndex int) bool {
-	site := p.world.NewUnit(unitConfig{
-		Stats: gamedata.TankFactoryUnitStats,
-		Pos:   p.selectedUnit.pos,
-	})
-	site.extra = &constructionSiteExtra{
-		newUnitExtra: &tankFactoryExtra{
-			tankDesign: p.designs.Tanks[0],
-		},
-		goalProgress: gamedata.TankFactoryUnitStats.ConstructionTime,
+	pos := p.world.FindConstructionSitePos(p.selectedUnit.pos)
+	if pos.IsZero() {
+		return false
 	}
-	site.AddConstructorToSite(p.selectedUnit)
-	p.world.runner.AddObject(site)
-	p.setSelectedUnit(site)
+	p.selectedUnit.extra = &constructionOrder{
+		siteExtra: &constructionSiteExtra{
+			newUnitExtra: &tankFactoryExtra{
+				tankDesign: p.designs.Tanks[0],
+			},
+			goalProgress: gamedata.TankFactoryUnitStats.ConstructionTime,
+		},
+	}
+	p.selectedUnit.SendTo(pos)
 	return true
 }
 

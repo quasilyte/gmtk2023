@@ -160,6 +160,24 @@ func (w *worldState) FindSelectable(pos gmath.Vec) *unit {
 	return closestUnit
 }
 
+func (w *worldState) FindConstructionSitePos(pos gmath.Vec) gmath.Vec {
+	alignedPos := w.pathgrid.AlignPos(pos)
+	if w.pathgrid.CellIsFree(w.pathgrid.PosToCoord(alignedPos)) {
+		return alignedPos
+	}
+	offset := randIterate(w.Rand(), groupOffsets, func(offset gmath.Vec) bool {
+		probe := alignedPos.Add(offset)
+		if w.pathgrid.CellIsFree(w.pathgrid.PosToCoord(probe)) {
+			return true
+		}
+		return false
+	})
+	if !offset.IsZero() {
+		return alignedPos.Add(offset)
+	}
+	return gmath.Vec{}
+}
+
 func (w *worldState) FindConstructor(pos gmath.Vec) *unit {
 	if len(w.playerUnits.selectable) == 0 {
 		return nil
