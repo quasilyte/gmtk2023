@@ -34,6 +34,22 @@ var ScoutBodyStats = &BodyStats{
 	Speed:         100,
 }
 
+var FighterBodyStats = &BodyStats{
+	TurretOffset:  -1,
+	Size:          unitSizeMedium,
+	HP:            35,
+	RotationSpeed: 2.0,
+	Speed:         80,
+}
+
+var HunterBodyStats = &BodyStats{
+	TurretOffset:  -1,
+	Size:          unitSizeBig,
+	HP:            40,
+	RotationSpeed: 1.6,
+	Speed:         110,
+}
+
 var DestroyerBodyStats = &BodyStats{
 	TurretOffset:  -1,
 	Size:          unitSizeBig,

@@ -22,6 +22,8 @@ func InitState(ctx *ge.Context, state *session.State) {
 
 	tankTextureTasks := []textureConfig{
 		{assets.ImageTankBodyScout, 3, 0, &gamedata.ScoutBodyStats.Texture},
+		{assets.ImageTankBodyFighter, 3, 0, &gamedata.FighterBodyStats.Texture},
+		{assets.ImageTankBodyHunter, 3, 0, &gamedata.HunterBodyStats.Texture},
 		{assets.ImageTankBodyDestroyer, 3, 0, &gamedata.DestroyerBodyStats.Texture},
 
 		{assets.ImageTankTurretScatterCannon, 2, 1, &gamedata.ScatterCannonStats.Texture},

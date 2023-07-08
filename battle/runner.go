@@ -75,7 +75,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 
 	tankStats := &gamedata.UnitStats{
 		Movement: gamedata.UnitMovementGround,
-		Body:     gamedata.DestroyerBodyStats,
+		Body:     gamedata.FighterBodyStats,
 		Turret:   gamedata.LightCannonStats,
 	}
 	r.AddObject(r.world.NewUnit(unitConfig{
