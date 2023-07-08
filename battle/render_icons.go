@@ -58,8 +58,13 @@ func renderFactoryIcon(scene *ge.Scene, icon *ebiten.Image, design *gamedata.Uni
 	iconHeight := icon.Bounds().Dy()
 
 	var drawOptions ebiten.DrawImageOptions
-	drawOptions.GeoM.Translate(4, 4)
-	icon.DrawImage(scene.LoadImage(assets.ImageTankFactory).Data, &drawOptions)
+	if design.Body.Heavy {
+		drawOptions.GeoM.Translate(1, 1)
+		icon.DrawImage(scene.LoadImage(assets.ImageHeavyTankFactory).Data, &drawOptions)
+	} else {
+		drawOptions.GeoM.Translate(4, 4)
+		icon.DrawImage(scene.LoadImage(assets.ImageTankFactory).Data, &drawOptions)
+	}
 
 	drawOptions.GeoM.Reset()
 	drawOptions.GeoM.Translate(float64(iconWidth-50), float64(iconHeight-50))

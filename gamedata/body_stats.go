@@ -17,6 +17,8 @@ type BodyStats struct {
 
 	Size gmath.Vec
 
+	Heavy bool
+
 	HP float64
 }
 
@@ -49,6 +51,7 @@ var HunterBodyStats = &BodyStats{
 	HP:            40,
 	RotationSpeed: 1.6,
 	Speed:         110,
+	Heavy:         true,
 }
 
 var DestroyerBodyStats = &BodyStats{
@@ -57,6 +60,7 @@ var DestroyerBodyStats = &BodyStats{
 	HP:            120,
 	RotationSpeed: 1,
 	Speed:         50,
+	Heavy:         true,
 }
 
 var BunkerBodyStats = &BodyStats{

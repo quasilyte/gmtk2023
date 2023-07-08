@@ -108,12 +108,37 @@ func (p *humanPlayer) executeConstructorAction(actionIndex int) bool {
 	if pos.IsZero() {
 		return false
 	}
+
+	var stats *gamedata.UnitStats
+	var newUnitExtra any
+	switch actionIndex {
+	case 0:
+		// Generator.
+	case 1:
+		// Turret 1
+	case 2:
+		// Turret 2
+	case 3:
+		stats = gamedata.TankFactoryUnitStats
+		newUnitExtra = &tankFactoryExtra{tankDesign: p.designs.Tanks[0]}
+	case 4:
+		stats = gamedata.TankFactoryUnitStats
+		newUnitExtra = &tankFactoryExtra{tankDesign: p.designs.Tanks[1]}
+	case 5:
+		stats = gamedata.TankFactoryUnitStats
+		newUnitExtra = &tankFactoryExtra{tankDesign: p.designs.Tanks[2]}
+	case 6:
+		stats = gamedata.TankFactoryUnitStats
+		newUnitExtra = &tankFactoryExtra{tankDesign: p.designs.Tanks[3]}
+	}
+	if stats == gamedata.TankFactoryUnitStats && newUnitExtra.(*tankFactoryExtra).tankDesign.Body.Heavy {
+		stats = gamedata.HeavyTankFactoryUnitStats
+	}
 	p.selectedUnit.extra = &constructionOrder{
+		siteStats: stats,
 		siteExtra: &constructionSiteExtra{
-			newUnitExtra: &tankFactoryExtra{
-				tankDesign: p.designs.Tanks[0],
-			},
-			goalProgress: gamedata.TankFactoryUnitStats.ConstructionTime,
+			newUnitExtra: newUnitExtra,
+			goalProgress: stats.ConstructionTime,
 		},
 	}
 	p.selectedUnit.SendTo(pos)

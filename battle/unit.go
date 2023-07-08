@@ -57,6 +57,7 @@ type constructorEntryTarget struct {
 }
 
 type constructionOrder struct {
+	siteStats *gamedata.UnitStats
 	siteExtra *constructionSiteExtra
 }
 
@@ -457,7 +458,7 @@ func (u *unit) moveToWaypoint(delta float64) {
 				}
 			case *constructionOrder:
 				site := u.world.NewUnit(unitConfig{
-					Stats: gamedata.TankFactoryUnitStats,
+					Stats: extra.siteStats,
 					Pos:   u.pos,
 				})
 				site.extra = extra.siteExtra

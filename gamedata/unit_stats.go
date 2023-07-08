@@ -35,8 +35,21 @@ var TankFactoryUnitStats = &UnitStats{
 	},
 	Selectable:         true,
 	Large:              true,
-	ConstructorsNeeded: 3,
+	ConstructorsNeeded: 2,
 	ConstructionTime:   20,
+}
+
+var HeavyTankFactoryUnitStats = &UnitStats{
+	Movement: UnitMovementNone,
+	Body: &BodyStats{
+		HP:    300,
+		Image: assets.ImageHeavyTankFactory,
+		Size:  unitSizeVeryBig,
+	},
+	Selectable:         true,
+	Large:              true,
+	ConstructorsNeeded: 3,
+	ConstructionTime:   40,
 }
 
 var ConstructorUnitStats = &UnitStats{
