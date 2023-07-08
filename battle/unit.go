@@ -118,6 +118,7 @@ func (u *unit) Init(scene *ge.Scene) {
 		u.turret = newTurret(u.world, turretConfig{
 			Image: u.stats.Turret.Texture,
 			Pos:   &u.turretPos,
+			Stats: u.stats,
 		})
 		u.world.runner.AddObject(u.turret)
 	}
@@ -209,6 +210,20 @@ func (u *unit) calcSpeed() float64 {
 	return u.stats.Body.Speed
 }
 
+func (u *unit) setGroundUnitWaypoint(pos gmath.Vec) {
+	u.waypoint = pos
+	dstRotation := u.pos.AngleToPoint(u.waypoint).Normalized()
+	u.setDstRotation(dstRotation)
+	if u.turret != nil {
+		if u.world.Rand().Chance(0.7) {
+			if u.world.Rand().Chance(0.2) {
+				dstRotation = (dstRotation + gmath.Rad(u.world.Rand().FloatRange(-0.3, 0.3))).Normalized()
+			}
+			u.turret.AlignRequest(dstRotation)
+		}
+	}
+}
+
 func (u *unit) moveGroundUnitToWaypoint(delta float64) {
 	if u.needRotate {
 		u.setRotation(u.rotation.RotatedTowards(u.dstRotation, u.stats.Body.RotationSpeed*gmath.Rad(delta)))
@@ -236,8 +251,7 @@ func (u *unit) moveGroundUnitToWaypoint(delta float64) {
 			if u.world.Rand().Chance(0.4) {
 				probe := u.pos.Add(gmath.RandElem(u.world.Rand(), groupOffsets))
 				if u.world.pathgrid.CellIsFree(u.world.pathgrid.PosToCoord(probe)) {
-					u.waypoint = probe
-					u.setDstRotation(u.pos.AngleToPoint(u.waypoint).Normalized())
+					u.setGroundUnitWaypoint(probe)
 					return
 				}
 			}
@@ -249,8 +263,7 @@ func (u *unit) moveGroundUnitToWaypoint(delta float64) {
 		}
 		d := u.path.Next()
 		aligned := u.world.pathgrid.AlignPos(u.pos)
-		u.waypoint = posMove(aligned, d)
-		u.setDstRotation(u.pos.AngleToPoint(u.waypoint).Normalized())
+		u.setGroundUnitWaypoint(posMove(aligned, d))
 	} else {
 		if u.finalWaypoint.DistanceSquaredTo(u.pos) > maxFinalWaypointDistSqr {
 			u.SendTo(u.finalWaypoint)

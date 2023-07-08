@@ -14,7 +14,9 @@ type turret struct {
 
 	sprite *ge.Sprite
 
-	rotation gmath.Rad
+	rotation    gmath.Rad
+	dstRotation gmath.Rad
+	needRotate  bool
 
 	config turretConfig
 }
@@ -23,6 +25,8 @@ type turretConfig struct {
 	Image resource.Image
 
 	Pos *gmath.Vec
+
+	Stats *gamedata.UnitStats
 }
 
 func newTurret(world *worldState, config turretConfig) *turret {
@@ -33,12 +37,12 @@ func newTurret(world *worldState, config turretConfig) *turret {
 }
 
 func (t *turret) Init(scene *ge.Scene) {
-	t.rotation = scene.Rand().Rad()
-
 	t.sprite = ge.NewSprite(scene.Context())
 	t.sprite.SetImage(t.config.Image)
 	t.sprite.Pos.Base = t.config.Pos
 	t.world.Stage().AddSprite(t.sprite)
+
+	t.setRotation(scene.Rand().Rad())
 }
 
 func (t *turret) IsDisposed() bool {
@@ -50,6 +54,25 @@ func (t *turret) Dispose() {
 }
 
 func (t *turret) Update(delta float64) {
+	if t.needRotate {
+		t.setRotation(t.rotation.RotatedTowards(t.dstRotation, t.config.Stats.Turret.RotationSpeed*gmath.Rad(delta)))
+		if t.rotation == t.dstRotation {
+			t.needRotate = false
+		}
+	}
+}
+
+func (t *turret) setRotation(v gmath.Rad) {
+	t.rotation = v
 	spriteAngle := t.rotation.Normalized() - (gamedata.TankFrameAngleStep / 2)
 	t.sprite.FrameOffset.X = 48 * math.Trunc(float64(spriteAngle/gamedata.TankFrameAngleStep))
+}
+
+func (t *turret) AlignRequest(rotation gmath.Rad) {
+	if rotation == t.rotation {
+		return
+	}
+
+	t.needRotate = true
+	t.dstRotation = rotation
 }
