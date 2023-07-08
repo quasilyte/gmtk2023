@@ -125,21 +125,26 @@ func (r *Runner) Init(scene *ge.Scene) {
 		Body:     gamedata.ScoutBodyStats,
 		Turret:   gamedata.ScatterCannonStats,
 	}
+	tank3Stats := &gamedata.UnitStats{
+		Movement: gamedata.UnitMovementGround,
+		Body:     gamedata.WheelsBodyStats,
+		Turret:   gamedata.GatlingStats,
+	}
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: 360, Y: 360},
-		Stats: tank2Stats,
+		Stats: tank3Stats,
 	}))
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: 400, Y: 360},
-		Stats: tank2Stats,
+		Stats: tank3Stats,
 	}))
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: 440, Y: 360},
-		Stats: tank2Stats,
+		Stats: tank3Stats,
 	}))
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: 360, Y: 400},
-		Stats: tank2Stats,
+		Stats: tank3Stats,
 	}))
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: 400, Y: 400},
@@ -158,22 +163,41 @@ func (r *Runner) Init(scene *ge.Scene) {
 		Stats: tank2Stats,
 	}))
 
-	enemyBunkerStats := &gamedata.UnitStats{
-		Movement: gamedata.UnitMovementNone,
-		Body:     gamedata.BunkerBodyStats,
+	enemyTankStats := &gamedata.UnitStats{
+		Movement: gamedata.UnitMovementGround,
+		Body:     gamedata.WheelsBodyStats,
 		Turret:   gamedata.GatlingStats,
 		Creep:    true,
 	}
 	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 20) - 20, Y: (40 * 5) - 20},
+		Pos:   gmath.Vec{X: (40 * 22) - 20, Y: (40 * 5) - 20},
+		Stats: enemyTankStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 22) - 20, Y: (40 * 6) - 20},
+		Stats: enemyTankStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 22) - 20, Y: (40 * 7) - 20},
+		Stats: enemyTankStats,
+	}))
+
+	enemyBunkerStats := &gamedata.UnitStats{
+		Movement: gamedata.UnitMovementNone,
+		Body:     gamedata.BunkerBodyStats,
+		Turret:   gamedata.LightCannonStats,
+		Creep:    true,
+	}
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 28) - 20, Y: (40 * 4) - 20},
 		Stats: enemyBunkerStats,
 	}))
 	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 20) - 20, Y: (40 * 6) - 20},
+		Pos:   gmath.Vec{X: (40 * 26) - 20, Y: (40 * 6) - 20},
 		Stats: enemyBunkerStats,
 	}))
 	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 20) - 20, Y: (40 * 7) - 20},
+		Pos:   gmath.Vec{X: (40 * 28) - 20, Y: (40 * 8) - 20},
 		Stats: enemyBunkerStats,
 	}))
 }

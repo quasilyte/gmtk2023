@@ -12,6 +12,7 @@ func registerImageResources(ctx *ge.Context) {
 		ImageBackgroundTiles: {Path: "image/tiles.png"},
 
 		ImageUIDroneSelector: {Path: "image/battleui/drone_selector.png"},
+		ImageUITowerSelector: {Path: "image/battleui/tower_selector.png"},
 		ImageUILargeSelector: {Path: "image/battleui/large_selector.png"},
 		ImageUITankSelector:  {Path: "image/battleui/tank_selector.png"},
 
@@ -23,6 +24,7 @@ func registerImageResources(ctx *ge.Context) {
 		ImageTankBodyFighter:   {Path: "image/tank/body_fighter.png"},
 		ImageTankBodyHunter:    {Path: "image/tank/body_hunter.png"},
 		ImageTankBodyDestroyer: {Path: "image/tank/body_destroyer.png"},
+		ImageTankBodyWheels:    {Path: "image/tank/body_wheels.png"},
 
 		ImageTankTurretScatterCannon: {Path: "image/tank/turret_scatter_cannon.png"},
 		ImageTankTurretLightCannon:   {Path: "image/tank/turret_light_cannon.png"},
@@ -57,6 +59,7 @@ const (
 	ImageBackgroundTiles
 
 	ImageUIDroneSelector
+	ImageUITowerSelector
 	ImageUILargeSelector
 	ImageUITankSelector
 
@@ -68,6 +71,7 @@ const (
 	ImageTankBodyFighter
 	ImageTankBodyHunter
 	ImageTankBodyDestroyer
+	ImageTankBodyWheels
 
 	ImageTankTurretScatterCannon
 	ImageTankTurretLightCannon

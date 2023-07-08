@@ -111,25 +111,21 @@ func (p *humanPlayer) executeConstructorAction(actionIndex int) bool {
 
 	var stats *gamedata.UnitStats
 	var newUnitExtra any
+	time := 0.0
 	switch actionIndex {
 	case 0:
 		// Generator.
-	case 1:
-		// Turret 1
-	case 2:
-		// Turret 2
-	case 3:
+		return false
+	case 1, 2:
+		index := actionIndex - 1
+		stats = gamedata.TowerConstruction
+		newUnitExtra = p.designs.Towers[index]
+		time = p.designs.Towers[index].Turret.ProductionTime * 3
+	case 3, 4, 5, 6:
+		index := actionIndex - 3
 		stats = gamedata.TankFactoryUnitStats
-		newUnitExtra = &tankFactoryExtra{tankDesign: p.designs.Tanks[0]}
-	case 4:
-		stats = gamedata.TankFactoryUnitStats
-		newUnitExtra = &tankFactoryExtra{tankDesign: p.designs.Tanks[1]}
-	case 5:
-		stats = gamedata.TankFactoryUnitStats
-		newUnitExtra = &tankFactoryExtra{tankDesign: p.designs.Tanks[2]}
-	case 6:
-		stats = gamedata.TankFactoryUnitStats
-		newUnitExtra = &tankFactoryExtra{tankDesign: p.designs.Tanks[3]}
+		newUnitExtra = &tankFactoryExtra{tankDesign: p.designs.Tanks[index]}
+		time = stats.ConstructionTime
 	}
 	if stats == gamedata.TankFactoryUnitStats && newUnitExtra.(*tankFactoryExtra).tankDesign.Body.Heavy {
 		stats = gamedata.HeavyTankFactoryUnitStats
@@ -138,7 +134,7 @@ func (p *humanPlayer) executeConstructorAction(actionIndex int) bool {
 		siteStats: stats,
 		siteExtra: &constructionSiteExtra{
 			newUnitExtra: newUnitExtra,
-			goalProgress: stats.ConstructionTime,
+			goalProgress: time,
 		},
 	}
 	p.selectedUnit.SendTo(pos)
@@ -246,6 +242,8 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 		img := assets.ImageUIDroneSelector
 		if u.stats.Large {
 			img = assets.ImageUILargeSelector
+		} else if u.IsBuilding() {
+			img = assets.ImageUITowerSelector
 		}
 		if p.droneSelector.ImageID() != img {
 			p.droneSelector.SetImage(p.world.scene.LoadImage(img))

@@ -26,6 +26,17 @@ const (
 	UnitMovementNone
 )
 
+var TowerConstruction = &UnitStats{
+	Movement: UnitMovementNone,
+	Body: &BodyStats{
+		HP:    50,
+		Image: assets.ImageTowerBodyBunker,
+		Size:  unitSizeBig,
+	},
+	Selectable:         true,
+	ConstructorsNeeded: 1,
+}
+
 var TankFactoryUnitStats = &UnitStats{
 	Movement: UnitMovementNone,
 	Body: &BodyStats{

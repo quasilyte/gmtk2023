@@ -50,14 +50,16 @@ func main() {
 	}
 
 	playerDesigns.Towers[0] = &gamedata.UnitStats{
-		Movement: gamedata.UnitMovementNone,
-		Body:     gamedata.BunkerBodyStats,
-		Turret:   gamedata.GatlingStats,
+		Movement:   gamedata.UnitMovementNone,
+		Body:       gamedata.BunkerBodyStats,
+		Turret:     gamedata.GatlingStats,
+		Selectable: true,
 	}
 	playerDesigns.Towers[1] = &gamedata.UnitStats{
-		Movement: gamedata.UnitMovementNone,
-		Body:     gamedata.BunkerBodyStats,
-		Turret:   gamedata.LightCannonStats,
+		Movement:   gamedata.UnitMovementNone,
+		Body:       gamedata.BunkerBodyStats,
+		Turret:     gamedata.LightCannonStats,
+		Selectable: true,
 	}
 
 	config := &gamedata.BattleConfig{

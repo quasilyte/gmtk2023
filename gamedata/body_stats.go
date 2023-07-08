@@ -29,6 +29,14 @@ var (
 	unitSizeVeryBig = gmath.Vec{X: 60, Y: 60}
 )
 
+var WheelsBodyStats = &BodyStats{
+	TurretOffset:  -1,
+	Size:          unitSizeSmall,
+	HP:            5,
+	RotationSpeed: 1.0,
+	Speed:         140,
+}
+
 var ScoutBodyStats = &BodyStats{
 	TurretOffset:  -1,
 	Size:          unitSizeSmall,

@@ -114,6 +114,10 @@ func (u *unit) NeedsMoreConstructors() bool {
 }
 
 func (u *unit) IsSimpleDeconstructible() bool {
+	if u.IsBuilding() && u.turret != nil {
+		return true
+	}
+
 	switch u.extra.(type) {
 	case *tankFactoryExtra, *constructionSiteExtra:
 		return true
@@ -127,6 +131,10 @@ func (u *unit) IsBuilding() bool { return u.stats.Movement == gamedata.UnitMovem
 func (u *unit) Dispose() {
 	u.disposed = true
 	u.sprite.Dispose()
+
+	if u.turret != nil {
+		u.turret.Dispose()
+	}
 
 	if u.IsBuilding() {
 		u.world.UnmarkPos(u.pos)
@@ -252,8 +260,16 @@ func (u *unit) updateConstructionSite(delta float64) {
 	extra.percentage = extra.progress / extra.goalProgress
 	u.sprite.Shader.SetFloatValue("Time", extra.percentage+0.05)
 	if extra.progress >= extra.goalProgress {
+		stats := u.stats
+		if statsOverride, ok := extra.newUnitExtra.(*gamedata.UnitStats); ok {
+			stats = statsOverride
+			extra.newUnitExtra = nil
+		}
+		effect := newEffectNode(u.world, u.pos, true, assets.ImageConstructorMerge)
+		effect.rotates = true
+		u.world.runner.AddObject(effect)
 		building := u.world.NewUnit(unitConfig{
-			Stats: u.stats,
+			Stats: stats,
 			Pos:   u.pos,
 		})
 		u.world.runner.AddObject(building)
@@ -284,10 +300,6 @@ func (u *unit) OnDamage(d gamedata.DamageValue, attacker *unit) {
 
 func (u *unit) Destroy() {
 	createAreaExplosion(u.world, spriteRect(u.pos, u.stats.Body.Size.X, u.stats.Body.Size.Y), true)
-
-	if u.turret != nil {
-		u.turret.Dispose()
-	}
 
 	u.Dispose()
 }

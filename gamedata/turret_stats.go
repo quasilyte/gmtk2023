@@ -16,6 +16,8 @@ const (
 type TurretStats struct {
 	Texture resource.Image
 
+	ProductionTime float64
+
 	ProjectileImage          resource.ImageID
 	ProjectileSpeed          float64
 	ProjectileRotateSpeed    float64
@@ -78,6 +80,7 @@ var ScatterCannonStats = FinalizeTurretStats(&TurretStats{
 })
 
 var LightCannonStats = FinalizeTurretStats(&TurretStats{
+	ProductionTime:      5,
 	AttackSound:         assets.AudioShotLightCannon1,
 	HP:                  10,
 	RotationSpeed:       2.0,
@@ -95,8 +98,9 @@ var LightCannonStats = FinalizeTurretStats(&TurretStats{
 })
 
 var GatlingStats = FinalizeTurretStats(&TurretStats{
+	ProductionTime:  5,
 	AttackSound:     assets.AudioShotGatling,
-	HP:              0,
+	HP:              10,
 	RotationSpeed:   1.2,
 	Range:           7 * CellSize,
 	Accuracy:        0.5,
