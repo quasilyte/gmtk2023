@@ -24,6 +24,7 @@ func InitState(ctx *ge.Context, state *session.State) {
 		{assets.ImageTankBodyScout, 3, 0, &gamedata.ScoutBodyStats.Texture},
 		{assets.ImageTankBodyDestroyer, 3, 0, &gamedata.DestroyerBodyStats.Texture},
 
+		{assets.ImageTankTurretGatling, 2, 1, &gamedata.GatlingStats.Texture},
 		{assets.ImageTankTurretLightCannon, 2, 1, &gamedata.LightCannonStats.Texture},
 	}
 
@@ -63,7 +64,7 @@ func createTexture(source *ge.Sprite, depth, colorLayer int) (*ebiten.Image, flo
 		addShading(tmpImage, depth, colorLayer)
 
 		var options ebiten.DrawImageOptions
-		options.GeoM.Translate(float64(offsetX), float64(depth))
+		options.GeoM.Translate(float64(offsetX)+1, float64(depth))
 		result.DrawImage(tmpImage, &options)
 
 		offsetX += width
