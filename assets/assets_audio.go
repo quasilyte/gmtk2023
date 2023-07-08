@@ -23,6 +23,8 @@ func registerAudioResources(ctx *ge.Context) {
 		AudioUnitAck4: {Path: "audio/unit_ack4.wav", Volume: -0.55},
 		AudioUnitAck5: {Path: "audio/unit_ack5.wav", Volume: -0.55},
 		AudioUnitAck6: {Path: "audio/unit_ack6.wav", Volume: -0.55},
+		AudioUnitAck7: {Path: "audio/unit_ack7.wav", Volume: -0.55},
+		AudioUnitAck8: {Path: "audio/unit_ack8.wav", Volume: -0.55},
 
 		AudioShotLightCannon1: {Path: "audio/shot_light_cannon1.wav", Volume: -0.3},
 		AudioShotLightCannon2: {Path: "audio/shot_light_cannon2.wav", Volume: -0.3},
@@ -44,7 +46,7 @@ func NumSamples(a resource.AudioID) int {
 	case AudioShotLightCannon1:
 		return 3
 	case AudioUnitAck1:
-		return 6
+		return 8
 	default:
 		return 1
 	}
@@ -67,6 +69,8 @@ const (
 	AudioUnitAck4
 	AudioUnitAck5
 	AudioUnitAck6
+	AudioUnitAck7
+	AudioUnitAck8
 
 	AudioShotLightCannon1
 	AudioShotLightCannon2
