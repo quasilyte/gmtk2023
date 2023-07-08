@@ -114,8 +114,8 @@ func (p *humanPlayer) executeConstructorAction(actionIndex int) bool {
 	time := 0.0
 	switch actionIndex {
 	case 0:
-		// Generator.
-		return false
+		stats = gamedata.GeneratorUnitStats
+		time = stats.ConstructionTime
 	case 1, 2:
 		index := actionIndex - 1
 		stats = gamedata.TowerConstruction
@@ -155,7 +155,9 @@ func (p *humanPlayer) handleInput() {
 	if p.selectedUnit != nil && p.unitPanel.bg.Visible {
 		actionIndex := p.unitPanel.HandleInput()
 		if actionIndex != -1 {
-			if !p.executeUnitAction(actionIndex) {
+			if p.executeUnitAction(actionIndex) {
+				playGlobalSound(p.world, assets.AudioUnitAck1)
+			} else {
 				playGlobalSound(p.world, assets.AudioError)
 			}
 			return
@@ -163,11 +165,13 @@ func (p *humanPlayer) handleInput() {
 	}
 
 	if p.selectedUnit != nil {
-		if info, ok := p.input.JustPressedActionInfo(controls.ActionSendUnit); ok {
-			worldPos := p.camera.AbsPos(info.Pos)
-			p.selectedUnit.SendTo(worldPos)
-			p.updateUnitPath(p.selectedUnit)
-			playGlobalSound(p.world, assets.AudioUnitAck1)
+		if p.selectedUnit.stats.Movement != gamedata.UnitMovementNone {
+			if info, ok := p.input.JustPressedActionInfo(controls.ActionSendUnit); ok {
+				worldPos := p.camera.AbsPos(info.Pos)
+				p.selectedUnit.SendTo(worldPos)
+				p.updateUnitPath(p.selectedUnit)
+				playGlobalSound(p.world, assets.AudioUnitAck1)
+			}
 		}
 
 		if p.selectedUnit.NeedsMoreConstructors() {

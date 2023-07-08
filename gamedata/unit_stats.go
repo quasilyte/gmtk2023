@@ -37,6 +37,18 @@ var TowerConstruction = &UnitStats{
 	ConstructorsNeeded: 1,
 }
 
+var GeneratorUnitStats = &UnitStats{
+	Movement: UnitMovementNone,
+	Body: &BodyStats{
+		HP:    70,
+		Image: assets.ImageGenerator,
+		Size:  unitSizeMedium,
+	},
+	Selectable:         true,
+	ConstructorsNeeded: 1,
+	ConstructionTime:   15,
+}
+
 var TankFactoryUnitStats = &UnitStats{
 	Movement: UnitMovementNone,
 	Body: &BodyStats{

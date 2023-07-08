@@ -117,6 +117,9 @@ func (u *unit) IsSimpleDeconstructible() bool {
 	if u.IsBuilding() && u.turret != nil {
 		return true
 	}
+	if u.stats == gamedata.GeneratorUnitStats {
+		return true
+	}
 
 	switch u.extra.(type) {
 	case *tankFactoryExtra, *constructionSiteExtra:
@@ -180,7 +183,7 @@ func (u *unit) Init(scene *ge.Scene) {
 	}
 	if u.IsConstructionSite() {
 		u.sprite.Shader = scene.NewShader(assets.ShaderConstructionLarge)
-		u.sprite.Shader.SetFloatValue("Time", 0.05)
+		u.sprite.Shader.SetFloatValue("Time", 0.15)
 	}
 
 	if u.stats.Turret != nil {
@@ -260,7 +263,7 @@ func (u *unit) updateConstructionSite(delta float64) {
 
 	extra.progress += delta
 	extra.percentage = extra.progress / extra.goalProgress
-	u.sprite.Shader.SetFloatValue("Time", extra.percentage+0.05)
+	u.sprite.Shader.SetFloatValue("Time", extra.percentage+0.15)
 	if extra.progress >= extra.goalProgress {
 		stats := u.stats
 		if statsOverride, ok := extra.newUnitExtra.(*gamedata.UnitStats); ok {
