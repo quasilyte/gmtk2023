@@ -30,16 +30,16 @@ func InitState(ctx *ge.Context, state *session.State) {
 	s := ge.NewSprite(ctx)
 	for _, task := range tankTextureTasks {
 		s.SetImage(ctx.Loader.LoadImage(task.src))
-		tex := createTexture(s, task.depth, task.colorLayer)
+		tex, frameHeight, frameWidth := createTexture(s, task.depth, task.colorLayer)
 		*task.dst = resource.Image{
 			Data:               tex,
-			DefaultFrameWidth:  s.FrameWidth,
-			DefaultFrameHeight: s.FrameHeight,
+			DefaultFrameWidth:  frameWidth,
+			DefaultFrameHeight: frameHeight,
 		}
 	}
 }
 
-func createTexture(source *ge.Sprite, depth, colorLayer int) *ebiten.Image {
+func createTexture(source *ge.Sprite, depth, colorLayer int) (*ebiten.Image, float64, float64) {
 	source.Centered = true
 	pos := gmath.Vec{
 		X: source.ImageWidth() / 2,
@@ -50,11 +50,11 @@ func createTexture(source *ge.Sprite, depth, colorLayer int) *ebiten.Image {
 	source.Rotation = &angle
 
 	sides := gamedata.NumTankSpriteFrames
-	width := int(source.ImageWidth())
-	height := int(source.ImageHeight())
+	width := int(source.ImageWidth()) + depth
+	height := int(source.ImageHeight()) + depth
 
-	result := ebiten.NewImage(width*sides, (height + depth*2))
-	tmpImage := ebiten.NewImage(width, height+depth)
+	result := ebiten.NewImage(width*sides, height+depth)
+	tmpImage := ebiten.NewImage(width, height)
 
 	offsetX := 0
 	for i := 0; i < sides; i++ {
@@ -69,7 +69,7 @@ func createTexture(source *ge.Sprite, depth, colorLayer int) *ebiten.Image {
 		offsetX += width
 		angle += gamedata.TankFrameAngleStep
 	}
-	return result
+	return result, float64(width), float64(height)
 }
 
 func addShading(img *ebiten.Image, depth, colorLayer int) {

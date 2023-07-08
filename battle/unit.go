@@ -16,9 +16,10 @@ type unit struct {
 
 	world *worldState
 
-	pos       gmath.Vec
-	spritePos gmath.Vec
-	turretPos gmath.Vec
+	pos        gmath.Vec
+	spritePos  gmath.Vec
+	turretPos  gmath.Vec
+	frameWidth float64
 
 	path             pathing.GridPath
 	partialPathSteps int
@@ -52,9 +53,10 @@ type unitConfig struct {
 
 func newUnit(world *worldState, config unitConfig) *unit {
 	u := &unit{
-		stats: config.Stats,
-		world: world,
-		pos:   config.Pos,
+		stats:      config.Stats,
+		world:      world,
+		pos:        config.Pos,
+		frameWidth: config.Stats.Body.Texture.DefaultFrameWidth,
 	}
 	u.maxHP = config.Stats.Body.HP
 	if u.stats.Turret != nil {
@@ -139,7 +141,7 @@ func (u *unit) Update(delta float64) {
 func (u *unit) setRotation(v gmath.Rad) {
 	u.rotation = v
 	spriteAngle := u.rotation.Normalized() - (gamedata.TankFrameAngleStep / 2)
-	u.sprite.FrameOffset.X = 48 * math.Trunc(float64(spriteAngle/gamedata.TankFrameAngleStep))
+	u.sprite.FrameOffset.X = u.frameWidth * math.Trunc(float64(spriteAngle/gamedata.TankFrameAngleStep))
 }
 
 func (u *unit) SendTo(pos gmath.Vec) {

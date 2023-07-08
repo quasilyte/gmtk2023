@@ -12,7 +12,8 @@ import (
 type turret struct {
 	world *worldState
 
-	sprite *ge.Sprite
+	sprite     *ge.Sprite
+	frameWidth float64
 
 	rotation    gmath.Rad
 	dstRotation gmath.Rad
@@ -31,8 +32,9 @@ type turretConfig struct {
 
 func newTurret(world *worldState, config turretConfig) *turret {
 	return &turret{
-		world:  world,
-		config: config,
+		world:      world,
+		config:     config,
+		frameWidth: config.Image.DefaultFrameWidth,
 	}
 }
 
@@ -65,7 +67,7 @@ func (t *turret) Update(delta float64) {
 func (t *turret) setRotation(v gmath.Rad) {
 	t.rotation = v
 	spriteAngle := t.rotation.Normalized() - (gamedata.TankFrameAngleStep / 2)
-	t.sprite.FrameOffset.X = 48 * math.Trunc(float64(spriteAngle/gamedata.TankFrameAngleStep))
+	t.sprite.FrameOffset.X = t.frameWidth * math.Trunc(float64(spriteAngle/gamedata.TankFrameAngleStep))
 }
 
 func (t *turret) AlignRequest(rotation gmath.Rad) {
