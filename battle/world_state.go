@@ -7,6 +7,7 @@ import (
 	"github.com/quasilyte/ge/input"
 	"github.com/quasilyte/ge/xslices"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/gmtk2023/gamedata"
 	"github.com/quasilyte/gmtk2023/pathing"
 	"github.com/quasilyte/gmtk2023/viewport"
 )
@@ -16,11 +17,15 @@ type worldState struct {
 
 	PlayerInput *input.Handler
 
+	scene *ge.Scene
+
 	runner *Runner
 
 	playerUnits playerUnits
 
 	enemyUnits []*unit
+
+	projectilePool []*projectile
 
 	gridCounters map[int]uint8
 	pathgrid     *pathing.Grid
@@ -33,15 +38,17 @@ type playerUnits struct {
 	towers        []*unit
 }
 
-func newWorldState() *worldState {
+func newWorldState(scene *ge.Scene) *worldState {
 	return &worldState{
+		scene: scene,
 		playerUnits: playerUnits{
 			selectable:    make([]*unit, 0, 16),
 			nonSelectable: make([]*unit, 0, 96),
 			towers:        make([]*unit, 0, 10),
 		},
-		enemyUnits:   make([]*unit, 0, 64),
-		gridCounters: make(map[int]uint8, 64),
+		enemyUnits:     make([]*unit, 0, 64),
+		gridCounters:   make(map[int]uint8, 64),
+		projectilePool: make([]*projectile, 0, 128),
 	}
 }
 
@@ -55,6 +62,48 @@ func (w *worldState) Scene() *ge.Scene {
 
 func (w *worldState) Stage() *viewport.Stage {
 	return w.Camera.Stage
+}
+
+func (w *worldState) FindTarget(pos gmath.Vec, stats *gamedata.UnitStats) *unit {
+	if stats.Creep {
+		if target := w.findTargetInSlice(pos, stats, w.playerUnits.towers); target != nil {
+			return target
+		}
+		if target := w.findTargetInSlice(pos, stats, w.playerUnits.nonSelectable); target != nil {
+			return target
+		}
+		if target := w.findTargetInSlice(pos, stats, w.playerUnits.selectable); target != nil {
+			return target
+		}
+		return nil
+	}
+	return w.findTargetInSlice(pos, stats, w.enemyUnits)
+}
+
+func (w *worldState) HasEnemyNearby(pos gmath.Vec, stats *gamedata.UnitStats) bool {
+	if stats.Creep {
+		return w.hasEnemyInSlice(pos, stats, w.playerUnits.towers) ||
+			w.hasEnemyInSlice(pos, stats, w.playerUnits.nonSelectable) ||
+			w.hasEnemyInSlice(pos, stats, w.playerUnits.selectable)
+	}
+	return w.hasEnemyInSlice(pos, stats, w.enemyUnits)
+}
+
+func (w *worldState) findTargetInSlice(pos gmath.Vec, stats *gamedata.UnitStats, slice []*unit) *unit {
+	attackDistSqr := stats.Turret.TargetLockSqr
+	return randIterate(w.Rand(), slice, func(u2 *unit) bool {
+		return u2.pos.DistanceSquaredTo(pos) < attackDistSqr
+	})
+}
+
+func (w *worldState) hasEnemyInSlice(pos gmath.Vec, stats *gamedata.UnitStats, slice []*unit) bool {
+	dangerDistSqr := (stats.Turret.RangeSqr * 1.25) + (gamedata.CellSize * gamedata.CellSize)
+	for _, u2 := range slice {
+		if u2.pos.DistanceSquaredTo(pos) <= dangerDistSqr {
+			return true
+		}
+	}
+	return false
 }
 
 func (w *worldState) FindSelectable(pos gmath.Vec) *unit {
@@ -146,4 +195,20 @@ func (w *worldState) UnmarkCell(coord pathing.GridCoord) {
 	} else {
 		w.gridCounters[key]--
 	}
+}
+
+func (w *worldState) NewProjectile(config projectileConfig) *projectile {
+	if len(w.projectilePool) != 0 {
+		p := w.projectilePool[len(w.projectilePool)-1]
+		initProjectile(p, config)
+		w.projectilePool = w.projectilePool[:len(w.projectilePool)-1]
+		return p
+	}
+	p := &projectile{}
+	initProjectile(p, config)
+	return p
+}
+
+func (w *worldState) FreeProjectileNode(p *projectile) {
+	w.projectilePool = append(w.projectilePool, p)
 }

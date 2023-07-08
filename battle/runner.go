@@ -16,8 +16,10 @@ type Runner struct {
 
 	world *worldState
 
-	objects      []ge.SceneObject
-	addedObjects []ge.SceneObject
+	objects          []ge.SceneObject
+	addedObjects     []ge.SceneObject
+	projectiles      []*projectile
+	addedProjectiles []*projectile
 
 	gameSpeedMultiplier float64
 
@@ -51,7 +53,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 		2.00,
 	}[r.config.GameSpeed]
 
-	r.world = newWorldState()
+	r.world = newWorldState(scene)
 	r.world.runner = r
 	r.world.Camera = r.camera
 	r.world.PlayerInput = r.config.PlayerInput
@@ -126,79 +128,30 @@ func (r *Runner) Init(scene *ge.Scene) {
 		Stats: tank2Stats,
 	}))
 
-	bunkerStats := &gamedata.UnitStats{
+	enemyBunkerStats := &gamedata.UnitStats{
 		Movement: gamedata.UnitMovementNone,
 		Body:     gamedata.BunkerBodyStats,
 		Turret:   gamedata.GatlingStats,
+		Creep:    true,
 	}
 	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 8) - 20, Y: (40 * 5) - 20},
-		Stats: bunkerStats,
+		Pos:   gmath.Vec{X: (40 * 20) - 20, Y: (40 * 5) - 20},
+		Stats: enemyBunkerStats,
 	}))
 	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 9) - 20, Y: (40 * 5) - 20},
-		Stats: bunkerStats,
+		Pos:   gmath.Vec{X: (40 * 20) - 20, Y: (40 * 6) - 20},
+		Stats: enemyBunkerStats,
 	}))
 	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 8) - 20, Y: (40 * 4) - 20},
-		Stats: bunkerStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 9) - 20, Y: (40 * 4) - 20},
-		Stats: bunkerStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 10) - 20, Y: (40 * 5) - 20},
-		Stats: bunkerStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 11) - 20, Y: (40 * 5) - 20},
-		Stats: bunkerStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 10) - 20, Y: (40 * 4) - 20},
-		Stats: bunkerStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 11) - 20, Y: (40 * 4) - 20},
-		Stats: bunkerStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 8) - 20, Y: (40 * 7) - 20},
-		Stats: bunkerStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 9) - 20, Y: (40 * 7) - 20},
-		Stats: bunkerStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 10) - 20, Y: (40 * 7) - 20},
-		Stats: bunkerStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 11) - 20, Y: (40 * 7) - 20},
-		Stats: bunkerStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 8) - 20, Y: (40 * 9) - 20},
-		Stats: bunkerStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 9) - 20, Y: (40 * 9) - 20},
-		Stats: bunkerStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 10) - 20, Y: (40 * 9) - 20},
-		Stats: bunkerStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 11) - 20, Y: (40 * 9) - 20},
-		Stats: bunkerStats,
+		Pos:   gmath.Vec{X: (40 * 20) - 20, Y: (40 * 7) - 20},
+		Stats: enemyBunkerStats,
 	}))
 }
 
 func (r *Runner) Update(delta float64) {
 	scaledDelta := delta * r.gameSpeedMultiplier
+
+	r.camera.Stage.Update()
 
 	for _, u := range r.world.playerUnits.selectable {
 		if !u.IsCommander() {
@@ -220,6 +173,19 @@ func (r *Runner) Update(delta float64) {
 		p.Update(scaledDelta, delta)
 	}
 
+	liveProjectiles := r.projectiles[:0]
+	for _, p := range r.projectiles {
+		if p.IsDisposed() {
+			p.world.FreeProjectileNode(p)
+			continue
+		}
+		p.Update(scaledDelta)
+		liveProjectiles = append(liveProjectiles, p)
+	}
+	r.projectiles = liveProjectiles
+	r.projectiles = append(r.projectiles, r.addedProjectiles...)
+	r.addedProjectiles = r.addedProjectiles[:0]
+
 	liveObjects := r.objects[:0]
 	for _, o := range r.objects {
 		if o.IsDisposed() {
@@ -231,6 +197,11 @@ func (r *Runner) Update(delta float64) {
 	r.objects = liveObjects
 	r.objects = append(r.objects, r.addedObjects...)
 	r.addedObjects = r.addedObjects[:0]
+}
+
+func (r *Runner) AddProjectile(p *projectile) {
+	r.addedProjectiles = append(r.addedProjectiles, p)
+	p.Init(r.scene)
 }
 
 func (r *Runner) AddObject(o ge.SceneObject) {

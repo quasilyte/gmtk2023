@@ -63,7 +63,6 @@ func newUnit(world *worldState, config unitConfig) *unit {
 		u.maxHP += config.Stats.Turret.HP
 	}
 	u.hp = u.maxHP
-	u.hp *= world.Scene().Rand().FloatRange(0.2, 0.9)
 	return u
 }
 
@@ -116,11 +115,15 @@ func (u *unit) Init(scene *ge.Scene) {
 		u.world.Stage().AddSprite(u.sprite)
 	}
 
+	if u.stats.Creep {
+		u.sprite.SetHue(gmath.DegToRad(80))
+	}
+
 	if u.stats.Turret != nil {
 		u.turret = newTurret(u.world, turretConfig{
 			Image: u.stats.Turret.Texture,
 			Pos:   &u.turretPos,
-			Stats: u.stats,
+			Owner: u,
 		})
 		u.world.runner.AddObject(u.turret)
 	}
@@ -142,6 +145,30 @@ func (u *unit) setRotation(v gmath.Rad) {
 	u.rotation = v
 	spriteAngle := u.rotation.Normalized() - (gamedata.TankFrameAngleStep / 2)
 	u.sprite.FrameOffset.X = u.frameWidth * math.Trunc(float64(spriteAngle/gamedata.TankFrameAngleStep))
+}
+
+func (u *unit) OnDamage(d gamedata.DamageValue, attacker *unit) {
+	u.hp -= d.Health
+	if u.hp <= 0 {
+		u.Destroy()
+		return
+	}
+
+	if u.turret != nil {
+		u.turret.OnAttacked(attacker)
+	}
+}
+
+func (u *unit) Destroy() {
+	createAreaExplosion(u.world, spriteRect(u.pos, u.stats.Body.Size.X, u.stats.Body.Size.Y), true)
+
+	if u.turret != nil {
+		u.turret.Dispose()
+	}
+
+	u.EventDestroyed.Emit(u)
+
+	u.Dispose()
 }
 
 func (u *unit) SendTo(pos gmath.Vec) {

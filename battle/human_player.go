@@ -84,7 +84,7 @@ func (p *humanPlayer) handleInput() {
 		if info, ok := p.input.JustPressedActionInfo(controls.ActionSendUnit); ok {
 			worldPos := p.camera.AbsPos(info.Pos)
 			p.selectedUnit.SendTo(worldPos)
-			p.updateUnitPath()
+			p.updateUnitPath(p.selectedUnit)
 		}
 
 		if p.selectedUnit.IsCommander() {
@@ -112,19 +112,27 @@ func (p *humanPlayer) handleInput() {
 	}
 }
 
-func (p *humanPlayer) updateUnitPath() {
-	p.selectedUnitPath.BeginPos.Base = &p.selectedUnit.spritePos
-	p.selectedUnitPath.EndPos.Offset = p.selectedUnit.waypoint
-	p.selectedUnitPath.Visible = !p.selectedUnit.waypoint.IsZero()
+func (p *humanPlayer) updateUnitPath(u *unit) {
+	if u != nil {
+		p.selectedUnitPath.BeginPos.Base = &p.selectedUnit.spritePos
+		p.selectedUnitPath.EndPos.Offset = p.selectedUnit.waypoint
+		p.selectedUnitPath.Visible = !p.selectedUnit.waypoint.IsZero()
+	} else {
+		p.selectedUnitPath.Visible = false
+	}
 }
 
+func (p *humanPlayer) IsDisposed() bool { return false }
+
 func (p *humanPlayer) setSelectedUnit(u *unit) {
+	if p.selectedUnit != nil {
+		p.selectedUnit.EventDestroyed.Disconnect(p)
+	}
+
 	p.selectedUnit = u
 
-	p.updateUnitPath()
-
-	p.droneSelector.Visible = true
-	p.droneSelector.Pos.Base = &p.selectedUnit.spritePos
+	p.droneSelector.Visible = u != nil
+	p.updateUnitPath(u)
 
 	if len(p.activeTankSelectors) != 0 {
 		for _, sel := range p.activeTankSelectors {
@@ -134,9 +142,19 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 		p.activeTankSelectors = p.activeTankSelectors[:0]
 	}
 
-	p.activeTankSelectors = append(p.activeTankSelectors, p.createTankSelector(u))
-	for _, gu := range u.group {
-		p.activeTankSelectors = append(p.activeTankSelectors, p.createTankSelector(gu))
+	if u != nil {
+		p.selectedUnit.EventDestroyed.Connect(p, func(u *unit) {
+			if p.selectedUnit == u {
+				p.setSelectedUnit(nil)
+			}
+		})
+
+		p.droneSelector.Pos.Base = &p.selectedUnit.spritePos
+
+		p.activeTankSelectors = append(p.activeTankSelectors, p.createTankSelector(u))
+		for _, gu := range u.group {
+			p.activeTankSelectors = append(p.activeTankSelectors, p.createTankSelector(gu))
+		}
 	}
 }
 
