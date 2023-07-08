@@ -164,15 +164,18 @@ func (t *turret) updateInDangerMode(delta float64) {
 	}
 	for i := 0; i < t.stats.BurstSize; i++ {
 		fireDelay := float64(i) * t.stats.BurstDelay
-		p := t.world.NewProjectile(projectileConfig{
-			Weapon:    t.stats,
-			World:     t.world,
-			Attacker:  t.owner,
-			ToPos:     t.target.pos,
-			Target:    t.target,
-			FireDelay: fireDelay,
+		t.world.WalkNearbyTargets(t.owner.stats, t.target, func(target *unit) {
+			p := t.world.NewProjectile(projectileConfig{
+				Weapon:    t.stats,
+				World:     t.world,
+				Attacker:  t.owner,
+				ToPos:     target.pos,
+				Target:    target,
+				FireDelay: fireDelay,
+			})
+			t.world.runner.AddProjectile(p)
 		})
-		t.world.runner.AddProjectile(p)
+
 	}
 }
 

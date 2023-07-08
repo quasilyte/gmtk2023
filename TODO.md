@@ -18,7 +18,7 @@ Turrets.
 
 | Name           | Damage | Reload | Range | HP  | Type    | Cost | Time | Speed |
 |----------------|--------|--------|-------|-----|---------|------|------|-------|
-| Scatter Cannon | 4 (x4) | 2.5    | 8     | +25 | Cannon  | 6    | 8    | -40%  |
+| Scatter Cannon | 4 (x4) | 2.5    | 8     | +25 | Cannon  | 7    | 8    | -40%  |
 | Light Cannon   | 6      | 1.5    | 9     | +10 | Cannon  | 5    | 5    | -30%  |
 | Heavy Cannon   | 8      | 2.0    | 10    | +50 | Cannon  | 9    | 10   | -45%  |
 | Assault Laser  | 3      | 0.5    | 7     | +10 | Laser   | 10   | 12   | ~     |

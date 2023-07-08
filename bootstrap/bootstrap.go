@@ -24,8 +24,9 @@ func InitState(ctx *ge.Context, state *session.State) {
 		{assets.ImageTankBodyScout, 3, 0, &gamedata.ScoutBodyStats.Texture},
 		{assets.ImageTankBodyDestroyer, 3, 0, &gamedata.DestroyerBodyStats.Texture},
 
-		{assets.ImageTankTurretGatling, 2, 1, &gamedata.GatlingStats.Texture},
+		{assets.ImageTankTurretScatterCannon, 2, 1, &gamedata.ScatterCannonStats.Texture},
 		{assets.ImageTankTurretLightCannon, 2, 1, &gamedata.LightCannonStats.Texture},
+		{assets.ImageTankTurretGatling, 2, 1, &gamedata.GatlingStats.Texture},
 	}
 
 	s := ge.NewSprite(ctx)

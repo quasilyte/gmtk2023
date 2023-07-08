@@ -19,8 +19,9 @@ func registerImageResources(ctx *ge.Context) {
 		ImageTankBodyScout:     {Path: "image/tank/body_scout.png"},
 		ImageTankBodyDestroyer: {Path: "image/tank/body_destroyer.png"},
 
-		ImageTankTurretLightCannon: {Path: "image/tank/turret_light_cannon.png"},
-		ImageTankTurretGatling:     {Path: "image/tank/turret_gatling.png"},
+		ImageTankTurretScatterCannon: {Path: "image/tank/turret_scatter_cannon.png"},
+		ImageTankTurretLightCannon:   {Path: "image/tank/turret_light_cannon.png"},
+		ImageTankTurretGatling:       {Path: "image/tank/turret_gatling.png"},
 
 		ImageDroneCommander: {Path: "image/drone/commander.png"},
 
@@ -52,6 +53,7 @@ const (
 	ImageTankBodyScout
 	ImageTankBodyDestroyer
 
+	ImageTankTurretScatterCannon
 	ImageTankTurretLightCannon
 	ImageTankTurretGatling
 

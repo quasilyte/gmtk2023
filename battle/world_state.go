@@ -64,6 +64,41 @@ func (w *worldState) Stage() *viewport.Stage {
 	return w.Camera.Stage
 }
 
+func (w *worldState) WalkNearbyTargets(stats *gamedata.UnitStats, target *unit, f func(*unit)) {
+	num := stats.Turret.MaxTargets
+	f(target)
+	if num == 1 {
+		return
+	}
+	num--
+	if !stats.Creep {
+		w.walkNearbyTargetsInSlice(target, num, w.enemyUnits, f)
+		return
+	}
+	num = w.walkNearbyTargetsInSlice(target, num, w.playerUnits.towers, f)
+	num = w.walkNearbyTargetsInSlice(target, num, w.playerUnits.nonSelectable, f)
+	w.walkNearbyTargetsInSlice(target, num, w.playerUnits.selectable, f)
+}
+
+func (w *worldState) walkNearbyTargetsInSlice(target *unit, num int, slice []*unit, f func(*unit)) int {
+	if num == 0 {
+		return 0
+	}
+	const nearbyDistSqr = 1.25 * (gamedata.CellSize * gamedata.CellSize)
+	randIterate(w.Rand(), slice, func(u *unit) bool {
+		if u == target {
+			return false
+		}
+		if u.pos.DistanceSquaredTo(target.pos) > nearbyDistSqr {
+			return false
+		}
+		f(u)
+		num--
+		return num <= 0
+	})
+	return num
+}
+
 func (w *worldState) FindTarget(pos gmath.Vec, stats *gamedata.UnitStats) *unit {
 	if stats.Creep {
 		if target := w.findTargetInSlice(pos, stats, w.playerUnits.towers); target != nil {

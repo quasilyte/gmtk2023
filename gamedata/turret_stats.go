@@ -29,6 +29,7 @@ type TurretStats struct {
 
 	BurstSize  int
 	BurstDelay float64
+	MaxTargets int
 
 	Reload float64
 
@@ -59,6 +60,23 @@ func FinalizeTurretStats(stats *TurretStats) *TurretStats {
 	return stats
 }
 
+var ScatterCannonStats = FinalizeTurretStats(&TurretStats{
+	AttackSound:         assets.AudioShotLightCannon1,
+	HP:                  25,
+	RotationSpeed:       1.8,
+	Range:               8 * CellSize,
+	Accuracy:            0.75,
+	MaxAngleDelta:       0.075,
+	ImpactArea:          10,
+	ProjectileImage:     assets.ImageProjectileLightCannon,
+	ProjectileExplosion: ExplosionNormal,
+	ProjectileSpeed:     250,
+	Reload:              2.6,
+	MaxTargets:          4,
+	BurstSize:           1,
+	Damage:              DamageValue{Health: 4},
+})
+
 var LightCannonStats = FinalizeTurretStats(&TurretStats{
 	AttackSound:         assets.AudioShotLightCannon1,
 	HP:                  10,
@@ -71,6 +89,7 @@ var LightCannonStats = FinalizeTurretStats(&TurretStats{
 	ProjectileExplosion: ExplosionNormal,
 	ProjectileSpeed:     250,
 	Reload:              1.5,
+	MaxTargets:          1,
 	BurstSize:           1,
 	Damage:              DamageValue{Health: 6},
 })
@@ -84,8 +103,9 @@ var GatlingStats = FinalizeTurretStats(&TurretStats{
 	MaxAngleDelta:   0.1,
 	ImpactArea:      4,
 	ProjectileImage: assets.ImageProjectileGatling,
-	ProjectileSpeed: 320,
+	ProjectileSpeed: 360,
 	Reload:          2.0,
+	MaxTargets:      1,
 	BurstSize:       3,
 	BurstDelay:      0.1,
 	Damage:          DamageValue{Health: 1},
