@@ -129,7 +129,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 	bunkerStats := &gamedata.UnitStats{
 		Movement: gamedata.UnitMovementNone,
 		Body:     gamedata.BunkerBodyStats,
-		Turret:   gamedata.LightCannonStats,
+		Turret:   gamedata.GatlingStats,
 	}
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: (40 * 8) - 20, Y: (40 * 5) - 20},

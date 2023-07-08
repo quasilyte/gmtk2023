@@ -17,3 +17,8 @@ var LightCannonStats = &TurretStats{
 	HP:            10,
 	RotationSpeed: 2.0,
 }
+
+var GatlingStats = &TurretStats{
+	HP:            0,
+	RotationSpeed: 1.2,
+}
