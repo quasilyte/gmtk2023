@@ -7,6 +7,7 @@ import (
 	"github.com/quasilyte/ge/input"
 	"github.com/quasilyte/ge/xslices"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/gmtk2023/pathing"
 	"github.com/quasilyte/gmtk2023/viewport"
 )
 
@@ -20,6 +21,9 @@ type worldState struct {
 	playerUnits playerUnits
 
 	enemyUnits []*unit
+
+	gridCounters map[int]uint8
+	pathgrid     *pathing.Grid
 }
 
 type playerUnits struct {
@@ -35,7 +39,8 @@ func newWorldState() *worldState {
 			nonSelectable: make([]*unit, 0, 96),
 			towers:        make([]*unit, 0, 10),
 		},
-		enemyUnits: make([]*unit, 0, 64),
+		enemyUnits:   make([]*unit, 0, 64),
+		gridCounters: make(map[int]uint8, 64),
 	}
 }
 
@@ -106,4 +111,30 @@ func (w *worldState) NewUnit(config unitConfig) *unit {
 		*slice = xslices.Remove(*slice, u)
 	})
 	return u
+}
+
+func (w *worldState) MarkPos(pos gmath.Vec) {
+	w.MarkCell(w.pathgrid.PosToCoord(pos))
+}
+
+func (w *worldState) UnmarkPos(pos gmath.Vec) {
+	w.UnmarkCell(w.pathgrid.PosToCoord(pos))
+}
+
+func (w *worldState) MarkCell(coord pathing.GridCoord) {
+	key := w.pathgrid.CoordToIndex(coord)
+	if v := w.gridCounters[key]; v == 0 {
+		w.pathgrid.MarkCell(coord)
+	}
+	w.gridCounters[key]++
+}
+
+func (w *worldState) UnmarkCell(coord pathing.GridCoord) {
+	key := w.pathgrid.CoordToIndex(coord)
+	if v := w.gridCounters[key]; v == 1 {
+		w.pathgrid.UnmarkCell(coord)
+		delete(w.gridCounters, key)
+	} else {
+		w.gridCounters[key]--
+	}
 }

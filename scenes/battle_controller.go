@@ -38,7 +38,7 @@ func (c *BattleController) Init(scene *ge.Scene) {
 
 	worldRect := gmath.Rect{
 		Max: gmath.Vec{
-			X: 1920,
+			X: gamedata.CellSize * gamedata.NumSegmentCells,
 			Y: 1080.0 / 2,
 		},
 	}

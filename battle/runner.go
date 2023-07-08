@@ -4,6 +4,7 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gmtk2023/gamedata"
+	"github.com/quasilyte/gmtk2023/pathing"
 	"github.com/quasilyte/gmtk2023/session"
 	"github.com/quasilyte/gmtk2023/viewport"
 )
@@ -54,6 +55,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 	r.world.runner = r
 	r.world.Camera = r.camera
 	r.world.PlayerInput = r.config.PlayerInput
+	r.world.pathgrid = pathing.NewGrid(gamedata.CellSize*gamedata.NumSegmentCells, r.camera.Rect.Height())
 
 	p := newHumanPlayer(r.world)
 	r.players = append(r.players, p)
