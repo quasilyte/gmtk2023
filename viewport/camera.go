@@ -2,11 +2,16 @@ package viewport
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
 )
 
 type Camera struct {
 	Stage *Stage
+
+	// A layer that is always on top of everything else.
+	// It's also position-independent.
+	UI *UserInterfaceLayer
 
 	Offset gmath.Vec
 
@@ -33,6 +38,13 @@ func NewCamera(stage *Stage, world gmath.Rect, width, height float64) *Camera {
 			Max: gmath.Vec{X: width, Y: height},
 		},
 		screen: ebiten.NewImage(int(width), int(height)),
+
+		UI: &UserInterfaceLayer{
+			belowObjects: make([]ge.SceneGraphics, 0, 4),
+			objects:      make([]ge.SceneGraphics, 0, 4),
+			aboveObjects: make([]ge.SceneGraphics, 0, 4),
+			Visible:      true,
+		},
 	}
 	return cam
 }
@@ -54,6 +66,12 @@ func (c *Camera) Draw(screen *ebiten.Image) {
 	c.drawLayer(c.screen, &c.Stage.objects, drawOffset)
 	c.drawLayer(c.screen, &c.Stage.slightlyAboveObjects, drawOffset)
 	c.drawLayer(c.screen, &c.Stage.aboveObjects, drawOffset)
+
+	if c.UI.Visible {
+		c.UI.belowObjects = drawSlice(c.screen, c.UI.belowObjects)
+		c.UI.objects = drawSlice(c.screen, c.UI.objects)
+		c.UI.aboveObjects = drawSlice(c.screen, c.UI.aboveObjects)
+	}
 
 	var options ebiten.DrawImageOptions
 	screen.DrawImage(c.screen, &options)
@@ -130,4 +148,16 @@ func (c *Camera) isVisible(objectRect gmath.Rect) bool {
 	}
 
 	return true
+}
+
+func drawSlice(dst *ebiten.Image, slice []ge.SceneGraphics) []ge.SceneGraphics {
+	live := slice[:0]
+	for _, o := range slice {
+		if o.IsDisposed() {
+			continue
+		}
+		o.Draw(dst)
+		live = append(live, o)
+	}
+	return live
 }

@@ -21,14 +21,14 @@ func InitState(ctx *ge.Context, state *session.State) {
 	}
 
 	tankTextureTasks := []textureConfig{
-		{assets.ImageTankBodyScout, 3, 0, &gamedata.ScoutBodyStats.Texture},
-		{assets.ImageTankBodyFighter, 3, 0, &gamedata.FighterBodyStats.Texture},
-		{assets.ImageTankBodyHunter, 3, 0, &gamedata.HunterBodyStats.Texture},
-		{assets.ImageTankBodyDestroyer, 3, 0, &gamedata.DestroyerBodyStats.Texture},
+		{assets.ImageTankBodyScout, 3, 1, &gamedata.ScoutBodyStats.Texture},
+		{assets.ImageTankBodyFighter, 3, 1, &gamedata.FighterBodyStats.Texture},
+		{assets.ImageTankBodyHunter, 3, 1, &gamedata.HunterBodyStats.Texture},
+		{assets.ImageTankBodyDestroyer, 3, 1, &gamedata.DestroyerBodyStats.Texture},
 
-		{assets.ImageTankTurretScatterCannon, 2, 1, &gamedata.ScatterCannonStats.Texture},
-		{assets.ImageTankTurretLightCannon, 2, 1, &gamedata.LightCannonStats.Texture},
-		{assets.ImageTankTurretGatling, 2, 1, &gamedata.GatlingStats.Texture},
+		{assets.ImageTankTurretScatterCannon, 2, 2, &gamedata.ScatterCannonStats.Texture},
+		{assets.ImageTankTurretLightCannon, 2, 2, &gamedata.LightCannonStats.Texture},
+		{assets.ImageTankTurretGatling, 2, 2, &gamedata.GatlingStats.Texture},
 	}
 
 	s := ge.NewSprite(ctx)

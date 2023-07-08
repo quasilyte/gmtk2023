@@ -28,25 +28,38 @@ func main() {
 	playerInput := controls.MakeHandler(ctx)
 
 	playerDesigns := gamedata.NewPlayerDesigns()
-	for i := range playerDesigns.Tanks {
-		// playerDesigns.Tanks[i] = &gamedata.UnitStats{
-		// 	Movement: gamedata.UnitMovementGround,
-		// 	Body:     gamedata.FighterBodyStats,
-		// 	Turret:   gamedata.LightCannonStats,
-		// }
-		playerDesigns.Tanks[i] = &gamedata.UnitStats{
-			Movement: gamedata.UnitMovementGround,
-			Body:     gamedata.ScoutBodyStats,
-			Turret:   gamedata.LightCannonStats,
-		}
+	playerDesigns.Tanks[0] = &gamedata.UnitStats{
+		Movement: gamedata.UnitMovementGround,
+		Body:     gamedata.ScoutBodyStats,
+		Turret:   gamedata.LightCannonStats,
 	}
-	for i := range playerDesigns.Towers {
-		playerDesigns.Towers[i] = &gamedata.UnitStats{
-			Movement: gamedata.UnitMovementNone,
-			Body:     gamedata.BunkerBodyStats,
-			Turret:   gamedata.LightCannonStats,
-		}
+	playerDesigns.Tanks[1] = &gamedata.UnitStats{
+		Movement: gamedata.UnitMovementGround,
+		Body:     gamedata.FighterBodyStats,
+		Turret:   gamedata.LightCannonStats,
 	}
+	playerDesigns.Tanks[2] = &gamedata.UnitStats{
+		Movement: gamedata.UnitMovementGround,
+		Body:     gamedata.HunterBodyStats,
+		Turret:   gamedata.ScatterCannonStats,
+	}
+	playerDesigns.Tanks[3] = &gamedata.UnitStats{
+		Movement: gamedata.UnitMovementGround,
+		Body:     gamedata.DestroyerBodyStats,
+		Turret:   gamedata.ScatterCannonStats,
+	}
+
+	playerDesigns.Towers[0] = &gamedata.UnitStats{
+		Movement: gamedata.UnitMovementNone,
+		Body:     gamedata.BunkerBodyStats,
+		Turret:   gamedata.GatlingStats,
+	}
+	playerDesigns.Towers[1] = &gamedata.UnitStats{
+		Movement: gamedata.UnitMovementNone,
+		Body:     gamedata.BunkerBodyStats,
+		Turret:   gamedata.LightCannonStats,
+	}
+
 	config := &gamedata.BattleConfig{
 		PlayerInput:   playerInput,
 		GameSpeed:     1,

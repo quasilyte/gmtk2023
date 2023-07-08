@@ -55,13 +55,21 @@ func (p *humanPlayer) Init() {
 	p.camera.Stage.AddGraphicsSlightlyAbove(p.selectedUnitPath)
 
 	p.renderIcons()
+	unitPanel := newUnitPanel(p.camera, p.input)
+	unitPanel.Init(p.world.scene)
+	unitPanel.SetButtons(p.designs.Icons[:6])
 }
 
 func (p *humanPlayer) renderIcons() {
 	// TODO: this should be done somewhere else, before the battle starts.
 
-	// icon := p.designs.Icons[0]
-	// renderTowerIcon(p.world.scene, icon, p.designs.Towers[0])
+	renderTowerIcon(p.world.scene, p.designs.Icons[0], p.designs.Towers[0])
+	renderTowerIcon(p.world.scene, p.designs.Icons[1], p.designs.Towers[1])
+
+	renderFactoryIcon(p.world.scene, p.designs.Icons[2], p.designs.Tanks[0])
+	renderFactoryIcon(p.world.scene, p.designs.Icons[3], p.designs.Tanks[1])
+	renderFactoryIcon(p.world.scene, p.designs.Icons[4], p.designs.Tanks[2])
+	renderFactoryIcon(p.world.scene, p.designs.Icons[5], p.designs.Tanks[3])
 }
 
 func (p *humanPlayer) Update(scaledDelta, delta float64) {

@@ -31,7 +31,7 @@ type PlayerDesigns struct {
 func NewPlayerDesigns() *PlayerDesigns {
 	icons := make([]*ebiten.Image, 8)
 	for i := range icons {
-		icons[i] = ebiten.NewImage(64, 80)
+		icons[i] = ebiten.NewImage(64, 72)
 	}
 	return &PlayerDesigns{
 		Towers: make([]*UnitStats, 2),

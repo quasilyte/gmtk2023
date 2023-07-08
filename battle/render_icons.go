@@ -2,19 +2,19 @@ package battle
 
 import (
 	"image"
-	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmtk2023/assets"
 	"github.com/quasilyte/gmtk2023/gamedata"
+	"github.com/quasilyte/gmtk2023/styles"
 )
 
 // TODO: these functions should go away from the battle package.
 
 func renderTowerIcon(scene *ge.Scene, icon *ebiten.Image, design *gamedata.UnitStats) {
 	icon.Clear()
-	icon.Fill(color.RGBA{R: 0xff, G: 0xff, B: 0xff, A: 255})
+	icon.Fill(styles.UnitPanelBgColor)
 
 	bodyTexture := scene.LoadImage(design.Body.Image)
 
@@ -35,7 +35,7 @@ func renderTowerIcon(scene *ge.Scene, icon *ebiten.Image, design *gamedata.UnitS
 
 func renderFactoryIcon(scene *ge.Scene, icon *ebiten.Image, design *gamedata.UnitStats) {
 	icon.Clear()
-	icon.Fill(color.RGBA{R: 0xff, G: 0xff, B: 0xff, A: 255})
+	icon.Fill(styles.UnitPanelBgColor)
 
 	iconWidth := icon.Bounds().Dx()
 	iconHeight := icon.Bounds().Dy()
@@ -45,7 +45,7 @@ func renderFactoryIcon(scene *ge.Scene, icon *ebiten.Image, design *gamedata.Uni
 	icon.DrawImage(scene.LoadImage(assets.ImageTankFactory).Data, &drawOptions)
 
 	drawOptions.GeoM.Reset()
-	drawOptions.GeoM.Translate(float64(iconWidth-48), float64(iconHeight-48))
+	drawOptions.GeoM.Translate(float64(iconWidth-50), float64(iconHeight-50))
 
 	tankBodyTexture := design.Body.Texture
 	tankBodyFrame := tankBodyTexture.Data.SubImage(image.Rectangle{
@@ -65,5 +65,6 @@ func renderFactoryIcon(scene *ge.Scene, icon *ebiten.Image, design *gamedata.Uni
 			Y: int(tankTurretTexture.DefaultFrameHeight),
 		},
 	}).(*ebiten.Image)
+	drawOptions.GeoM.Translate(0, design.Body.TurretOffset)
 	icon.DrawImage(tankTurretFrame, &drawOptions)
 }

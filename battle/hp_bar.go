@@ -4,6 +4,7 @@ import (
 	"math"
 
 	"github.com/quasilyte/ge"
+	"github.com/quasilyte/gmtk2023/styles"
 	"github.com/quasilyte/gmtk2023/viewport"
 )
 
@@ -21,13 +22,13 @@ func newHPBar() *hpBar {
 
 func (b *hpBar) Init(scene *ge.Scene, stage *viewport.Stage) {
 	b.bgRect = ge.NewRect(scene.Context(), 32, 4)
-	b.bgRect.FillColorScale.SetColor(ge.RGB(0x1e3a27))
+	b.bgRect.FillColorScale.SetColor(styles.InterfaceBgColor)
 	b.bgRect.Pos.Offset.Y = 24
 	stage.AddGraphicsSlightlyAbove(b.bgRect)
 	b.bgRect.Visible = false
 
 	b.valueRect = ge.NewRect(scene.Context(), 0, 2)
-	b.valueRect.FillColorScale.SetColor(ge.RGB(0x26cd61))
+	b.valueRect.FillColorScale.SetColor(styles.HealthBarColor)
 	b.valueRect.Pos.Offset.Y = 24
 	stage.AddGraphicsSlightlyAbove(b.valueRect)
 	b.valueRect.Visible = false
