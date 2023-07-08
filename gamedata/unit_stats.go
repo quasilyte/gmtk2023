@@ -29,7 +29,7 @@ const (
 var TowerConstruction = &UnitStats{
 	Movement: UnitMovementNone,
 	Body: &BodyStats{
-		HP:    50,
+		HP:    30,
 		Image: assets.ImageTowerBodyBunker,
 		Size:  unitSizeBig,
 	},

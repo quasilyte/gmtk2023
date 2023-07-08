@@ -210,6 +210,7 @@ func (u *unit) Update(delta float64) {
 }
 
 func (u *unit) Deconstruct() {
+	hpPercentage := u.hp / u.maxHP
 	for i, gu := range u.group {
 		released := u.world.NewUnit(unitConfig{
 			Stats: gu.stats,
@@ -219,6 +220,7 @@ func (u *unit) Deconstruct() {
 		if i != 0 {
 			released.SendTo(released.pos.Add(deconstructWaypointOffsets[i]))
 		}
+		released.hp = released.maxHP * hpPercentage
 		effect := newEffectNode(u.world, released.pos, true, assets.ImageConstructorMerge)
 		effect.rotates = true
 		u.world.runner.AddObject(effect)
@@ -265,6 +267,13 @@ func (u *unit) updateConstructionSite(delta float64) {
 			stats = statsOverride
 			extra.newUnitExtra = nil
 		}
+
+		totalPercentage := 0.0
+		for _, gu := range u.group {
+			totalPercentage += gu.hp / gu.maxHP
+		}
+		totalPercentage /= float64(len(u.group))
+
 		effect := newEffectNode(u.world, u.pos, true, assets.ImageConstructorMerge)
 		effect.rotates = true
 		u.world.runner.AddObject(effect)
@@ -272,6 +281,7 @@ func (u *unit) updateConstructionSite(delta float64) {
 			Stats: stats,
 			Pos:   u.pos,
 		})
+		building.hp = building.maxHP * totalPercentage
 		u.world.runner.AddObject(building)
 		building.group = u.group
 		building.extra = extra.newUnitExtra
@@ -473,6 +483,7 @@ func (u *unit) moveToWaypoint(delta float64) {
 					Stats: extra.siteStats,
 					Pos:   u.pos,
 				})
+				site.hp = (u.hp / u.maxHP) * site.maxHP
 				site.extra = extra.siteExtra
 				site.AddConstructorToSite(u)
 				u.world.runner.AddObject(site)
