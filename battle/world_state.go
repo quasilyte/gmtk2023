@@ -45,6 +45,10 @@ func newWorldState() *worldState {
 	}
 }
 
+func (w *worldState) Rand() *gmath.Rand {
+	return w.Scene().Rand()
+}
+
 func (w *worldState) Scene() *ge.Scene {
 	return w.runner.scene
 }

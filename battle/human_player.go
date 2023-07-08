@@ -87,7 +87,7 @@ func (p *humanPlayer) handleInput() {
 			p.updateUnitPath()
 		}
 
-		if p.selectedUnit.IsCommander() && len(p.selectedUnit.group) < gamedata.MaxGroupSize {
+		if p.selectedUnit.IsCommander() {
 			if info, ok := p.input.JustPressedActionInfo(controls.ActionAddToGroup); ok {
 				worldPos := p.camera.AbsPos(info.Pos)
 				u := p.world.FindAssignable(worldPos)
@@ -101,8 +101,10 @@ func (p *humanPlayer) handleInput() {
 							}
 						}
 					} else {
-						u.leader = p.selectedUnit
-						p.activeTankSelectors = append(p.activeTankSelectors, p.createTankSelector(u))
+						if len(p.selectedUnit.group) < gamedata.MaxGroupSize {
+							u.leader = p.selectedUnit
+							p.activeTankSelectors = append(p.activeTankSelectors, p.createTankSelector(u))
+						}
 					}
 				}
 			}

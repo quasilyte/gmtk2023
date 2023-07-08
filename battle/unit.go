@@ -20,11 +20,13 @@ type unit struct {
 	spritePos gmath.Vec
 	turretPos gmath.Vec
 
-	path pathing.GridPath
+	path             pathing.GridPath
+	partialPathSteps int
 
-	waypoint    gmath.Vec
-	rotation    gmath.Rad
-	dstRotation gmath.Rad
+	finalWaypoint gmath.Vec
+	waypoint      gmath.Vec
+	rotation      gmath.Rad
+	dstRotation   gmath.Rad
 
 	sprite *ge.Sprite
 	anim   *ge.Animation
@@ -147,7 +149,31 @@ func (u *unit) SendTo(pos gmath.Vec) {
 
 	switch u.stats.Movement {
 	case gamedata.UnitMovementGround:
+		if !u.world.pathgrid.CellIsFree(u.world.pathgrid.PosToCoord(pos)) {
+			var slider gmath.Slider
+			slider.SetBounds(0, len(groupOffsets)-1)
+			slider.TrySetValue(u.world.Rand().IntRange(0, len(groupOffsets)-1))
+			for i := 0; i < len(groupOffsets); i++ {
+				offset := groupOffsets[slider.Value()]
+				newPos := pos.Add(offset)
+				slider.Inc()
+				if u.world.pathgrid.CellIsFree(u.world.pathgrid.PosToCoord(newPos)) {
+					pos = newPos
+				}
+			}
+		}
+		if u.pos.DistanceSquaredTo(pos) < 2 {
+			return
+		}
 		p := u.world.BuildPath(u.pos, pos)
+		if p.Partial {
+			u.partialPathSteps = u.world.Rand().IntRange(3, 6)
+		} else {
+			u.partialPathSteps = -1
+		}
+		if p.Steps.Len() == 0 {
+			return
+		}
 		u.path = p.Steps
 		alignedPos := u.world.pathgrid.AlignPos(u.pos)
 		if alignedPos.DistanceSquaredTo(u.pos) < 1 {
@@ -155,6 +181,7 @@ func (u *unit) SendTo(pos gmath.Vec) {
 		} else {
 			u.waypoint = alignedPos
 		}
+		u.finalWaypoint = pos
 		u.setDstRotation(u.pos.AngleToPoint(u.waypoint).Normalized())
 	}
 }
@@ -182,6 +209,62 @@ func (u *unit) calcSpeed() float64 {
 	return u.stats.Body.Speed
 }
 
+func (u *unit) moveGroundUnitToWaypoint(delta float64) {
+	if u.needRotate {
+		u.setRotation(u.rotation.RotatedTowards(u.dstRotation, u.stats.Body.RotationSpeed*gmath.Rad(delta)))
+		if u.rotation == u.dstRotation {
+			u.needRotate = false
+		}
+	}
+	if u.needRotate {
+		return
+	}
+
+	travelled := u.calcSpeed() * delta
+	u.pos = u.pos.MoveTowards(u.waypoint, travelled)
+	if u.pos != u.waypoint {
+		return
+	}
+
+	const maxFinalWaypointDistSqr = (pathing.CellSize * pathing.CellSize * 4)
+	if u.path.HasNext() {
+		if u.partialPathSteps == 0 {
+			if u.finalWaypoint.DistanceSquaredTo(u.pos) < maxFinalWaypointDistSqr {
+				u.groundUnitStop()
+				return
+			}
+			if u.world.Rand().Chance(0.4) {
+				probe := u.pos.Add(gmath.RandElem(u.world.Rand(), groupOffsets))
+				if u.world.pathgrid.CellIsFree(u.world.pathgrid.PosToCoord(probe)) {
+					u.waypoint = probe
+					u.setDstRotation(u.pos.AngleToPoint(u.waypoint).Normalized())
+					return
+				}
+			}
+			u.SendTo(u.finalWaypoint.Add(gmath.RandElem(u.world.Rand(), groupOffsets)))
+			return
+		}
+		if u.partialPathSteps > 0 {
+			u.partialPathSteps--
+		}
+		d := u.path.Next()
+		aligned := u.world.pathgrid.AlignPos(u.pos)
+		u.waypoint = posMove(aligned, d)
+		u.setDstRotation(u.pos.AngleToPoint(u.waypoint).Normalized())
+	} else {
+		if u.finalWaypoint.DistanceSquaredTo(u.pos) > maxFinalWaypointDistSqr {
+			u.SendTo(u.finalWaypoint)
+			return
+		}
+		u.groundUnitStop()
+	}
+}
+
+func (u *unit) groundUnitStop() {
+	u.waypoint = gmath.Vec{}
+	u.needRotate = false
+}
+
 func (u *unit) moveToWaypoint(delta float64) {
 	switch u.stats.Movement {
 	case gamedata.UnitMovementHover:
@@ -192,26 +275,6 @@ func (u *unit) moveToWaypoint(delta float64) {
 		}
 
 	case gamedata.UnitMovementGround:
-		if u.needRotate {
-			u.setRotation(u.rotation.RotatedTowards(u.dstRotation, u.stats.Body.RotationSpeed*gmath.Rad(delta)))
-			if u.rotation == u.dstRotation {
-				u.needRotate = false
-			}
-		}
-		if u.needRotate {
-			return
-		}
-		travelled := u.calcSpeed() * delta
-		u.pos = u.pos.MoveTowards(u.waypoint, travelled)
-		if u.pos == u.waypoint {
-			if u.path.HasNext() {
-				d := u.path.Next()
-				aligned := u.world.pathgrid.AlignPos(u.pos)
-				u.waypoint = posMove(aligned, d)
-				u.setDstRotation(u.pos.AngleToPoint(u.waypoint).Normalized())
-			} else {
-				u.waypoint = gmath.Vec{}
-			}
-		}
+		u.moveGroundUnitToWaypoint(delta)
 	}
 }

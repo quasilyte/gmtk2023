@@ -105,6 +105,26 @@ func (r *Runner) Init(scene *ge.Scene) {
 		Pos:   gmath.Vec{X: 440, Y: 360},
 		Stats: tank2Stats,
 	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: 360, Y: 400},
+		Stats: tank2Stats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: 400, Y: 400},
+		Stats: tank2Stats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: 440, Y: 400},
+		Stats: tank2Stats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: 400, Y: 440},
+		Stats: tank2Stats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: 440, Y: 480},
+		Stats: tank2Stats,
+	}))
 
 	bunkerStats := &gamedata.UnitStats{
 		Movement: gamedata.UnitMovementNone,
@@ -125,6 +145,54 @@ func (r *Runner) Init(scene *ge.Scene) {
 	}))
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: (40 * 9) - 20, Y: (40 * 4) - 20},
+		Stats: bunkerStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 10) - 20, Y: (40 * 5) - 20},
+		Stats: bunkerStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 11) - 20, Y: (40 * 5) - 20},
+		Stats: bunkerStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 10) - 20, Y: (40 * 4) - 20},
+		Stats: bunkerStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 11) - 20, Y: (40 * 4) - 20},
+		Stats: bunkerStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 8) - 20, Y: (40 * 7) - 20},
+		Stats: bunkerStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 9) - 20, Y: (40 * 7) - 20},
+		Stats: bunkerStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 10) - 20, Y: (40 * 7) - 20},
+		Stats: bunkerStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 11) - 20, Y: (40 * 7) - 20},
+		Stats: bunkerStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 8) - 20, Y: (40 * 9) - 20},
+		Stats: bunkerStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 9) - 20, Y: (40 * 9) - 20},
+		Stats: bunkerStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 10) - 20, Y: (40 * 9) - 20},
+		Stats: bunkerStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 11) - 20, Y: (40 * 9) - 20},
 		Stats: bunkerStats,
 	}))
 }
