@@ -23,6 +23,8 @@ type Runner struct {
 
 	gameSpeedMultiplier float64
 
+	playerSpawn gmath.Vec
+
 	camera *viewport.Camera
 
 	players []player
@@ -68,6 +70,11 @@ func (r *Runner) Init(scene *ge.Scene) {
 	r.players = append(r.players, cp)
 	cp.Init()
 
+	r.deployPlayer()
+	p.camera.CenterOn(r.playerSpawn)
+
+	r.deployEnemy()
+
 	// r.AddObject(r.world.NewUnit(unitConfig{
 	// 	Pos:   gmath.Vec{X: (40 * 4) - 20, Y: (40 * 9) - 20},
 	// 	Stats: gamedata.ConstructorUnitStats,
@@ -88,39 +95,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 	// 	Pos:   gmath.Vec{X: (40 * 6) - 20, Y: (40 * 10) - 20},
 	// 	Stats: gamedata.ConstructorUnitStats,
 	// }))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 5) - 20, Y: (40 * 10) - 20},
-		Stats: gamedata.ConstructorUnitStats,
-	}))
 
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: 96, Y: 96},
-		Stats: gamedata.CommanderUnitStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: 160, Y: 160},
-		Stats: gamedata.CommanderUnitStats,
-	}))
-
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 3) - 20, Y: (40 * 10) - 20},
-		Stats: gamedata.MCVUnitStats,
-	}))
-
-	// r.AddObject(r.world.NewUnit(unitConfig{
-	// 	Pos:   gmath.Vec{X: (40 * 6) - 20, Y: (40 * 4) - 20},
-	// 	Stats: gamedata.TankFactoryUnitStats,
-	// }))
-
-	tankStats := &gamedata.UnitStats{
-		Movement: gamedata.UnitMovementGround,
-		Body:     gamedata.FighterBodyStats,
-		Turret:   gamedata.ScatterCannonStats,
-	}
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: 240, Y: 240},
-		Stats: tankStats,
-	}))
 	// r.AddObject(r.world.NewUnit(unitConfig{
 	// 	Pos:   gmath.Vec{X: 300, Y: 300},
 	// 	Stats: tankStats,
@@ -172,79 +147,181 @@ func (r *Runner) Init(scene *ge.Scene) {
 	// 	Stats: tank2Stats,
 	// }))
 
-	enemyTankStats := &gamedata.UnitStats{
+	// enemyTankStats := &gamedata.UnitStats{
+	// 	Movement: gamedata.UnitMovementGround,
+	// 	Body:     gamedata.WheelsBodyStats,
+	// 	Turret:   gamedata.GatlingStats,
+	// 	Creep:    true,
+	// }
+	// enemyTank2Stats := &gamedata.UnitStats{
+	// 	Movement: gamedata.UnitMovementGround,
+	// 	Body:     gamedata.WheelsBodyStats,
+	// 	Turret:   gamedata.ScatterCannonStats,
+	// 	Creep:    true,
+	// }
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 22) - 20, Y: (40 * 5) - 20},
+	// 	Stats: enemyTankStats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 22) - 20, Y: (40 * 6) - 20},
+	// 	Stats: enemyTankStats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 22) - 20, Y: (40 * 7) - 20},
+	// 	Stats: enemyTankStats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 23) - 20, Y: (40 * 5) - 20},
+	// 	Stats: enemyTankStats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 23) - 20, Y: (40 * 6) - 20},
+	// 	Stats: enemyTankStats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 23) - 20, Y: (40 * 7) - 20},
+	// 	Stats: enemyTankStats,
+	// }))
+
+	// enemyBunkerStats := &gamedata.UnitStats{
+	// 	Movement: gamedata.UnitMovementNone,
+	// 	Body:     gamedata.CreepBunkerBodyStats,
+	// 	Turret:   gamedata.LightCannonStats,
+	// 	Creep:    true,
+	// }
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 28) - 20, Y: (40 * 4) - 20},
+	// 	Stats: enemyBunkerStats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 26) - 20, Y: (40 * 6) - 20},
+	// 	Stats: enemyBunkerStats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 28) - 20, Y: (40 * 8) - 20},
+	// 	Stats: enemyBunkerStats,
+	// }))
+
+	// creepFactory1 := r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 28) - 20, Y: (40 * 10) - 20},
+	// 	Stats: gamedata.CreepTankFactoryUnitStats,
+	// 	Extra: &tankFactoryExtra{
+	// 		tankDesign: enemyTankStats,
+	// 	},
+	// })
+	// r.AddObject(creepFactory1)
+
+	// creepFactory2 := r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 30) - 20, Y: (40 * 9) - 20},
+	// 	Stats: gamedata.CreepTankFactoryUnitStats,
+	// 	Extra: &tankFactoryExtra{
+	// 		tankDesign: enemyTank2Stats,
+	// 	},
+	// })
+	// r.AddObject(creepFactory2)
+}
+
+func (r *Runner) deployPlayer() {
+	r.playerSpawn = r.world.pathgrid.AlignPos(gmath.Vec{X: 1400, Y: 320})
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   r.playerSpawn,
+		Stats: gamedata.MCVUnitStats,
+	}))
+}
+
+func (r *Runner) deployEnemy() {
+	gatlingWheels := &gamedata.UnitStats{
 		Movement: gamedata.UnitMovementGround,
 		Body:     gamedata.WheelsBodyStats,
 		Turret:   gamedata.GatlingStats,
 		Creep:    true,
 	}
-	enemyTank2Stats := &gamedata.UnitStats{
+	lightTank := &gamedata.UnitStats{
 		Movement: gamedata.UnitMovementGround,
 		Body:     gamedata.WheelsBodyStats,
+		Turret:   gamedata.GatlingStats,
+		Creep:    true,
+	}
+
+	gatlingBunkerStats := &gamedata.UnitStats{
+		Movement: gamedata.UnitMovementNone,
+		Body:     gamedata.CreepBunkerBodyStats,
+		Turret:   gamedata.GatlingStats,
+		Creep:    true,
+	}
+	scatterBunkerStats := &gamedata.UnitStats{
+		Movement: gamedata.UnitMovementNone,
+		Body:     gamedata.CreepBunkerBodyStats,
 		Turret:   gamedata.ScatterCannonStats,
 		Creep:    true,
 	}
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 22) - 20, Y: (40 * 5) - 20},
-		Stats: enemyTankStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 22) - 20, Y: (40 * 6) - 20},
-		Stats: enemyTankStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 22) - 20, Y: (40 * 7) - 20},
-		Stats: enemyTankStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 23) - 20, Y: (40 * 5) - 20},
-		Stats: enemyTankStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 23) - 20, Y: (40 * 6) - 20},
-		Stats: enemyTankStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 23) - 20, Y: (40 * 7) - 20},
-		Stats: enemyTankStats,
-	}))
 
-	enemyBunkerStats := &gamedata.UnitStats{
-		Movement: gamedata.UnitMovementNone,
-		Body:     gamedata.CreepBunkerBodyStats,
-		Turret:   gamedata.LightCannonStats,
-		Creep:    true,
-	}
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 28) - 20, Y: (40 * 4) - 20},
-		Stats: enemyBunkerStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 26) - 20, Y: (40 * 6) - 20},
-		Stats: enemyBunkerStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 28) - 20, Y: (40 * 8) - 20},
-		Stats: enemyBunkerStats,
-	}))
+	// One base to the left.
+	// It's active from the beginning.
 
-	creepFactory1 := r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 28) - 20, Y: (40 * 10) - 20},
+	leftBasePos := r.world.pathgrid.AlignPos(r.playerSpawn.Sub(gmath.Vec{X: 800, Y: 150}))
+
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   leftBasePos,
 		Stats: gamedata.CreepTankFactoryUnitStats,
 		Extra: &tankFactoryExtra{
-			tankDesign: enemyTankStats,
+			tankDesign:      gatlingWheels,
+			productionDelay: 30,
 		},
-	})
-	r.AddObject(creepFactory1)
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:      leftBasePos.Add(gmath.Vec{X: pathing.CellSize}),
+		Stats:    gatlingBunkerStats,
+		Rotation: leftBasePos.AngleToPoint(r.playerSpawn),
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:      leftBasePos.Sub(gmath.Vec{X: pathing.CellSize}),
+		Stats:    gatlingBunkerStats,
+		Rotation: leftBasePos.AngleToPoint(r.playerSpawn),
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:      leftBasePos.Add(gmath.Vec{X: pathing.CellSize, Y: 2 * pathing.CellSize}),
+		Stats:    gatlingWheels,
+		Rotation: leftBasePos.AngleToPoint(r.playerSpawn),
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:      leftBasePos.Add(gmath.Vec{X: -pathing.CellSize, Y: 2 * pathing.CellSize}),
+		Stats:    gatlingWheels,
+		Rotation: leftBasePos.AngleToPoint(r.playerSpawn),
+	}))
 
-	creepFactory2 := r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 30) - 20, Y: (40 * 9) - 20},
+	// Another base to the left. It will be activated much later.
+
+	leftBasePos2 := r.world.pathgrid.AlignPos(r.playerSpawn.Add(gmath.Vec{X: -1200, Y: 40}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   leftBasePos2,
 		Stats: gamedata.CreepTankFactoryUnitStats,
 		Extra: &tankFactoryExtra{
-			tankDesign: enemyTank2Stats,
+			tankDesign:      lightTank,
+			productionDelay: 6 * 60,
 		},
-	})
-	r.AddObject(creepFactory2)
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:      leftBasePos2.Add(gmath.Vec{X: 2 * pathing.CellSize}),
+		Stats:    scatterBunkerStats,
+		Rotation: leftBasePos.AngleToPoint(r.playerSpawn),
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:      leftBasePos2.Add(gmath.Vec{X: -2 * pathing.CellSize}),
+		Stats:    scatterBunkerStats,
+		Rotation: leftBasePos.AngleToPoint(r.playerSpawn),
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:      leftBasePos2.Add(gmath.Vec{Y: 2 * pathing.CellSize}),
+		Stats:    scatterBunkerStats,
+		Rotation: leftBasePos.AngleToPoint(r.playerSpawn),
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:      leftBasePos2.Add(gmath.Vec{Y: -2 * pathing.CellSize}),
+		Stats:    scatterBunkerStats,
+		Rotation: leftBasePos.AngleToPoint(r.playerSpawn),
+	}))
 }
 
 func (r *Runner) Update(delta float64) {

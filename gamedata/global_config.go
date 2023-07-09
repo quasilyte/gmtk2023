@@ -11,7 +11,7 @@ const (
 	TankFrameAngleStep  = gmath.Rad((2 * math.Pi) / float64(NumTankSpriteFrames))
 
 	CellSize        = 40
-	NumSegmentCells = 64
+	NumSegmentCells = 96
 
 	MaxGroupSize = 8
 
