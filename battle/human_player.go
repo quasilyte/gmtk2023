@@ -121,6 +121,9 @@ func (p *humanPlayer) executeConstructorAction(actionIndex int) bool {
 	if pos.IsZero() {
 		return false
 	}
+	if p.world.MayBlockFactory(pos) {
+		return false
+	}
 
 	var stats *gamedata.UnitStats
 	var newUnitExtra any

@@ -160,6 +160,28 @@ func (w *worldState) FindSelectable(pos gmath.Vec) *unit {
 	return closestUnit
 }
 
+func (w *worldState) MayBlockFactory(pos gmath.Vec) bool {
+	posAbove := w.pathgrid.AlignPos(pos).Sub(gmath.Vec{Y: pathing.CellSize - 1})
+	const checkDist = pathing.CellSize + 1
+	for _, u := range w.playerUnits.selectable {
+		check := false
+		switch extra := u.extra.(type) {
+		case *tankFactoryExtra:
+			check = true
+		case *constructionSiteExtra:
+			if _, ok := extra.newUnitExtra.(*tankFactoryExtra); ok {
+				check = true
+			}
+		}
+		if check {
+			if u.pos.DistanceSquaredTo(posAbove) < (checkDist * checkDist) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func (w *worldState) IsInnerPos(pos gmath.Vec) bool {
 	aligned := w.pathgrid.AlignPos(pos)
 	if aligned.X < pathing.CellSize || aligned.Y < pathing.CellSize {
