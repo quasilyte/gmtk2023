@@ -15,7 +15,7 @@ type resourcesPanel struct {
 
 	bg *ge.Rect
 
-	labelNormalRes  *ge.Label
+	// labelNormalRes  *ge.Label
 	labelEnergyRes  *ge.Label
 	labelGenerators *ge.Label
 }
@@ -34,7 +34,7 @@ func newResourcesPanel(p *humanPlayer) *resourcesPanel {
 
 func (p *resourcesPanel) setVisibility(visible bool) {
 	p.bg.Visible = visible
-	p.labelNormalRes.Visible = visible
+	// p.labelNormalRes.Visible = visible
 	p.labelEnergyRes.Visible = visible
 	p.labelGenerators.Visible = visible
 }
@@ -43,7 +43,7 @@ func (p *resourcesPanel) Update(info resourcesPanelUpdate) {
 	if !p.bg.Visible {
 		return
 	}
-	p.labelNormalRes.Text = fmt.Sprintf("Resources: %d $", int(math.Trunc(info.numResources)))
+	// p.labelNormalRes.Text = fmt.Sprintf("Resources: %d $", int(math.Trunc(info.numResources)))
 	p.labelEnergyRes.Text = fmt.Sprintf("Energy: %d ♦", int(math.Trunc(info.numEnergy)))
 	p.labelGenerators.Text = fmt.Sprintf("Generators: %d", info.numGenerators)
 }
@@ -61,21 +61,21 @@ func (p *resourcesPanel) Init(scene *ge.Scene) {
 	p.bg.OutlineWidth = unitPanelOutline
 	p.player.camera.UI.AddGraphics(p.bg)
 
-	p.labelNormalRes = ge.NewLabel(assets.BitmapFont1)
-	p.labelNormalRes.AlignHorizontal = ge.AlignHorizontalCenter
-	p.labelNormalRes.AlignVertical = ge.AlignVerticalCenter
-	p.labelNormalRes.Width = width - 4
-	p.labelNormalRes.Height = 24
-	p.labelNormalRes.Pos.Offset = p.bg.Pos.Offset.Add(gmath.Vec{X: 4, Y: 16})
-	p.labelNormalRes.ColorScale.SetColor(styles.FontColor)
-	p.player.camera.UI.AddGraphics(p.labelNormalRes)
+	// p.labelNormalRes = ge.NewLabel(assets.BitmapFont1)
+	// p.labelNormalRes.AlignHorizontal = ge.AlignHorizontalCenter
+	// p.labelNormalRes.AlignVertical = ge.AlignVerticalCenter
+	// p.labelNormalRes.Width = width - 4
+	// p.labelNormalRes.Height = 24
+	// p.labelNormalRes.Pos.Offset = p.bg.Pos.Offset.Add(gmath.Vec{X: 4, Y: 16})
+	// p.labelNormalRes.ColorScale.SetColor(styles.FontColor)
+	// p.player.camera.UI.AddGraphics(p.labelNormalRes)
 
 	p.labelEnergyRes = ge.NewLabel(assets.BitmapFont1)
 	p.labelEnergyRes.AlignHorizontal = ge.AlignHorizontalCenter
 	p.labelEnergyRes.AlignVertical = ge.AlignVerticalCenter
 	p.labelEnergyRes.Width = width - 4
 	p.labelEnergyRes.Height = 24
-	p.labelEnergyRes.Pos.Offset = p.bg.Pos.Offset.Add(gmath.Vec{X: 4, Y: 32})
+	p.labelEnergyRes.Pos.Offset = p.bg.Pos.Offset.Add(gmath.Vec{X: 4, Y: 24})
 	p.labelEnergyRes.ColorScale.SetColor(styles.FontColor)
 	p.player.camera.UI.AddGraphics(p.labelEnergyRes)
 
@@ -84,7 +84,7 @@ func (p *resourcesPanel) Init(scene *ge.Scene) {
 	p.labelGenerators.AlignVertical = ge.AlignVerticalCenter
 	p.labelGenerators.Width = width - 4
 	p.labelGenerators.Height = 24
-	p.labelGenerators.Pos.Offset = p.bg.Pos.Offset.Add(gmath.Vec{X: 4, Y: 48})
+	p.labelGenerators.Pos.Offset = p.bg.Pos.Offset.Add(gmath.Vec{X: 4, Y: 40})
 	p.labelGenerators.ColorScale.SetColor(styles.FontColor)
 	p.player.camera.UI.AddGraphics(p.labelGenerators)
 
