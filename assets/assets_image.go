@@ -16,6 +16,18 @@ func registerImageResources(ctx *ge.Context) {
 		ImageUILargeSelector: {Path: "image/battleui/large_selector.png"},
 		ImageUITankSelector:  {Path: "image/battleui/tank_selector.png"},
 
+		ImageUIButtonDisabled:      {Path: "image/ebitenui/button-disabled.png"},
+		ImageUIButtonIdle:          {Path: "image/ebitenui/button-idle.png"},
+		ImageUIButtonHover:         {Path: "image/ebitenui/button-hover.png"},
+		ImageUIButtonPressed:       {Path: "image/ebitenui/button-pressed.png"},
+		ImageUISelectButtonIdle:    {Path: "image/ebitenui/select-button-idle.png"},
+		ImageUISelectButtonHover:   {Path: "image/ebitenui/select-button-hover.png"},
+		ImageUISelectButtonPressed: {Path: "image/ebitenui/select-button-pressed.png"},
+		ImageUITextInputIdle:       {Path: "image/ebitenui/text-input-idle.png"},
+		ImageUIPanelIdle:           {Path: "image/ebitenui/panel-idle.png"},
+		ImageUITooltip:             {Path: "image/ebitenui/tooltip.png"},
+		ImageLinkDummyTexture:      {Path: "image/ebitenui/link.png"},
+
 		ImageUIDeconstuctIcon:      {Path: "image/battleui/deconstruct.png"},
 		ImageUIConstructors1outof1: {Path: "image/battleui/constructors_1_outof_1.png"},
 		ImageUIConstructors1outof2: {Path: "image/battleui/constructors_1_outof_2.png"},
@@ -77,6 +89,18 @@ const (
 	ImageUITowerSelector
 	ImageUILargeSelector
 	ImageUITankSelector
+
+	ImageUIButtonDisabled
+	ImageUIButtonIdle
+	ImageUIButtonHover
+	ImageUIButtonPressed
+	ImageUISelectButtonIdle
+	ImageUISelectButtonHover
+	ImageUISelectButtonPressed
+	ImageUITextInputIdle
+	ImageUIPanelIdle
+	ImageUITooltip
+	ImageLinkDummyTexture
 
 	ImageUIDeconstuctIcon
 	ImageUIConstructors1outof1

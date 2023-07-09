@@ -6,6 +6,7 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmtk2023/assets"
 	"github.com/quasilyte/gmtk2023/controls"
+	"github.com/quasilyte/gmtk2023/eui"
 	"github.com/quasilyte/gmtk2023/gamedata"
 	"github.com/quasilyte/gmtk2023/scenes"
 	"github.com/quasilyte/gmtk2023/session"
@@ -24,6 +25,7 @@ func main() {
 	assets.RegisterResources(ctx)
 
 	state := session.NewState()
+	state.UIResources = eui.PrepareResources(ctx.Loader)
 
 	playerInput := controls.MakeHandler(ctx)
 
@@ -67,8 +69,9 @@ func main() {
 		GameSpeed:     1,
 		PlayerDesigns: playerDesigns,
 	}
+	_ = config
 
-	if err := ge.RunGame(ctx, scenes.NewBattleController(state, config)); err != nil {
+	if err := ge.RunGame(ctx, scenes.NewMainMenuController(state)); err != nil {
 		panic(err)
 	}
 }
