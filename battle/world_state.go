@@ -222,6 +222,9 @@ func (w *worldState) FindConstructor(pos gmath.Vec) *unit {
 	minDistSqr := math.MaxFloat64
 	var closestUnit *unit
 	for _, u := range w.playerUnits.selectable {
+		if !u.IsConstructor() {
+			continue
+		}
 		distSqr := u.pos.DistanceSquaredTo(pos)
 		if distSqr > (24 * 24) {
 			continue
