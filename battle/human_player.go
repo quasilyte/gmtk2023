@@ -18,9 +18,10 @@ type humanPlayer struct {
 
 	camera *viewport.Camera
 
-	droneSelector    *ge.Sprite
-	selectedUnit     *unit
-	selectedUnitPath *ge.Line
+	constructorsCounter *ge.Sprite
+	droneSelector       *ge.Sprite
+	selectedUnit        *unit
+	selectedUnitPath    *ge.Line
 
 	inactiveTankSelectors []*tankSelector
 	activeTankSelectors   []*tankSelector
@@ -56,6 +57,11 @@ func (p *humanPlayer) Init() {
 	p.selectedUnitPath.Width = 2
 	p.selectedUnitPath.Visible = false
 	p.camera.Stage.AddGraphicsSlightlyAbove(p.selectedUnitPath)
+
+	p.constructorsCounter = ge.NewSprite(p.world.scene.Context())
+	p.constructorsCounter.Visible = false
+	p.constructorsCounter.Pos.Offset.Y = 10
+	p.camera.Stage.AddSpriteSlightlyAbove(p.constructorsCounter)
 
 	p.renderIcons()
 	p.unitPanel = newUnitPanel(p.camera, p.input)
@@ -234,11 +240,13 @@ func (p *humanPlayer) IsDisposed() bool { return false }
 func (p *humanPlayer) setSelectedUnit(u *unit) {
 	if p.selectedUnit != nil {
 		p.selectedUnit.EventDestroyed.Disconnect(p)
+		p.selectedUnit.EventConstructorEntered.Disconnect(p)
 		p.unitPanel.SetButtons(nil)
 	}
 
 	p.selectedUnit = u
 
+	p.constructorsCounter.Visible = false
 	p.droneSelector.Visible = u != nil
 	p.updateUnitPath(u)
 
@@ -256,6 +264,11 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 		switch {
 		case u.IsConstructor():
 			p.unitPanel.SetButtons(p.designs.Icons[:7])
+		case u.IsConstructionSite():
+			p.constructorsCounter.Visible = true
+			p.constructorsCounter.Pos.Base = &u.spritePos
+			p.updateConsnstructorsCounter(u)
+			p.unitPanel.SetButtons([]*ebiten.Image{p.world.Scene().LoadImage(assets.ImageUIDeconstuctIcon).Data})
 		case u.IsSimpleDeconstructible():
 			p.unitPanel.SetButtons([]*ebiten.Image{p.world.Scene().LoadImage(assets.ImageUIDeconstuctIcon).Data})
 		}
@@ -275,6 +288,11 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 				p.setSelectedUnit(nil)
 			}
 		})
+		if p.selectedUnit.IsConstructionSite() {
+			p.selectedUnit.EventConstructorEntered.Connect(p, func(u *unit) {
+				p.updateConsnstructorsCounter(u)
+			})
+		}
 
 		p.droneSelector.Pos.Base = &p.selectedUnit.spritePos
 
@@ -283,6 +301,32 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 			p.activeTankSelectors = append(p.activeTankSelectors, p.createTankSelector(gu))
 		}
 	}
+}
+
+func (p *humanPlayer) updateConsnstructorsCounter(u *unit) {
+	imageID := assets.ImageUIConstructors1outof1
+	extra := u.extra.(*constructionSiteExtra)
+	switch u.stats.ConstructorsNeeded {
+	case 1:
+		// 1outof1
+	case 2:
+		switch extra.constructors {
+		case 1:
+			imageID = assets.ImageUIConstructors1outof2
+		case 2:
+			imageID = assets.ImageUIConstructors2outof2
+		}
+	case 3:
+		switch extra.constructors {
+		case 1:
+			imageID = assets.ImageUIConstructors1outof3
+		case 2:
+			imageID = assets.ImageUIConstructors2outof3
+		case 3:
+			imageID = assets.ImageUIConstructors3outof3
+		}
+	}
+	p.constructorsCounter.SetImage(p.world.Scene().LoadImage(imageID))
 }
 
 func (p *humanPlayer) createTankSelector(u *unit) *tankSelector {

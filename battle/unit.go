@@ -45,7 +45,8 @@ type unit struct {
 	needRotate bool
 	disposed   bool
 
-	EventDestroyed gsignal.Event[*unit]
+	EventDestroyed          gsignal.Event[*unit]
+	EventConstructorEntered gsignal.Event[*unit]
 }
 
 type tankFactoryExtra struct {
@@ -240,6 +241,7 @@ func (u *unit) AddConstructorToSite(constructor *unit) bool {
 		return false
 	}
 	extra.constructors++
+	u.EventConstructorEntered.Emit(u)
 
 	effect := newEffectNode(u.world, constructor.pos, false, assets.ImageConstructorMerge)
 	effect.rotates = true
