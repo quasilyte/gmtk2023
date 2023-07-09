@@ -65,6 +65,9 @@ func (p *humanPlayer) Init() {
 	p.droneSelector.Visible = false
 	p.camera.Stage.AddSpriteSlightlyAbove(p.droneSelector)
 
+	p.normalResource = 100
+	p.energyResource = 140
+
 	p.iconConstructor = ebiten.NewImage(unitPanelIconWidth, unitPanelIconHeight)
 	renderSimpleIcon(p.world.scene, p.iconConstructor, assets.ImageDroneConstructor, fmt.Sprintf("%d ♦", gamedata.ConstructorEnergyCost))
 	p.iconCommander = ebiten.NewImage(unitPanelIconWidth, unitPanelIconHeight)
@@ -91,7 +94,6 @@ func (p *humanPlayer) Init() {
 
 	p.resourcesPanel = newResourcesPanel(p)
 	p.resourcesPanel.Init(p.world.scene)
-	p.resourcesPanel.setVisibility(true)
 
 	p.world.EventUnitCreated.Connect(p, func(u *unit) {
 		if !u.IsGenerator() {
@@ -127,6 +129,13 @@ func (p *humanPlayer) Update(scaledDelta, delta float64) {
 	p.panCamera(delta)
 	p.handleInput()
 	p.maybeHarvest(scaledDelta)
+
+	// FIXME: this is a hack.
+	if p.selectedUnit != nil {
+		if p.selectedUnit.finalWaypoint.IsZero() {
+			p.updateUnitPath(nil)
+		}
+	}
 
 	if len(p.activeTankSelectors) != 0 {
 		stillActive := p.activeTankSelectors[:0]
@@ -164,6 +173,10 @@ func (p *humanPlayer) maybeHarvest(delta float64) {
 	}
 	p.energyResource += generated
 
+	p.updateResourcesPanel()
+}
+
+func (p *humanPlayer) updateResourcesPanel() {
 	p.resourcesPanel.Update(resourcesPanelUpdate{
 		numResources:  p.normalResource,
 		numEnergy:     p.energyResource,
@@ -388,6 +401,7 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 
 	p.constructorsCounter.Visible = false
 	p.progressBar.SetVisibility(false)
+	p.resourcesPanel.setVisibility(false)
 	p.droneSelector.Visible = u != nil
 	p.updateUnitPath(u)
 
@@ -408,6 +422,8 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 				p.iconConstructor,
 				p.iconCommander,
 			})
+			p.resourcesPanel.setVisibility(true)
+			p.updateResourcesPanel()
 		case u.IsConstructor():
 			p.unitPanel.SetButtons(p.designs.Icons)
 		case u.IsTankFactory():

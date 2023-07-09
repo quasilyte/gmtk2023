@@ -549,6 +549,7 @@ func (u *unit) moveGroundUnitToWaypoint(delta float64) {
 
 func (u *unit) groundUnitStop() {
 	u.waypoint = gmath.Vec{}
+	u.finalWaypoint = gmath.Vec{}
 	u.needRotate = false
 
 	if extra, ok := u.extra.(*freshUnitExtra); ok {

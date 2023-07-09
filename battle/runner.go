@@ -68,39 +68,39 @@ func (r *Runner) Init(scene *ge.Scene) {
 	r.players = append(r.players, cp)
 	cp.Init()
 
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 4) - 20, Y: (40 * 9) - 20},
-		Stats: gamedata.ConstructorUnitStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 5) - 20, Y: (40 * 9) - 20},
-		Stats: gamedata.ConstructorUnitStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 3) - 20, Y: (40 * 9) - 20},
-		Stats: gamedata.ConstructorUnitStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 6) - 20, Y: (40 * 9) - 20},
-		Stats: gamedata.ConstructorUnitStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 6) - 20, Y: (40 * 10) - 20},
-		Stats: gamedata.ConstructorUnitStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: (40 * 5) - 20, Y: (40 * 10) - 20},
-		Stats: gamedata.ConstructorUnitStats,
-	}))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 4) - 20, Y: (40 * 9) - 20},
+	// 	Stats: gamedata.ConstructorUnitStats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 5) - 20, Y: (40 * 9) - 20},
+	// 	Stats: gamedata.ConstructorUnitStats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 3) - 20, Y: (40 * 9) - 20},
+	// 	Stats: gamedata.ConstructorUnitStats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 6) - 20, Y: (40 * 9) - 20},
+	// 	Stats: gamedata.ConstructorUnitStats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 6) - 20, Y: (40 * 10) - 20},
+	// 	Stats: gamedata.ConstructorUnitStats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: (40 * 5) - 20, Y: (40 * 10) - 20},
+	// 	Stats: gamedata.ConstructorUnitStats,
+	// }))
 
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: 96, Y: 96},
-		Stats: gamedata.CommanderUnitStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: 160, Y: 160},
-		Stats: gamedata.CommanderUnitStats,
-	}))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: 96, Y: 96},
+	// 	Stats: gamedata.CommanderUnitStats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: 160, Y: 160},
+	// 	Stats: gamedata.CommanderUnitStats,
+	// }))
 
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: (40 * 3) - 20, Y: (40 * 10) - 20},
@@ -112,70 +112,76 @@ func (r *Runner) Init(scene *ge.Scene) {
 	// 	Stats: gamedata.TankFactoryUnitStats,
 	// }))
 
-	tankStats := &gamedata.UnitStats{
-		Movement: gamedata.UnitMovementGround,
-		Body:     gamedata.FighterBodyStats,
-		Turret:   gamedata.LightCannonStats,
-	}
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: 240, Y: 240},
-		Stats: tankStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: 300, Y: 300},
-		Stats: tankStats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: 100, Y: 200},
-		Stats: tankStats,
-	}))
-	tank2Stats := &gamedata.UnitStats{
-		Movement: gamedata.UnitMovementGround,
-		Body:     gamedata.ScoutBodyStats,
-		Turret:   gamedata.ScatterCannonStats,
-	}
-	tank3Stats := &gamedata.UnitStats{
-		Movement: gamedata.UnitMovementGround,
-		Body:     gamedata.WheelsBodyStats,
-		Turret:   gamedata.GatlingStats,
-	}
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: 360, Y: 360},
-		Stats: tank3Stats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: 400, Y: 360},
-		Stats: tank3Stats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: 440, Y: 360},
-		Stats: tank3Stats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: 360, Y: 400},
-		Stats: tank3Stats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: 400, Y: 400},
-		Stats: tank2Stats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: 440, Y: 400},
-		Stats: tank2Stats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: 400, Y: 440},
-		Stats: tank2Stats,
-	}))
-	r.AddObject(r.world.NewUnit(unitConfig{
-		Pos:   gmath.Vec{X: 440, Y: 480},
-		Stats: tank2Stats,
-	}))
+	// tankStats := &gamedata.UnitStats{
+	// 	Movement: gamedata.UnitMovementGround,
+	// 	Body:     gamedata.FighterBodyStats,
+	// 	Turret:   gamedata.LightCannonStats,
+	// }
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: 240, Y: 240},
+	// 	Stats: tankStats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: 300, Y: 300},
+	// 	Stats: tankStats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: 100, Y: 200},
+	// 	Stats: tankStats,
+	// }))
+	// tank2Stats := &gamedata.UnitStats{
+	// 	Movement: gamedata.UnitMovementGround,
+	// 	Body:     gamedata.ScoutBodyStats,
+	// 	Turret:   gamedata.ScatterCannonStats,
+	// }
+	// tank3Stats := &gamedata.UnitStats{
+	// 	Movement: gamedata.UnitMovementGround,
+	// 	Body:     gamedata.WheelsBodyStats,
+	// 	Turret:   gamedata.GatlingStats,
+	// }
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: 360, Y: 360},
+	// 	Stats: tank3Stats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: 400, Y: 360},
+	// 	Stats: tank3Stats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: 440, Y: 360},
+	// 	Stats: tank3Stats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: 360, Y: 400},
+	// 	Stats: tank3Stats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: 400, Y: 400},
+	// 	Stats: tank2Stats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: 440, Y: 400},
+	// 	Stats: tank2Stats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: 400, Y: 440},
+	// 	Stats: tank2Stats,
+	// }))
+	// r.AddObject(r.world.NewUnit(unitConfig{
+	// 	Pos:   gmath.Vec{X: 440, Y: 480},
+	// 	Stats: tank2Stats,
+	// }))
 
 	enemyTankStats := &gamedata.UnitStats{
 		Movement: gamedata.UnitMovementGround,
 		Body:     gamedata.WheelsBodyStats,
 		Turret:   gamedata.GatlingStats,
+		Creep:    true,
+	}
+	enemyTank2Stats := &gamedata.UnitStats{
+		Movement: gamedata.UnitMovementGround,
+		Body:     gamedata.WheelsBodyStats,
+		Turret:   gamedata.ScatterCannonStats,
 		Creep:    true,
 	}
 	r.AddObject(r.world.NewUnit(unitConfig{
@@ -223,7 +229,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 		Pos:   gmath.Vec{X: (40 * 30) - 20, Y: (40 * 9) - 20},
 		Stats: gamedata.CreepTankFactoryUnitStats,
 		Extra: &tankFactoryExtra{
-			tankDesign: enemyTankStats,
+			tankDesign: enemyTank2Stats,
 		},
 	})
 	r.AddObject(creepFactory2)

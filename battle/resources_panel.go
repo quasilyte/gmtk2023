@@ -36,6 +36,7 @@ func (p *resourcesPanel) setVisibility(visible bool) {
 	p.bg.Visible = visible
 	p.labelNormalRes.Visible = visible
 	p.labelEnergyRes.Visible = visible
+	p.labelGenerators.Visible = visible
 }
 
 func (p *resourcesPanel) Update(info resourcesPanelUpdate) {
@@ -66,6 +67,7 @@ func (p *resourcesPanel) Init(scene *ge.Scene) {
 	p.labelNormalRes.Width = width - 4
 	p.labelNormalRes.Height = 24
 	p.labelNormalRes.Pos.Offset = p.bg.Pos.Offset.Add(gmath.Vec{X: 4, Y: 16})
+	p.labelNormalRes.ColorScale.SetColor(styles.FontColor)
 	p.player.camera.UI.AddGraphics(p.labelNormalRes)
 
 	p.labelEnergyRes = ge.NewLabel(assets.BitmapFont1)
@@ -74,6 +76,7 @@ func (p *resourcesPanel) Init(scene *ge.Scene) {
 	p.labelEnergyRes.Width = width - 4
 	p.labelEnergyRes.Height = 24
 	p.labelEnergyRes.Pos.Offset = p.bg.Pos.Offset.Add(gmath.Vec{X: 4, Y: 32})
+	p.labelEnergyRes.ColorScale.SetColor(styles.FontColor)
 	p.player.camera.UI.AddGraphics(p.labelEnergyRes)
 
 	p.labelGenerators = ge.NewLabel(assets.BitmapFont1)
@@ -82,6 +85,7 @@ func (p *resourcesPanel) Init(scene *ge.Scene) {
 	p.labelGenerators.Width = width - 4
 	p.labelGenerators.Height = 24
 	p.labelGenerators.Pos.Offset = p.bg.Pos.Offset.Add(gmath.Vec{X: 4, Y: 48})
+	p.labelGenerators.ColorScale.SetColor(styles.FontColor)
 	p.player.camera.UI.AddGraphics(p.labelGenerators)
 
 	p.setVisibility(false)

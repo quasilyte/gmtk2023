@@ -10,8 +10,10 @@ var (
 	HealthBarColor   = ge.RGB(0x26cd61)
 	ProgressBarColor = ge.RGB(0x8b95d6)
 
-	UnitPanelBgColor        = withAlpha(InterfaceBgColor, 150)
-	UnitPanelBgOutlineColor = withAlpha(HealthBarColor, 200)
+	FontColor = ge.RGB(0x8ae6a2)
+
+	UnitPanelBgColor        = withAlpha(ge.RGB(0x23252c), 255/2)
+	UnitPanelBgOutlineColor = ge.RGB(0x1f9941)
 
 	InterfaceBgColor = ge.RGB(0x1e3a27)
 )

@@ -38,6 +38,7 @@ func renderSimpleIcon(scene *ge.Scene, icon *ebiten.Image, img resource.ImageID,
 		l.AlignHorizontal = ge.AlignHorizontalCenter
 		l.AlignVertical = ge.AlignVerticalBottom
 		l.Pos.Offset = gmath.Vec{Y: 32}
+		l.ColorScale.SetColor(styles.FontColor)
 		l.Draw(icon)
 	}
 }
