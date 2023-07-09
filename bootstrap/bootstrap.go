@@ -27,6 +27,8 @@ func InitState(ctx *ge.Context, state *session.State) {
 		{assets.ImageTankBodyHunter, 3, 1, &gamedata.HunterBodyStats.Texture},
 		{assets.ImageTankBodyDestroyer, 3, 1, &gamedata.DestroyerBodyStats.Texture},
 		{assets.ImageTankBodyWheels, 3, 1, &gamedata.WheelsBodyStats.Texture},
+		{assets.ImageTankBodyNormal, 3, 1, &gamedata.NormalBodyStats.Texture},
+		{assets.ImageTankBodyCreepHeavy, 3, 1, &gamedata.CreepHeavyBodyStats.Texture},
 
 		{assets.ImageTankTurretScatterCannon, 2, 2, &gamedata.ScatterCannonStats.Texture},
 		{assets.ImageTankTurretLightCannon, 2, 2, &gamedata.LightCannonStats.Texture},

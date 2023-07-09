@@ -39,12 +39,14 @@ func registerImageResources(ctx *ge.Context) {
 		ImageTowerBodyBunker:      {Path: "image/building/tower_body_bunker.png"},
 		ImageTowerBodyCreepBunker: {Path: "image/building/tower_body_creep_bunker.png"},
 
-		ImageTankBodyMCV:       {Path: "image/tank/body_mcv.png"},
-		ImageTankBodyScout:     {Path: "image/tank/body_scout.png"},
-		ImageTankBodyFighter:   {Path: "image/tank/body_fighter.png"},
-		ImageTankBodyHunter:    {Path: "image/tank/body_hunter.png"},
-		ImageTankBodyDestroyer: {Path: "image/tank/body_destroyer.png"},
-		ImageTankBodyWheels:    {Path: "image/tank/body_wheels.png"},
+		ImageTankBodyMCV:        {Path: "image/tank/body_mcv.png"},
+		ImageTankBodyScout:      {Path: "image/tank/body_scout.png"},
+		ImageTankBodyFighter:    {Path: "image/tank/body_fighter.png"},
+		ImageTankBodyHunter:     {Path: "image/tank/body_hunter.png"},
+		ImageTankBodyDestroyer:  {Path: "image/tank/body_destroyer.png"},
+		ImageTankBodyWheels:     {Path: "image/tank/body_wheels.png"},
+		ImageTankBodyNormal:     {Path: "image/tank/body_normal.png"},
+		ImageTankBodyCreepHeavy: {Path: "image/tank/body_creep_heavy.png"},
 
 		ImageTankTurretScatterCannon: {Path: "image/tank/turret_scatter_cannon.png"},
 		ImageTankTurretLightCannon:   {Path: "image/tank/turret_light_cannon.png"},
@@ -119,6 +121,8 @@ const (
 	ImageTankBodyHunter
 	ImageTankBodyDestroyer
 	ImageTankBodyWheels
+	ImageTankBodyNormal
+	ImageTankBodyCreepHeavy
 
 	ImageTankTurretScatterCannon
 	ImageTankTurretLightCannon

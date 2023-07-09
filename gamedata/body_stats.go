@@ -40,6 +40,25 @@ var WheelsBodyStats = &BodyStats{
 	Speed:          140,
 }
 
+var NormalBodyStats = &BodyStats{
+	ProductionTime: 13,
+	TurretOffset:   -1,
+	Size:           unitSizeMedium,
+	HP:             30,
+	RotationSpeed:  1.5,
+	Speed:          85,
+}
+
+var CreepHeavyBodyStats = &BodyStats{
+	ProductionTime: 40,
+	TurretOffset:   -1,
+	Size:           unitSizeBig,
+	HP:             140,
+	RotationSpeed:  1.2,
+	Speed:          40,
+	Heavy:          true,
+}
+
 var MCVBodyStats = &BodyStats{
 	Size:          unitSizeBig,
 	HP:            250,
