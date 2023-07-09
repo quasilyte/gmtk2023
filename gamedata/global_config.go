@@ -14,4 +14,7 @@ const (
 	NumSegmentCells = 64
 
 	MaxGroupSize = 8
+
+	ConstructorEnergyCost = 60
+	CommanderEnergyCost   = 80
 )

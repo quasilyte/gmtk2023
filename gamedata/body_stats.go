@@ -94,7 +94,7 @@ var BunkerBodyStats = &BodyStats{
 }
 
 var CreepBunkerBodyStats = &BodyStats{
-	TurretOffset: -5,
+	TurretOffset: -1,
 	Size:         unitSizeBig,
 	HP:           100,
 	Image:        assets.ImageTowerBodyCreepBunker,

@@ -1,6 +1,8 @@
 package battle
 
 import (
+	"fmt"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/ge/input"
@@ -32,7 +34,8 @@ type humanPlayer struct {
 	inactiveTankSelectors []*tankSelector
 	activeTankSelectors   []*tankSelector
 
-	unitPanel *unitPanel
+	unitPanel      *unitPanel
+	resourcesPanel *resourcesPanel
 
 	// TODO: this is not the place to store icons.
 	iconConstructor *ebiten.Image
@@ -63,9 +66,9 @@ func (p *humanPlayer) Init() {
 	p.camera.Stage.AddSpriteSlightlyAbove(p.droneSelector)
 
 	p.iconConstructor = ebiten.NewImage(unitPanelIconWidth, unitPanelIconHeight)
-	renderSimpleIcon(p.world.scene, p.iconConstructor, assets.ImageDroneConstructor, "60 ♦")
+	renderSimpleIcon(p.world.scene, p.iconConstructor, assets.ImageDroneConstructor, fmt.Sprintf("%d ♦", gamedata.ConstructorEnergyCost))
 	p.iconCommander = ebiten.NewImage(unitPanelIconWidth, unitPanelIconHeight)
-	renderSimpleIcon(p.world.scene, p.iconCommander, assets.ImageDroneCommander, "80 ♦")
+	renderSimpleIcon(p.world.scene, p.iconCommander, assets.ImageDroneCommander, fmt.Sprintf("%d ♦", gamedata.CommanderEnergyCost))
 
 	p.selectedUnitPath = ge.NewLine(ge.Pos{}, ge.Pos{})
 	p.selectedUnitPath.SetColorScaleRGBA(0x4b, 0xc2, 0x75, 200)
@@ -85,6 +88,10 @@ func (p *humanPlayer) Init() {
 	p.renderIcons()
 	p.unitPanel = newUnitPanel(p.camera, p.input)
 	p.unitPanel.Init(p.world.scene)
+
+	p.resourcesPanel = newResourcesPanel(p)
+	p.resourcesPanel.Init(p.world.scene)
+	p.resourcesPanel.setVisibility(true)
 
 	p.world.EventUnitCreated.Connect(p, func(u *unit) {
 		if !u.IsGenerator() {
@@ -145,16 +152,23 @@ func (p *humanPlayer) maybeHarvest(delta float64) {
 
 	p.normalResource += 5
 
-	nextGeneratorYield := 1.0
-	generated := 0.0
+	// 0.7, 0.55, 0.40, 0.25, 0.10, 0.10, ...
+	nextGeneratorYield := 0.7
+	generated := 1.0
 	for i := 0; i < p.numGenerators; i++ {
 		if nextGeneratorYield <= gmath.Epsilon {
 			break
 		}
 		generated += nextGeneratorYield
-		nextGeneratorYield -= 0.15
+		nextGeneratorYield = gmath.ClampMin(nextGeneratorYield-0.15, 0.1)
 	}
 	p.energyResource += generated
+
+	p.resourcesPanel.Update(resourcesPanelUpdate{
+		numResources:  p.normalResource,
+		numEnergy:     p.energyResource,
+		numGenerators: p.numGenerators,
+	})
 }
 
 func (p *humanPlayer) executeDeconstructableAction(actionIndex int) bool {
@@ -229,6 +243,54 @@ func (p *humanPlayer) executeUnitAction(actionIndex int) bool {
 	if p.selectedUnit.IsSimpleDeconstructible() {
 		return p.executeDeconstructableAction(actionIndex)
 	}
+	if p.selectedUnit.IsMCV() {
+		return p.executeMCVAction(actionIndex)
+	}
+	return true
+}
+
+func (p *humanPlayer) executeMCVAction(actionIndex int) bool {
+	if !p.world.IsInnerPos(p.selectedUnit.pos) {
+		return false
+	}
+
+	var stats *gamedata.UnitStats
+
+	switch actionIndex {
+	case 0:
+		if p.energyResource < gamedata.ConstructorEnergyCost {
+			return false
+		}
+		p.energyResource -= gamedata.ConstructorEnergyCost
+		stats = gamedata.ConstructorUnitStats
+
+	case 1:
+		if p.energyResource < gamedata.CommanderEnergyCost {
+			return false
+		}
+		p.energyResource -= gamedata.CommanderEnergyCost
+		stats = gamedata.CommanderUnitStats
+
+	default:
+		return false
+	}
+
+	if stats == nil {
+		return false
+	}
+
+	spawnPos := p.selectedUnit.pos.Add(gmath.RandElem(p.world.Rand(), groupOffsets))
+	u := p.world.NewUnit(unitConfig{
+		Stats: stats,
+		Pos:   p.selectedUnit.pos,
+	})
+	p.world.runner.AddObject(u)
+	u.SendTo(spawnPos)
+
+	effect := newEffectNode(u.world, u.pos, false, assets.ImageConstructorMerge)
+	effect.rotates = true
+	u.world.runner.AddObject(effect)
+
 	return true
 }
 
