@@ -234,6 +234,7 @@ func (p *humanPlayer) handleInput() {
 					} else {
 						if len(p.selectedUnit.group) < gamedata.MaxGroupSize {
 							u.leader = p.selectedUnit
+							u.SendTo(p.selectedUnit.pos.Add(gmath.RandElem(p.world.Rand(), groupOffsets)))
 							p.activeTankSelectors = append(p.activeTankSelectors, p.createTankSelector(u))
 						}
 					}
