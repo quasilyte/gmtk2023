@@ -135,15 +135,21 @@ func (p *humanPlayer) executeConstructorAction(actionIndex int) bool {
 		newUnitExtra = p.designs.Towers[index]
 		time = p.designs.Towers[index].Turret.ProductionTime * 3
 	case 3:
-		if !p.world.IsInnerPos(p.selectedUnit.pos) {
+		if !p.world.IsInnerPos(pos) {
 			return false
 		}
 		stats = gamedata.RepairDepotUnitStats
 		time = stats.ConstructionTime
 	case 4, 5, 6, 7:
-		if !p.world.IsInnerPos(p.selectedUnit.pos) {
+		if !p.world.IsInnerPos(pos) {
 			return false
 		}
+		for _, offset := range factoryCheckOffsets {
+			if !p.world.pathgrid.CellIsFree(p.world.pathgrid.PosToCoord(pos.Add(offset))) {
+				return false
+			}
+		}
+
 		index := actionIndex - 4
 		stats = gamedata.TankFactoryUnitStats
 		extra := &tankFactoryExtra{tankDesign: p.designs.Tanks[index]}

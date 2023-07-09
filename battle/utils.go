@@ -14,6 +14,14 @@ var deconstructSpawnOffsets = []gmath.Vec{
 	{X: +12, Y: -12},
 }
 
+var factoryCheckOffsets = []gmath.Vec{
+	{X: +gamedata.CellSize},
+	{X: +gamedata.CellSize, Y: +gamedata.CellSize},
+	{Y: +gamedata.CellSize},
+	{X: -gamedata.CellSize, Y: +gamedata.CellSize},
+	{X: -gamedata.CellSize},
+}
+
 var deconstructWaypointOffsets = []gmath.Vec{
 	{},
 	{X: -gamedata.CellSize},
