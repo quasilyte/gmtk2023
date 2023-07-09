@@ -31,7 +31,7 @@ func main() {
 	playerDesigns.Tanks[0] = &gamedata.UnitStats{
 		Movement: gamedata.UnitMovementGround,
 		Body:     gamedata.ScoutBodyStats,
-		Turret:   gamedata.LightCannonStats,
+		Turret:   gamedata.HurricaneStats,
 	}
 	playerDesigns.Tanks[1] = &gamedata.UnitStats{
 		Movement: gamedata.UnitMovementGround,

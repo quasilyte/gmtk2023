@@ -88,10 +88,10 @@ func (r *Runner) Init(scene *ge.Scene) {
 	// 	Pos:   gmath.Vec{X: (40 * 6) - 20, Y: (40 * 10) - 20},
 	// 	Stats: gamedata.ConstructorUnitStats,
 	// }))
-	// r.AddObject(r.world.NewUnit(unitConfig{
-	// 	Pos:   gmath.Vec{X: (40 * 5) - 20, Y: (40 * 10) - 20},
-	// 	Stats: gamedata.ConstructorUnitStats,
-	// }))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 5) - 20, Y: (40 * 10) - 20},
+		Stats: gamedata.ConstructorUnitStats,
+	}))
 
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: 96, Y: 96},
