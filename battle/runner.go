@@ -93,14 +93,14 @@ func (r *Runner) Init(scene *ge.Scene) {
 	// 	Stats: gamedata.ConstructorUnitStats,
 	// }))
 
-	// r.AddObject(r.world.NewUnit(unitConfig{
-	// 	Pos:   gmath.Vec{X: 96, Y: 96},
-	// 	Stats: gamedata.CommanderUnitStats,
-	// }))
-	// r.AddObject(r.world.NewUnit(unitConfig{
-	// 	Pos:   gmath.Vec{X: 160, Y: 160},
-	// 	Stats: gamedata.CommanderUnitStats,
-	// }))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: 96, Y: 96},
+		Stats: gamedata.CommanderUnitStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: 160, Y: 160},
+		Stats: gamedata.CommanderUnitStats,
+	}))
 
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: (40 * 3) - 20, Y: (40 * 10) - 20},
@@ -112,15 +112,15 @@ func (r *Runner) Init(scene *ge.Scene) {
 	// 	Stats: gamedata.TankFactoryUnitStats,
 	// }))
 
-	// tankStats := &gamedata.UnitStats{
-	// 	Movement: gamedata.UnitMovementGround,
-	// 	Body:     gamedata.FighterBodyStats,
-	// 	Turret:   gamedata.LightCannonStats,
-	// }
-	// r.AddObject(r.world.NewUnit(unitConfig{
-	// 	Pos:   gmath.Vec{X: 240, Y: 240},
-	// 	Stats: tankStats,
-	// }))
+	tankStats := &gamedata.UnitStats{
+		Movement: gamedata.UnitMovementGround,
+		Body:     gamedata.FighterBodyStats,
+		Turret:   gamedata.HurricaneStats,
+	}
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: 240, Y: 240},
+		Stats: tankStats,
+	}))
 	// r.AddObject(r.world.NewUnit(unitConfig{
 	// 	Pos:   gmath.Vec{X: 300, Y: 300},
 	// 	Stats: tankStats,
@@ -194,6 +194,18 @@ func (r *Runner) Init(scene *ge.Scene) {
 	}))
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: (40 * 22) - 20, Y: (40 * 7) - 20},
+		Stats: enemyTankStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 23) - 20, Y: (40 * 5) - 20},
+		Stats: enemyTankStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 23) - 20, Y: (40 * 6) - 20},
+		Stats: enemyTankStats,
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 23) - 20, Y: (40 * 7) - 20},
 		Stats: enemyTankStats,
 	}))
 

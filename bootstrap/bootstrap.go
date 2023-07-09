@@ -30,6 +30,7 @@ func InitState(ctx *ge.Context, state *session.State) {
 
 		{assets.ImageTankTurretScatterCannon, 2, 2, &gamedata.ScatterCannonStats.Texture},
 		{assets.ImageTankTurretLightCannon, 2, 2, &gamedata.LightCannonStats.Texture},
+		{assets.ImageTankTurretHurricane, 2, 2, &gamedata.HurricaneStats.Texture},
 		{assets.ImageTankTurretGatling, 2, 2, &gamedata.GatlingStats.Texture},
 	}
 

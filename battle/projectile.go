@@ -108,7 +108,9 @@ func (p *projectile) playFireSound() {
 
 func (p *projectile) initPos() {
 	p.pos = p.attacker.pos.Add(p.weapon.FireOffset)
-	p.pos = p.pos.MoveInDirection(20, p.attacker.turret.rotation)
+	if p.weapon.ArcPower == 0 {
+		p.pos = p.pos.MoveInDirection(20, p.attacker.turret.rotation)
+	}
 }
 
 func (p *projectile) Update(delta float64) {

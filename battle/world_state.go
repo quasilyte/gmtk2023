@@ -87,7 +87,7 @@ func (w *worldState) walkNearbyTargetsInSlice(target *unit, num int, slice []*un
 	if num == 0 {
 		return 0
 	}
-	const nearbyDistSqr = 1.25 * (gamedata.CellSize * gamedata.CellSize)
+	const nearbyDistSqr = 1.4 * (gamedata.CellSize * gamedata.CellSize)
 	randIterate(w.Rand(), slice, func(u *unit) bool {
 		if u == target {
 			return false

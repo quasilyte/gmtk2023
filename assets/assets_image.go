@@ -36,6 +36,7 @@ func registerImageResources(ctx *ge.Context) {
 
 		ImageTankTurretScatterCannon: {Path: "image/tank/turret_scatter_cannon.png"},
 		ImageTankTurretLightCannon:   {Path: "image/tank/turret_light_cannon.png"},
+		ImageTankTurretHurricane:     {Path: "image/tank/turret_hurricane.png"},
 		ImageTankTurretGatling:       {Path: "image/tank/turret_gatling.png"},
 
 		ImageDroneConstructor: {Path: "image/drone/constructor.png"},
@@ -47,8 +48,9 @@ func registerImageResources(ctx *ge.Context) {
 		ImageHeavyTankFactory: {Path: "image/building/heavy_tank_factory.png", FrameWidth: 52},
 		ImageCreepTankFactory: {Path: "image/building/creep_tank_factory.png", FrameWidth: 52},
 
-		ImageProjectileLightCannon: {Path: "image/projectile/projectile_light_cannon.png"},
-		ImageProjectileGatling:     {Path: "image/projectile/projectile_gatling.png"},
+		ImageProjectileSmallMissile: {Path: "image/projectile/projectile_small_missile.png"},
+		ImageProjectileLightCannon:  {Path: "image/projectile/projectile_light_cannon.png"},
+		ImageProjectileGatling:      {Path: "image/projectile/projectile_gatling.png"},
 
 		ImageConstructorMerge:     {Path: "image/effect/constructor_merge.png", FrameWidth: 50},
 		ImageSmallExplosion:       {Path: "image/effect/small_explosion.png", FrameWidth: 32},
@@ -93,6 +95,7 @@ const (
 
 	ImageTankTurretScatterCannon
 	ImageTankTurretLightCannon
+	ImageTankTurretHurricane
 	ImageTankTurretGatling
 
 	ImageDroneConstructor
@@ -104,6 +107,7 @@ const (
 	ImageHeavyTankFactory
 	ImageCreepTankFactory
 
+	ImageProjectileSmallMissile
 	ImageProjectileLightCannon
 	ImageProjectileGatling
 

@@ -97,6 +97,25 @@ var LightCannonStats = FinalizeTurretStats(&TurretStats{
 	Damage:              DamageValue{Health: 6},
 })
 
+var HurricaneStats = FinalizeTurretStats(&TurretStats{
+	ProductionTime:      20,
+	AttackSound:         assets.AudioShotHurricane1,
+	HP:                  0,
+	RotationSpeed:       2.0,
+	Range:               15 * CellSize,
+	Accuracy:            0.65,
+	MaxAngleDelta:       0.15,
+	ImpactArea:          14,
+	ProjectileImage:     assets.ImageProjectileSmallMissile,
+	ProjectileExplosion: ExplosionNormal,
+	ProjectileSpeed:     240,
+	Reload:              4.25,
+	MaxTargets:          5,
+	BurstSize:           1,
+	ArcPower:            2.5,
+	Damage:              DamageValue{Health: 6},
+})
+
 var GatlingStats = FinalizeTurretStats(&TurretStats{
 	ProductionTime:  5,
 	AttackSound:     assets.AudioShotGatling,
