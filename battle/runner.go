@@ -64,6 +64,10 @@ func (r *Runner) Init(scene *ge.Scene) {
 	r.players = append(r.players, p)
 	p.Init()
 
+	cp := newComputerPlayer(r.world)
+	r.players = append(r.players, cp)
+	cp.Init()
+
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: (40 * 4) - 20, Y: (40 * 9) - 20},
 		Stats: gamedata.ConstructorUnitStats,
@@ -184,7 +188,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 
 	enemyBunkerStats := &gamedata.UnitStats{
 		Movement: gamedata.UnitMovementNone,
-		Body:     gamedata.BunkerBodyStats,
+		Body:     gamedata.CreepBunkerBodyStats,
 		Turret:   gamedata.LightCannonStats,
 		Creep:    true,
 	}
@@ -204,11 +208,20 @@ func (r *Runner) Init(scene *ge.Scene) {
 	creepFactory1 := r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: (40 * 28) - 20, Y: (40 * 10) - 20},
 		Stats: gamedata.CreepTankFactoryUnitStats,
+		Extra: &tankFactoryExtra{
+			tankDesign: enemyTankStats,
+		},
 	})
-	creepFactory1.extra = &tankFactoryExtra{
-		tankDesign: enemyTankStats,
-	}
 	r.AddObject(creepFactory1)
+
+	creepFactory2 := r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 30) - 20, Y: (40 * 9) - 20},
+		Stats: gamedata.CreepTankFactoryUnitStats,
+		Extra: &tankFactoryExtra{
+			tankDesign: enemyTankStats,
+		},
+	})
+	r.AddObject(creepFactory2)
 }
 
 func (r *Runner) Update(delta float64) {

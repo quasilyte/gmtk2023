@@ -39,6 +39,18 @@ var groupOffsets = []gmath.Vec{
 	{X: -gamedata.CellSize},
 }
 
+func sendGroupTo(world *worldState, pos gmath.Vec, g []*unit) {
+	alignedPos := world.pathgrid.AlignPos(pos)
+	var slider gmath.Slider
+	slider.SetBounds(0, len(groupOffsets)-1)
+	slider.TrySetValue(world.Scene().Rand().IntRange(0, len(groupOffsets)-1))
+	for _, gu := range g {
+		offset := groupOffsets[slider.Value()]
+		slider.Inc()
+		gu.SendTo(alignedPos.Add(offset))
+	}
+}
+
 func posMove(pos gmath.Vec, d pathing.Direction) gmath.Vec {
 	switch d {
 	case pathing.DirRight:

@@ -34,8 +34,9 @@ type unit struct {
 
 	turret *turret
 
-	leader *unit
-	group  []*unit
+	factory *unit
+	leader  *unit
+	group   []*unit
 
 	extra any
 
@@ -48,6 +49,7 @@ type unit struct {
 	EventDestroyed          gsignal.Event[*unit]
 	EventConstructorEntered gsignal.Event[*unit]
 	EventReselectRequest    gsignal.Event[*unit]
+	EventAttacked           gsignal.Event[*unit]
 	EventProductionProgress gsignal.Event[float64]
 }
 
@@ -91,6 +93,8 @@ type unitConfig struct {
 	Stats    *gamedata.UnitStats
 	Pos      gmath.Vec
 	Rotation gmath.Rad
+	Factory  *unit
+	Extra    any
 }
 
 func newUnit(world *worldState, config unitConfig) *unit {
@@ -100,6 +104,8 @@ func newUnit(world *worldState, config unitConfig) *unit {
 		pos:        config.Pos,
 		rotation:   config.Rotation,
 		frameWidth: config.Stats.Body.Texture.DefaultFrameWidth,
+		factory:    config.Factory,
+		extra:      config.Extra,
 	}
 	u.maxHP = config.Stats.Body.HP
 	if u.stats.Turret != nil {
@@ -116,6 +122,10 @@ func (u *unit) IsDisposed() bool {
 func (u *unit) IsCommander() bool { return u.stats == gamedata.CommanderUnitStats }
 
 func (u *unit) IsConstructor() bool { return u.stats == gamedata.ConstructorUnitStats }
+
+func (u *unit) IsGenerator() bool { return u.stats == gamedata.GeneratorUnitStats }
+
+func (u *unit) IsRepairDepot() bool { return u.stats == gamedata.RepairDepotUnitStats }
 
 func (u *unit) IsTankFactory() bool {
 	_, ok := u.extra.(*tankFactoryExtra)
@@ -326,6 +336,7 @@ func (u *unit) updateTankFactory(delta float64, extra *tankFactoryExtra) {
 		Stats:    extra.tankDesign,
 		Pos:      u.pos,
 		Rotation: math.Pi / 2,
+		Factory:  u,
 	})
 	newUnit.SendTo(u.pos.Add(gmath.Vec{Y: gamedata.CellSize}))
 	newUnit.extra = &freshUnitExtra{
@@ -363,9 +374,9 @@ func (u *unit) updateConstructionSite(delta float64, extra *constructionSiteExtr
 		building := u.world.NewUnit(unitConfig{
 			Stats: stats,
 			Pos:   u.pos,
+			Extra: extra.newUnitExtra,
 		})
 		building.hp = building.maxHP * totalPercentage
-		building.extra = extra.newUnitExtra
 		building.group = u.group
 		u.world.runner.AddObject(building)
 		u.EventReselectRequest.Emit(building)
@@ -389,6 +400,10 @@ func (u *unit) OnDamage(d gamedata.DamageValue, attacker *unit) {
 
 	if u.turret != nil {
 		u.turret.OnAttacked(attacker)
+	}
+
+	if !u.EventAttacked.IsEmpty() {
+		u.EventAttacked.Emit(attacker)
 	}
 }
 
@@ -458,16 +473,7 @@ func (u *unit) sendConstructorTo(pos gmath.Vec) {
 
 func (u *unit) sendCommanderTo(pos gmath.Vec) {
 	u.waypoint = u.world.pathgrid.AlignPos(pos)
-
-	alignedPos := u.world.pathgrid.AlignPos(pos)
-	var slider gmath.Slider
-	slider.SetBounds(0, len(groupOffsets)-1)
-	slider.TrySetValue(u.world.Scene().Rand().IntRange(0, len(groupOffsets)-1))
-	for _, gu := range u.group {
-		offset := groupOffsets[slider.Value()]
-		slider.Inc()
-		gu.SendTo(alignedPos.Add(offset))
-	}
+	sendGroupTo(u.world, pos, u.group)
 }
 
 func (u *unit) calcSpeed() float64 {

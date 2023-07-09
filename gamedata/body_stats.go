@@ -84,3 +84,10 @@ var BunkerBodyStats = &BodyStats{
 	HP:           100,
 	Image:        assets.ImageTowerBodyBunker,
 }
+
+var CreepBunkerBodyStats = &BodyStats{
+	TurretOffset: -5,
+	Size:         unitSizeBig,
+	HP:           100,
+	Image:        assets.ImageTowerBodyCreepBunker,
+}

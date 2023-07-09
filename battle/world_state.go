@@ -10,6 +10,7 @@ import (
 	"github.com/quasilyte/gmtk2023/gamedata"
 	"github.com/quasilyte/gmtk2023/pathing"
 	"github.com/quasilyte/gmtk2023/viewport"
+	"github.com/quasilyte/gsignal"
 )
 
 type worldState struct {
@@ -30,6 +31,8 @@ type worldState struct {
 	gridCounters map[int]uint8
 	pathgrid     *pathing.Grid
 	bfs          *pathing.GreedyBFS
+
+	EventUnitCreated gsignal.Event[*unit]
 }
 
 type playerUnits struct {
@@ -270,6 +273,7 @@ func (w *worldState) NewUnit(config unitConfig) *unit {
 	u.EventDestroyed.Connect(nil, func(u *unit) {
 		*slice = xslices.Remove(*slice, u)
 	})
+	w.EventUnitCreated.Emit(u)
 	return u
 }
 
