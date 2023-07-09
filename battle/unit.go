@@ -215,7 +215,7 @@ func (u *unit) Init(scene *ge.Scene) {
 		u.sprite.Shader = scene.NewShader(assets.ShaderConstructionLarge)
 		u.sprite.Shader.SetFloatValue("Time", 0.05)
 	case *tankFactoryExtra:
-		extra.goalProgress = extra.tankDesign.Body.ProductionTime + extra.tankDesign.Turret.ProductionTime
+		extra.goalProgress = 3 + extra.tankDesign.Body.ProductionTime + extra.tankDesign.Turret.ProductionTime
 	}
 
 	if u.stats.Turret != nil {

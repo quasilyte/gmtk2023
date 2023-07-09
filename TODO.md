@@ -2,10 +2,10 @@ Bodies.
 
 | Name      | HP  | Cost | Time | Speed |
 |-----------|-----|------|------|-------|
-| Scout     | 20  | 3    | 3    | 100   |
-| Fighter   | 35  | 6    | 5    | 80    |
-| Hunter    | 40  | 10   | 12   | 110   |
-| Destroyer | 120 | 12   | 20   | 50    |
+| Scout     | 20  | 3    | 5    | 100   |
+| Fighter   | 35  | 6    | 10   | 80    |
+| Hunter    | 40  | 10   | 14   | 110   |
+| Destroyer | 120 | 12   | 30   | 50    |
 
 Comments:
 

@@ -41,7 +41,7 @@ var WheelsBodyStats = &BodyStats{
 }
 
 var ScoutBodyStats = &BodyStats{
-	ProductionTime: 3,
+	ProductionTime: 5,
 	TurretOffset:   -1,
 	Size:           unitSizeSmall,
 	HP:             20,
@@ -50,7 +50,7 @@ var ScoutBodyStats = &BodyStats{
 }
 
 var FighterBodyStats = &BodyStats{
-	ProductionTime: 5,
+	ProductionTime: 10,
 	TurretOffset:   -1,
 	Size:           unitSizeMedium,
 	HP:             35,
@@ -59,7 +59,7 @@ var FighterBodyStats = &BodyStats{
 }
 
 var HunterBodyStats = &BodyStats{
-	ProductionTime: 12,
+	ProductionTime: 14,
 	TurretOffset:   -1,
 	Size:           unitSizeBig,
 	HP:             40,
@@ -69,7 +69,7 @@ var HunterBodyStats = &BodyStats{
 }
 
 var DestroyerBodyStats = &BodyStats{
-	ProductionTime: 20,
+	ProductionTime: 30,
 	TurretOffset:   -1,
 	Size:           unitSizeBig,
 	HP:             120,

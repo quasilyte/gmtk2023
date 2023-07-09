@@ -140,11 +140,12 @@ func (p *humanPlayer) executeConstructorAction(actionIndex int) bool {
 	case 4, 5, 6, 7:
 		index := actionIndex - 4
 		stats = gamedata.TankFactoryUnitStats
-		newUnitExtra = &tankFactoryExtra{tankDesign: p.designs.Tanks[index]}
+		extra := &tankFactoryExtra{tankDesign: p.designs.Tanks[index]}
+		newUnitExtra = extra
+		if stats == gamedata.TankFactoryUnitStats && extra.tankDesign.Body.Heavy {
+			stats = gamedata.HeavyTankFactoryUnitStats
+		}
 		time = stats.ConstructionTime
-	}
-	if stats == gamedata.TankFactoryUnitStats && newUnitExtra.(*tankFactoryExtra).tankDesign.Body.Heavy {
-		stats = gamedata.HeavyTankFactoryUnitStats
 	}
 	p.selectedUnit.extra = &constructionOrder{
 		siteStats: stats,
