@@ -51,6 +51,10 @@ type unit struct {
 	EventProductionProgress gsignal.Event[float64]
 }
 
+type freshUnitExtra struct {
+	nextWaypoint gmath.Vec
+}
+
 type tankFactoryExtra struct {
 	tankDesign *gamedata.UnitStats
 
@@ -308,6 +312,7 @@ func (u *unit) updateTankFactory(delta float64, extra *tankFactoryExtra) {
 		return
 	}
 	// Tank ready!
+	u.EventProductionProgress.Emit(0)
 	extra.progress = 0
 	extra.percentage = 0
 	newUnit := u.world.NewUnit(unitConfig{
@@ -316,6 +321,9 @@ func (u *unit) updateTankFactory(delta float64, extra *tankFactoryExtra) {
 		Rotation: math.Pi / 2,
 	})
 	newUnit.SendTo(u.pos.Add(gmath.Vec{Y: gamedata.CellSize}))
+	newUnit.extra = &freshUnitExtra{
+		nextWaypoint: u.pos.Add(gmath.RandElem(u.world.Rand(), groupOffsets)),
+	}
 	u.world.runner.AddObject(newUnit)
 	extra.releasingUnitTime = 3.5
 	u.sprite.FrameOffset.X = u.sprite.FrameWidth
@@ -525,6 +533,11 @@ func (u *unit) moveGroundUnitToWaypoint(delta float64) {
 func (u *unit) groundUnitStop() {
 	u.waypoint = gmath.Vec{}
 	u.needRotate = false
+
+	if extra, ok := u.extra.(*freshUnitExtra); ok {
+		u.SendTo(extra.nextWaypoint)
+		u.extra = nil
+	}
 }
 
 func (u *unit) moveToWaypoint(delta float64) {
