@@ -40,7 +40,8 @@ func (sel *tankSelector) GetUnit() *unit { return sel.hp.unit }
 func (sel *tankSelector) SetUnit(u *unit) {
 	sel.hp.SetTarget(u)
 
-	isTank := u != nil && u.stats.Movement == gamedata.UnitMovementGround
+	isTank := u != nil && u.stats.Movement == gamedata.UnitMovementGround &&
+		u.stats != gamedata.MCVUnitStats
 	sel.sprite.Visible = isTank
 	if isTank {
 		sel.sprite.Pos.Base = &u.spritePos
