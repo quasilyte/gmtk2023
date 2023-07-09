@@ -14,8 +14,8 @@ import (
 func main() {
 	ctx := ge.NewContext(ge.ContextConfig{})
 	ctx.Rand.SetSeed(time.Now().Unix())
-	ctx.GameName = "quasilte_gmtk2023"
-	ctx.WindowTitle = "GMTK2023"
+	ctx.GameName = "assemblox"
+	ctx.WindowTitle = "Assemblox"
 	ctx.WindowWidth = 1920 / 2
 	ctx.WindowHeight = 1080 / 2
 	ctx.FullScreen = true
