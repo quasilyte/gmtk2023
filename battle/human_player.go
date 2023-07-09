@@ -60,7 +60,7 @@ func (p *humanPlayer) Init() {
 	p.camera.Stage.AddSpriteSlightlyAbove(p.droneSelector)
 
 	p.normalResource = 100
-	p.energyResource = 140
+	p.energyResource = 160
 
 	p.selectedUnitPath = ge.NewLine(ge.Pos{}, ge.Pos{})
 	p.selectedUnitPath.SetColorScaleRGBA(0x4b, 0xc2, 0x75, 200)
