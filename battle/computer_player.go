@@ -173,6 +173,8 @@ func (p *computerPlayer) maybeDoAttack() float64 {
 			switch {
 			case u.IsTankFactory():
 				kindScore = 20.0
+			case u.IsMCV():
+				kindScore = 18.0
 			case u.IsGenerator():
 				kindScore = 16.0
 			case u.IsRepairDepot():
