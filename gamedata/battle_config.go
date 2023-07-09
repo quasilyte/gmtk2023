@@ -26,6 +26,9 @@ type PlayerDesigns struct {
 	// [6] factory 3
 	// [7] factory 4
 	Icons []*ebiten.Image
+
+	IconConstructor *ebiten.Image
+	IconCommander   *ebiten.Image
 }
 
 func NewPlayerDesigns() *PlayerDesigns {

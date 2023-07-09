@@ -5,7 +5,6 @@ import (
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gmtk2023/assets"
 	"github.com/quasilyte/gmtk2023/battle"
-	"github.com/quasilyte/gmtk2023/bootstrap"
 	"github.com/quasilyte/gmtk2023/gamedata"
 	"github.com/quasilyte/gmtk2023/session"
 	"github.com/quasilyte/gmtk2023/viewport"
@@ -32,9 +31,6 @@ func NewBattleController(state *session.State, config *gamedata.BattleConfig) *B
 
 func (c *BattleController) Init(scene *ge.Scene) {
 	c.scene = scene
-
-	// TODO: this should be done in a scene before battle scene.
-	bootstrap.InitState(scene.Context(), c.state)
 
 	worldRect := gmath.Rect{
 		Max: gmath.Vec{

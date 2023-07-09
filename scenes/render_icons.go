@@ -1,4 +1,4 @@
-package battle
+package scenes
 
 import (
 	"image"

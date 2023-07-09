@@ -7,7 +7,6 @@ import (
 	"github.com/quasilyte/gmtk2023/assets"
 	"github.com/quasilyte/gmtk2023/controls"
 	"github.com/quasilyte/gmtk2023/eui"
-	"github.com/quasilyte/gmtk2023/gamedata"
 	"github.com/quasilyte/gmtk2023/scenes"
 	"github.com/quasilyte/gmtk2023/session"
 )
@@ -24,52 +23,11 @@ func main() {
 	ctx.Loader.OpenAssetFunc = assets.MakeOpenAssetFunc(ctx)
 	assets.RegisterResources(ctx)
 
-	state := session.NewState()
-	state.UIResources = eui.PrepareResources(ctx.Loader)
-
 	playerInput := controls.MakeHandler(ctx)
 
-	playerDesigns := gamedata.NewPlayerDesigns()
-	playerDesigns.Tanks[0] = &gamedata.UnitStats{
-		Movement: gamedata.UnitMovementGround,
-		Body:     gamedata.ScoutBodyStats,
-		Turret:   gamedata.HurricaneStats,
-	}
-	playerDesigns.Tanks[1] = &gamedata.UnitStats{
-		Movement: gamedata.UnitMovementGround,
-		Body:     gamedata.FighterBodyStats,
-		Turret:   gamedata.LightCannonStats,
-	}
-	playerDesigns.Tanks[2] = &gamedata.UnitStats{
-		Movement: gamedata.UnitMovementGround,
-		Body:     gamedata.HunterBodyStats,
-		Turret:   gamedata.ScatterCannonStats,
-	}
-	playerDesigns.Tanks[3] = &gamedata.UnitStats{
-		Movement: gamedata.UnitMovementGround,
-		Body:     gamedata.DestroyerBodyStats,
-		Turret:   gamedata.AssaultLaserStats,
-	}
-
-	playerDesigns.Towers[0] = &gamedata.UnitStats{
-		Movement:   gamedata.UnitMovementNone,
-		Body:       gamedata.BunkerBodyStats,
-		Turret:     gamedata.GatlingStats,
-		Selectable: true,
-	}
-	playerDesigns.Towers[1] = &gamedata.UnitStats{
-		Movement:   gamedata.UnitMovementNone,
-		Body:       gamedata.BunkerBodyStats,
-		Turret:     gamedata.LightCannonStats,
-		Selectable: true,
-	}
-
-	config := &gamedata.BattleConfig{
-		PlayerInput:   playerInput,
-		GameSpeed:     1,
-		PlayerDesigns: playerDesigns,
-	}
-	_ = config
+	state := session.NewState()
+	state.UIResources = eui.PrepareResources(ctx.Loader)
+	state.Input = playerInput
 
 	if err := ge.RunGame(ctx, scenes.NewMainMenuController(state)); err != nil {
 		panic(err)
