@@ -241,6 +241,7 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 	if p.selectedUnit != nil {
 		p.selectedUnit.EventDestroyed.Disconnect(p)
 		p.selectedUnit.EventConstructorEntered.Disconnect(p)
+		p.selectedUnit.EventReselectRequest.Disconnect(p)
 		p.unitPanel.SetButtons(nil)
 	}
 
@@ -287,6 +288,9 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 			if p.selectedUnit == u {
 				p.setSelectedUnit(nil)
 			}
+		})
+		p.selectedUnit.EventReselectRequest.Connect(p, func(u *unit) {
+			p.setSelectedUnit(u)
 		})
 		if p.selectedUnit.IsConstructionSite() {
 			p.selectedUnit.EventConstructorEntered.Connect(p, func(u *unit) {

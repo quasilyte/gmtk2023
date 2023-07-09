@@ -47,6 +47,7 @@ type unit struct {
 
 	EventDestroyed          gsignal.Event[*unit]
 	EventConstructorEntered gsignal.Event[*unit]
+	EventReselectRequest    gsignal.Event[*unit]
 }
 
 type tankFactoryExtra struct {
@@ -290,6 +291,7 @@ func (u *unit) updateConstructionSite(delta float64) {
 		u.world.runner.AddObject(building)
 		building.group = u.group
 		building.extra = extra.newUnitExtra
+		u.EventReselectRequest.Emit(building)
 		u.Dispose()
 		return
 	}
@@ -490,6 +492,7 @@ func (u *unit) moveToWaypoint(delta float64) {
 				})
 				site.hp = (u.hp / u.maxHP) * site.maxHP
 				site.extra = extra.siteExtra
+				u.EventReselectRequest.Emit(site)
 				site.AddConstructorToSite(u)
 				u.world.runner.AddObject(site)
 			}
