@@ -40,8 +40,9 @@ type unit struct {
 
 	extra any
 
-	hp    float64
-	maxHP float64
+	hp        float64
+	maxHP     float64
+	realSpeed float64
 
 	needRotate bool
 	disposed   bool
@@ -108,7 +109,9 @@ func newUnit(world *worldState, config unitConfig) *unit {
 		extra:      config.Extra,
 	}
 	u.maxHP = config.Stats.Body.HP
+	u.realSpeed = config.Stats.Body.Speed
 	if u.stats.Turret != nil {
+		u.realSpeed *= config.Stats.Turret.BodySpeedMultiplier
 		u.maxHP += config.Stats.Turret.HP
 	}
 	u.hp = u.maxHP
@@ -481,7 +484,7 @@ func (u *unit) sendCommanderTo(pos gmath.Vec) {
 }
 
 func (u *unit) calcSpeed() float64 {
-	return u.stats.Body.Speed
+	return u.realSpeed
 }
 
 func (u *unit) setGroundUnitWaypoint(pos gmath.Vec) {

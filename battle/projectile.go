@@ -174,6 +174,8 @@ func (p *projectile) createExplosion() {
 		explosion := newEffectNode(p.world, explosionPos, above, assets.ImageSmallExplosion)
 		p.world.runner.AddObject(explosion)
 		playExplosionSound(p.world, explosionPos)
+	case gamedata.ExplosionAssaultLaser:
+		p.world.runner.AddObject(newEffectNode(p.world, explosionPos, above, assets.ImageAssaultLaserExplosion))
 	}
 }
 

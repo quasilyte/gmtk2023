@@ -11,6 +11,7 @@ type ProjectileExplosionKind int
 const (
 	ExplosionNone ProjectileExplosionKind = iota
 	ExplosionNormal
+	ExplosionAssaultLaser
 )
 
 type TurretStats struct {
@@ -38,6 +39,8 @@ type TurretStats struct {
 	HP float64
 
 	RotationSpeed gmath.Rad
+
+	BodySpeedMultiplier float64
 
 	Range         float64
 	RangeSqr      float64
@@ -77,6 +80,7 @@ var ScatterCannonStats = FinalizeTurretStats(&TurretStats{
 	MaxTargets:          4,
 	BurstSize:           1,
 	Damage:              DamageValue{Health: 4},
+	BodySpeedMultiplier: 0.6,
 })
 
 var LightCannonStats = FinalizeTurretStats(&TurretStats{
@@ -95,6 +99,26 @@ var LightCannonStats = FinalizeTurretStats(&TurretStats{
 	MaxTargets:          1,
 	BurstSize:           1,
 	Damage:              DamageValue{Health: 6},
+	BodySpeedMultiplier: 0.7,
+})
+
+var AssaultLaserStats = FinalizeTurretStats(&TurretStats{
+	ProductionTime:      12,
+	AttackSound:         assets.AudioShotAssaultLaser1,
+	HP:                  10,
+	RotationSpeed:       2.0,
+	Range:               7 * CellSize,
+	Accuracy:            0.8,
+	MaxAngleDelta:       0.05,
+	ImpactArea:          8,
+	ProjectileImage:     assets.ImageProjectileAssaultLaser,
+	ProjectileExplosion: ExplosionAssaultLaser,
+	ProjectileSpeed:     350,
+	Reload:              0.5,
+	MaxTargets:          1,
+	BurstSize:           1,
+	Damage:              DamageValue{Health: 3},
+	BodySpeedMultiplier: 1.0,
 })
 
 var HurricaneStats = FinalizeTurretStats(&TurretStats{
@@ -114,22 +138,24 @@ var HurricaneStats = FinalizeTurretStats(&TurretStats{
 	BurstSize:           1,
 	ArcPower:            2.5,
 	Damage:              DamageValue{Health: 6},
+	BodySpeedMultiplier: 0.8,
 })
 
 var GatlingStats = FinalizeTurretStats(&TurretStats{
-	ProductionTime:  5,
-	AttackSound:     assets.AudioShotGatling,
-	HP:              10,
-	RotationSpeed:   1.2,
-	Range:           7 * CellSize,
-	Accuracy:        0.5,
-	MaxAngleDelta:   0.1,
-	ImpactArea:      4,
-	ProjectileImage: assets.ImageProjectileGatling,
-	ProjectileSpeed: 400,
-	Reload:          2.0,
-	MaxTargets:      1,
-	BurstSize:       3,
-	BurstDelay:      0.1,
-	Damage:          DamageValue{Health: 1},
+	ProductionTime:      5,
+	AttackSound:         assets.AudioShotGatling,
+	HP:                  10,
+	RotationSpeed:       1.2,
+	Range:               7 * CellSize,
+	Accuracy:            0.5,
+	MaxAngleDelta:       0.1,
+	ImpactArea:          4,
+	ProjectileImage:     assets.ImageProjectileGatling,
+	ProjectileSpeed:     400,
+	Reload:              2.0,
+	MaxTargets:          1,
+	BurstSize:           3,
+	BurstDelay:          0.1,
+	Damage:              DamageValue{Health: 1},
+	BodySpeedMultiplier: 1.0,
 })

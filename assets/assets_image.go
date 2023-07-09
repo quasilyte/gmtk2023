@@ -36,6 +36,7 @@ func registerImageResources(ctx *ge.Context) {
 
 		ImageTankTurretScatterCannon: {Path: "image/tank/turret_scatter_cannon.png"},
 		ImageTankTurretLightCannon:   {Path: "image/tank/turret_light_cannon.png"},
+		ImageTankTurretAssaultLaser:  {Path: "image/tank/turret_assault_laser.png"},
 		ImageTankTurretHurricane:     {Path: "image/tank/turret_hurricane.png"},
 		ImageTankTurretGatling:       {Path: "image/tank/turret_gatling.png"},
 
@@ -48,15 +49,17 @@ func registerImageResources(ctx *ge.Context) {
 		ImageHeavyTankFactory: {Path: "image/building/heavy_tank_factory.png", FrameWidth: 52},
 		ImageCreepTankFactory: {Path: "image/building/creep_tank_factory.png", FrameWidth: 52},
 
+		ImageProjectileAssaultLaser: {Path: "image/projectile/projectile_assault_laser.png"},
 		ImageProjectileSmallMissile: {Path: "image/projectile/projectile_small_missile.png"},
 		ImageProjectileLightCannon:  {Path: "image/projectile/projectile_light_cannon.png"},
 		ImageProjectileGatling:      {Path: "image/projectile/projectile_gatling.png"},
 
-		ImageConstructorMerge:     {Path: "image/effect/constructor_merge.png", FrameWidth: 50},
-		ImageSmallExplosion:       {Path: "image/effect/small_explosion.png", FrameWidth: 32},
-		ImageBigExplosion:         {Path: "image/effect/big_explosion.png", FrameWidth: 64},
-		ImageVerticalExplosion:    {Path: "image/effect/vertical_explosion.png", FrameWidth: 50},
-		ImageBigVerticalExplosion: {Path: "image/effect/big_vertical_explosion.png", FrameWidth: 38},
+		ImageConstructorMerge:      {Path: "image/effect/constructor_merge.png", FrameWidth: 50},
+		ImageAssaultLaserExplosion: {Path: "image/effect/assault_laser_explosion.png", FrameWidth: 10},
+		ImageSmallExplosion:        {Path: "image/effect/small_explosion.png", FrameWidth: 32},
+		ImageBigExplosion:          {Path: "image/effect/big_explosion.png", FrameWidth: 64},
+		ImageVerticalExplosion:     {Path: "image/effect/vertical_explosion.png", FrameWidth: 50},
+		ImageBigVerticalExplosion:  {Path: "image/effect/big_vertical_explosion.png", FrameWidth: 38},
 	}
 
 	for id, res := range imageResources {
@@ -95,6 +98,7 @@ const (
 
 	ImageTankTurretScatterCannon
 	ImageTankTurretLightCannon
+	ImageTankTurretAssaultLaser
 	ImageTankTurretHurricane
 	ImageTankTurretGatling
 
@@ -107,11 +111,13 @@ const (
 	ImageHeavyTankFactory
 	ImageCreepTankFactory
 
+	ImageProjectileAssaultLaser
 	ImageProjectileSmallMissile
 	ImageProjectileLightCannon
 	ImageProjectileGatling
 
 	ImageConstructorMerge
+	ImageAssaultLaserExplosion
 	ImageSmallExplosion
 	ImageBigExplosion
 	ImageVerticalExplosion

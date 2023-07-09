@@ -115,7 +115,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 	tankStats := &gamedata.UnitStats{
 		Movement: gamedata.UnitMovementGround,
 		Body:     gamedata.FighterBodyStats,
-		Turret:   gamedata.HurricaneStats,
+		Turret:   gamedata.ScatterCannonStats,
 	}
 	r.AddObject(r.world.NewUnit(unitConfig{
 		Pos:   gmath.Vec{X: 240, Y: 240},

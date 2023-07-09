@@ -46,7 +46,7 @@ func main() {
 	playerDesigns.Tanks[3] = &gamedata.UnitStats{
 		Movement: gamedata.UnitMovementGround,
 		Body:     gamedata.DestroyerBodyStats,
-		Turret:   gamedata.ScatterCannonStats,
+		Turret:   gamedata.AssaultLaserStats,
 	}
 
 	playerDesigns.Towers[0] = &gamedata.UnitStats{

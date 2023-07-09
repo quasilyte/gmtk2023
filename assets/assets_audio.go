@@ -26,13 +26,15 @@ func registerAudioResources(ctx *ge.Context) {
 		AudioUnitAck7: {Path: "audio/unit_ack7.wav", Volume: -0.55},
 		AudioUnitAck8: {Path: "audio/unit_ack8.wav", Volume: -0.55},
 
-		AudioShotLightCannon1: {Path: "audio/shot_light_cannon1.wav", Volume: -0.3},
-		AudioShotLightCannon2: {Path: "audio/shot_light_cannon2.wav", Volume: -0.3},
-		AudioShotLightCannon3: {Path: "audio/shot_light_cannon3.wav", Volume: -0.3},
-
-		AudioShotHurricane1: {Path: "audio/shot_hurricane1.wav", Volume: -0.3},
-		AudioShotHurricane2: {Path: "audio/shot_hurricane2.wav", Volume: -0.3},
-		AudioShotHurricane3: {Path: "audio/shot_hurricane3.wav", Volume: -0.3},
+		AudioShotAssaultLaser1: {Path: "audio/shot_assault_laser1.wav", Volume: -0.3},
+		AudioShotAssaultLaser2: {Path: "audio/shot_assault_laser2.wav", Volume: -0.3},
+		AudioShotAssaultLaser3: {Path: "audio/shot_assault_laser3.wav", Volume: -0.3},
+		AudioShotLightCannon1:  {Path: "audio/shot_light_cannon1.wav", Volume: -0.3},
+		AudioShotLightCannon2:  {Path: "audio/shot_light_cannon2.wav", Volume: -0.3},
+		AudioShotLightCannon3:  {Path: "audio/shot_light_cannon3.wav", Volume: -0.3},
+		AudioShotHurricane1:    {Path: "audio/shot_hurricane1.wav", Volume: -0.3},
+		AudioShotHurricane2:    {Path: "audio/shot_hurricane2.wav", Volume: -0.3},
+		AudioShotHurricane3:    {Path: "audio/shot_hurricane3.wav", Volume: -0.3},
 
 		AudioShotGatling: {Path: "audio/shot_gatling.wav", Volume: -0.8},
 	}
@@ -50,6 +52,8 @@ func NumSamples(a resource.AudioID) int {
 	case AudioShotLightCannon1:
 		return 3
 	case AudioShotHurricane1:
+		return 3
+	case AudioShotAssaultLaser1:
 		return 3
 	case AudioUnitAck1:
 		return 8
@@ -78,10 +82,12 @@ const (
 	AudioUnitAck7
 	AudioUnitAck8
 
+	AudioShotAssaultLaser1
+	AudioShotAssaultLaser2
+	AudioShotAssaultLaser3
 	AudioShotLightCannon1
 	AudioShotLightCannon2
 	AudioShotLightCannon3
-
 	AudioShotHurricane1
 	AudioShotHurricane2
 	AudioShotHurricane3
