@@ -268,6 +268,12 @@ func (r *Runner) deployEnemy() {
 		Turret:   gamedata.ScatterCannonStats,
 		Creep:    true,
 	}
+	rocketBunkerStats := &gamedata.UnitStats{
+		Movement: gamedata.UnitMovementNone,
+		Body:     gamedata.CreepBunkerBodyStats,
+		Turret:   gamedata.HurricaneStats,
+		Creep:    true,
+	}
 
 	// One base to the left.
 	// It's active from the beginning.
@@ -427,6 +433,62 @@ func (r *Runner) deployEnemy() {
 		Pos:      rightBasePos2.Add(gmath.Vec{X: -3 * pathing.CellSize, Y: 7 * pathing.CellSize}),
 		Stats:    heavyTank,
 		Rotation: rightBasePos2.AngleToPoint(r.playerSpawn),
+	}))
+
+	rightBasePos3 := r.world.pathgrid.AlignPos(r.playerSpawn.Add(gmath.Vec{X: 1800, Y: -100}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   rightBasePos3,
+		Stats: gamedata.CreepTankFactoryUnitStats,
+		Extra: &tankFactoryExtra{
+			tankDesign:      rocketTank,
+			productionDelay: 16 * 60,
+		},
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   rightBasePos3.Add(gmath.Vec{Y: 4 * pathing.CellSize}),
+		Stats: gamedata.CreepTankFactoryUnitStats,
+		Extra: &tankFactoryExtra{
+			tankDesign:      rocketTank,
+			productionDelay: 20 * 60,
+		},
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   rightBasePos3.Add(gmath.Vec{Y: -4 * pathing.CellSize}),
+		Stats: gamedata.CreepTankFactoryUnitStats,
+		Extra: &tankFactoryExtra{
+			tankDesign:      heavyTank,
+			productionDelay: 10 * 60,
+		},
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:      rightBasePos3.Add(gmath.Vec{X: 3 * pathing.CellSize, Y: -2 * pathing.CellSize}),
+		Stats:    rocketBunkerStats,
+		Rotation: leftBasePos.AngleToPoint(r.playerSpawn),
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:      rightBasePos3.Add(gmath.Vec{X: 3 * pathing.CellSize, Y: 2 * pathing.CellSize}),
+		Stats:    rocketBunkerStats,
+		Rotation: leftBasePos.AngleToPoint(r.playerSpawn),
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:      rightBasePos3.Add(gmath.Vec{X: 2 * pathing.CellSize, Y: -2 * pathing.CellSize}),
+		Stats:    scatterBunkerStats,
+		Rotation: leftBasePos.AngleToPoint(r.playerSpawn),
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:      rightBasePos3.Add(gmath.Vec{X: 2 * pathing.CellSize, Y: 2 * pathing.CellSize}),
+		Stats:    scatterBunkerStats,
+		Rotation: leftBasePos.AngleToPoint(r.playerSpawn),
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:      rightBasePos3.Add(gmath.Vec{X: 1 * pathing.CellSize, Y: -2 * pathing.CellSize}),
+		Stats:    scatterBunkerStats,
+		Rotation: leftBasePos.AngleToPoint(r.playerSpawn),
+	}))
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:      rightBasePos3.Add(gmath.Vec{X: 1 * pathing.CellSize, Y: 2 * pathing.CellSize}),
+		Stats:    scatterBunkerStats,
+		Rotation: leftBasePos.AngleToPoint(r.playerSpawn),
 	}))
 }
 

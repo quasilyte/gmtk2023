@@ -72,8 +72,76 @@ func (c *PlayController) Init(scene *ge.Scene) {
 		})),
 		widget.ContainerOpts.Layout(widget.NewAnchorLayout()))
 
-	rowContainer := eui.NewRowLayoutContainerWithMinWidth(260, 10, nil)
+	rowContainer := eui.NewRowLayoutContainerWithMinWidth(540, 10, nil)
 	root.AddChild(rowContainer)
+
+	grid := widget.NewContainer(
+		widget.ContainerOpts.Layout(widget.NewGridLayout(
+			widget.GridLayoutOpts.Columns(3),
+			widget.GridLayoutOpts.Stretch([]bool{false, true, true}, nil),
+			widget.GridLayoutOpts.Spacing(4, 8),
+		)))
+	rowContainer.AddChild(grid)
+
+	bodyDesigns := []*gamedata.BodyStats{
+		gamedata.ScoutBodyStats,
+		gamedata.FighterBodyStats,
+		gamedata.HunterBodyStats,
+		gamedata.DestroyerBodyStats,
+	}
+	turretDesigns := []*gamedata.TurretStats{
+		gamedata.ScatterCannonStats,
+		gamedata.LightCannonStats,
+		gamedata.HurricaneStats,
+		gamedata.AssaultLaserStats,
+	}
+
+	bodies := []int{
+		0, 1, 2, 3,
+	}
+	turrets := []int{
+		2, 1, 0, 3,
+	}
+	for i := range bodies {
+		index := i
+		grid.AddChild(eui.NewCenteredLabel(fmt.Sprintf("Design %d", i+1), assets.BitmapFont2))
+
+		c.designs.Tanks[index] = &gamedata.UnitStats{
+			Movement: gamedata.UnitMovementGround,
+			Body:     bodyDesigns[bodies[index]],
+			Turret:   turretDesigns[turrets[index]],
+		}
+
+		grid.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
+			Resources: c.state.UIResources,
+			Input:     c.state.Input,
+			Value:     &bodies[index],
+			ValueNames: []string{
+				"scout",
+				"fighter",
+				"hunter",
+				"destroyer",
+			},
+			OnPressed: func() {
+				c.designs.Tanks[index].Body = bodyDesigns[bodies[index]]
+			},
+		}))
+
+		grid.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
+			Resources: c.state.UIResources,
+			Input:     c.state.Input,
+			Value:     &turrets[index],
+			ValueNames: []string{
+				"scatter cannon",
+				"light cannon",
+				"hurricane",
+				"assault laser",
+			},
+			OnPressed: func() {
+				c.designs.Tanks[index].Turret = turretDesigns[turrets[index]]
+			},
+		}))
+	}
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, "START", func() {
 		c.setDummyDesigns()
@@ -98,26 +166,26 @@ func (c *PlayController) Init(scene *ge.Scene) {
 
 func (c *PlayController) setDummyDesigns() {
 	playerDesigns := c.designs
-	playerDesigns.Tanks[0] = &gamedata.UnitStats{
-		Movement: gamedata.UnitMovementGround,
-		Body:     gamedata.ScoutBodyStats,
-		Turret:   gamedata.HurricaneStats,
-	}
-	playerDesigns.Tanks[1] = &gamedata.UnitStats{
-		Movement: gamedata.UnitMovementGround,
-		Body:     gamedata.FighterBodyStats,
-		Turret:   gamedata.LightCannonStats,
-	}
-	playerDesigns.Tanks[2] = &gamedata.UnitStats{
-		Movement: gamedata.UnitMovementGround,
-		Body:     gamedata.HunterBodyStats,
-		Turret:   gamedata.ScatterCannonStats,
-	}
-	playerDesigns.Tanks[3] = &gamedata.UnitStats{
-		Movement: gamedata.UnitMovementGround,
-		Body:     gamedata.DestroyerBodyStats,
-		Turret:   gamedata.AssaultLaserStats,
-	}
+	// playerDesigns.Tanks[0] = &gamedata.UnitStats{
+	// 	Movement: gamedata.UnitMovementGround,
+	// 	Body:     gamedata.ScoutBodyStats,
+	// 	Turret:   gamedata.HurricaneStats,
+	// }
+	// playerDesigns.Tanks[1] = &gamedata.UnitStats{
+	// 	Movement: gamedata.UnitMovementGround,
+	// 	Body:     gamedata.FighterBodyStats,
+	// 	Turret:   gamedata.LightCannonStats,
+	// }
+	// playerDesigns.Tanks[2] = &gamedata.UnitStats{
+	// 	Movement: gamedata.UnitMovementGround,
+	// 	Body:     gamedata.HunterBodyStats,
+	// 	Turret:   gamedata.ScatterCannonStats,
+	// }
+	// playerDesigns.Tanks[3] = &gamedata.UnitStats{
+	// 	Movement: gamedata.UnitMovementGround,
+	// 	Body:     gamedata.DestroyerBodyStats,
+	// 	Turret:   gamedata.AssaultLaserStats,
+	// }
 
 	playerDesigns.Towers[0] = &gamedata.UnitStats{
 		Movement:   gamedata.UnitMovementNone,
