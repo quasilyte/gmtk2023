@@ -40,6 +40,14 @@ var WheelsBodyStats = &BodyStats{
 	Speed:          140,
 }
 
+var MCVBodyStats = &BodyStats{
+	Size:          unitSizeBig,
+	HP:            250,
+	RotationSpeed: 0.8,
+	Speed:         30,
+	Heavy:         true,
+}
+
 var ScoutBodyStats = &BodyStats{
 	ProductionTime: 5,
 	TurretOffset:   -1,

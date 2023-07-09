@@ -21,6 +21,7 @@ func InitState(ctx *ge.Context, state *session.State) {
 	}
 
 	tankTextureTasks := []textureConfig{
+		{assets.ImageTankBodyMCV, 3, 1, &gamedata.MCVBodyStats.Texture},
 		{assets.ImageTankBodyScout, 3, 1, &gamedata.ScoutBodyStats.Texture},
 		{assets.ImageTankBodyFighter, 3, 1, &gamedata.FighterBodyStats.Texture},
 		{assets.ImageTankBodyHunter, 3, 1, &gamedata.HunterBodyStats.Texture},
@@ -55,8 +56,8 @@ func createTexture(source *ge.Sprite, depth, colorLayer int) (*ebiten.Image, flo
 	source.Rotation = &angle
 
 	sides := gamedata.NumTankSpriteFrames
-	width := int(source.ImageWidth()) + depth
-	height := int(source.ImageHeight()) + depth
+	width := int(source.ImageWidth()) + depth + 4
+	height := int(source.ImageHeight()) + depth + 4
 
 	result := ebiten.NewImage(width*sides, height+depth)
 	tmpImage := ebiten.NewImage(width, height)

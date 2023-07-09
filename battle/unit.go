@@ -469,10 +469,12 @@ func (u *unit) sendConstructorTo(pos gmath.Vec) {
 	}
 
 	u.waypoint = u.world.pathgrid.AlignPos(pos)
+	u.finalWaypoint = u.waypoint
 }
 
 func (u *unit) sendCommanderTo(pos gmath.Vec) {
 	u.waypoint = u.world.pathgrid.AlignPos(pos)
+	u.finalWaypoint = u.waypoint
 	sendGroupTo(u.world, pos, u.group)
 }
 

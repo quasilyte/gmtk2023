@@ -255,8 +255,8 @@ func (p *humanPlayer) handleInput() {
 func (p *humanPlayer) updateUnitPath(u *unit) {
 	if u != nil {
 		p.selectedUnitPath.BeginPos.Base = &p.selectedUnit.spritePos
-		p.selectedUnitPath.EndPos.Offset = p.selectedUnit.waypoint
-		p.selectedUnitPath.Visible = !p.selectedUnit.waypoint.IsZero()
+		p.selectedUnitPath.EndPos.Offset = p.selectedUnit.finalWaypoint
+		p.selectedUnitPath.Visible = !p.selectedUnit.finalWaypoint.IsZero()
 	} else {
 		p.selectedUnitPath.Visible = false
 	}

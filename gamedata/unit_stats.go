@@ -97,6 +97,13 @@ var HeavyTankFactoryUnitStats = &UnitStats{
 	ConstructionTime:   60,
 }
 
+var MCVUnitStats = &UnitStats{
+	Movement:   UnitMovementGround,
+	Body:       MCVBodyStats,
+	Selectable: true,
+	Large:      true,
+}
+
 var ConstructorUnitStats = &UnitStats{
 	Movement: UnitMovementHover,
 	Body: &BodyStats{

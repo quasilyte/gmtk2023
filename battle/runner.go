@@ -102,6 +102,11 @@ func (r *Runner) Init(scene *ge.Scene) {
 		Stats: gamedata.CommanderUnitStats,
 	}))
 
+	r.AddObject(r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 3) - 20, Y: (40 * 10) - 20},
+		Stats: gamedata.MCVUnitStats,
+	}))
+
 	// r.AddObject(r.world.NewUnit(unitConfig{
 	// 	Pos:   gmath.Vec{X: (40 * 6) - 20, Y: (40 * 4) - 20},
 	// 	Stats: gamedata.TankFactoryUnitStats,
