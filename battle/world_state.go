@@ -160,6 +160,18 @@ func (w *worldState) FindSelectable(pos gmath.Vec) *unit {
 	return closestUnit
 }
 
+func (w *worldState) IsInnerPos(pos gmath.Vec) bool {
+	aligned := w.pathgrid.AlignPos(pos)
+	if aligned.X < pathing.CellSize || aligned.Y < pathing.CellSize {
+		return false
+	}
+	rect := w.Camera.WorldRect
+	if aligned.X > rect.Width()-pathing.CellSize || aligned.Y > rect.Height()-(2*pathing.CellSize) {
+		return false
+	}
+	return true
+}
+
 func (w *worldState) FindConstructionSitePos(pos gmath.Vec) gmath.Vec {
 	alignedPos := w.pathgrid.AlignPos(pos)
 	if w.pathgrid.CellIsFree(w.pathgrid.PosToCoord(alignedPos)) {
