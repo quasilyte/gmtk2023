@@ -31,7 +31,7 @@ func newComputerPlayer(world *worldState) *computerPlayer {
 }
 
 func (p *computerPlayer) Init() {
-	p.attackDelay = p.world.Rand().FloatRange(5, 10)
+	p.attackDelay = p.world.Rand().FloatRange(40, 60)
 
 	p.world.EventUnitCreated.Connect(p, func(u *unit) {
 		if !u.stats.Creep {
