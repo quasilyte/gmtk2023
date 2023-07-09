@@ -167,7 +167,7 @@ func (p *projectile) Dispose() {
 
 func (p *projectile) createExplosion() {
 	explosionPos := p.pos.Add(p.world.Rand().Offset(-4, 4))
-	above := false
+	above := true
 
 	switch p.weapon.ProjectileExplosion {
 	case gamedata.ExplosionNormal:

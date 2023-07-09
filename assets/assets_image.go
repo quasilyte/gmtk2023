@@ -68,6 +68,7 @@ func registerImageResources(ctx *ge.Context) {
 		ImageProjectileLightCannon:  {Path: "image/projectile/projectile_light_cannon.png"},
 		ImageProjectileGatling:      {Path: "image/projectile/projectile_gatling.png"},
 
+		ImageRegeneratorExplosion:  {Path: "image/effect/regenerator_explosion.png", FrameWidth: 32},
 		ImageConstructorMerge:      {Path: "image/effect/constructor_merge.png", FrameWidth: 50},
 		ImageAssaultLaserExplosion: {Path: "image/effect/assault_laser_explosion.png", FrameWidth: 10},
 		ImageSmallExplosion:        {Path: "image/effect/small_explosion.png", FrameWidth: 32},
@@ -144,6 +145,7 @@ const (
 	ImageProjectileLightCannon
 	ImageProjectileGatling
 
+	ImageRegeneratorExplosion
 	ImageConstructorMerge
 	ImageAssaultLaserExplosion
 	ImageSmallExplosion

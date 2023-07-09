@@ -3,6 +3,7 @@ package battle
 import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/gmtk2023/assets"
 	"github.com/quasilyte/gmtk2023/gamedata"
 	"github.com/quasilyte/gmtk2023/pathing"
 	"github.com/quasilyte/gmtk2023/session"
@@ -20,6 +21,8 @@ type Runner struct {
 	addedObjects     []ge.SceneObject
 	projectiles      []*projectile
 	addedProjectiles []*projectile
+
+	repairDelay float64
 
 	gameSpeedMultiplier float64
 
@@ -79,22 +82,34 @@ func (r *Runner) Init(scene *ge.Scene) {
 	// 	Pos:   gmath.Vec{X: (40 * 4) - 20, Y: (40 * 9) - 20},
 	// 	Stats: gamedata.ConstructorUnitStats,
 	// }))
+
+	// design := &gamedata.UnitStats{
+	// 	Movement: gamedata.UnitMovementGround,
+	// 	Body:     gamedata.ScoutBodyStats,
+	// 	Turret:   gamedata.HurricaneStats,
+	// }
+	// u2 := r.world.NewUnit(unitConfig{
+	// 	Pos:   r.playerSpawn.Add(gmath.Vec{Y: -60}),
+	// 	Stats: design,
+	// })
+	// u2.hp = 5
+	// r.AddObject(u2)
 	// r.AddObject(r.world.NewUnit(unitConfig{
-	// 	Pos:   gmath.Vec{X: (40 * 5) - 20, Y: (40 * 9) - 20},
+	// 	Pos:   r.playerSpawn.Add(gmath.Vec{X: -60}),
 	// 	Stats: gamedata.ConstructorUnitStats,
 	// }))
-	// r.AddObject(r.world.NewUnit(unitConfig{
-	// 	Pos:   gmath.Vec{X: (40 * 3) - 20, Y: (40 * 9) - 20},
-	// 	Stats: gamedata.ConstructorUnitStats,
-	// }))
-	// r.AddObject(r.world.NewUnit(unitConfig{
-	// 	Pos:   gmath.Vec{X: (40 * 6) - 20, Y: (40 * 9) - 20},
-	// 	Stats: gamedata.ConstructorUnitStats,
-	// }))
-	// r.AddObject(r.world.NewUnit(unitConfig{
-	// 	Pos:   gmath.Vec{X: (40 * 6) - 20, Y: (40 * 10) - 20},
-	// 	Stats: gamedata.ConstructorUnitStats,
-	// }))
+	// uu := r.world.NewUnit(unitConfig{
+	// 	Pos:   r.playerSpawn.Add(gmath.Vec{X: 60}),
+	// 	Stats: gamedata.CommanderUnitStats,
+	// })
+	// r.AddObject(uu)
+	// uu.hp = 10
+
+	// rep := r.world.NewUnit(unitConfig{
+	// 	Pos:   r.world.pathgrid.AlignPos(r.playerSpawn.Add(gmath.Vec{X: 60, Y: 96})),
+	// 	Stats: gamedata.RepairDepotUnitStats,
+	// })
+	// r.AddObject(rep)
 
 	// r.AddObject(r.world.NewUnit(unitConfig{
 	// 	Pos:   gmath.Vec{X: 300, Y: 300},
@@ -492,8 +507,56 @@ func (r *Runner) deployEnemy() {
 	}))
 }
 
+func (r *Runner) doRepair() {
+	repair := randIterate(r.scene.Rand(), r.world.playerUnits.selectable, func(u *unit) bool {
+		return u.IsRepairDepot()
+	})
+	if repair == nil {
+		return
+	}
+
+	const repairDist = pathing.CellSize * 1.5
+
+	repairUnit := func(u *unit) {
+		amountHealed := u.maxHP * 0.075
+		u.hp = gmath.ClampMax(u.hp+amountHealed, u.maxHP)
+		effect := newEffectNode(u.world, u.pos, true, assets.ImageRegeneratorExplosion)
+		r.AddObject(effect)
+	}
+
+	for _, u := range r.world.playerUnits.selectable {
+		if u.hp == u.maxHP {
+			continue
+		}
+		ok := u.IsCommander() || u.IsConstructor()
+		if !ok {
+			continue
+		}
+		if u.pos.DistanceSquaredTo(repair.pos) > (repairDist * repairDist) {
+			continue
+		}
+		repairUnit(u)
+	}
+
+	for _, u := range r.world.playerUnits.nonSelectable {
+		if u.hp == u.maxHP {
+			continue
+		}
+		if u.pos.DistanceSquaredTo(repair.pos) > (repairDist * repairDist) {
+			continue
+		}
+		repairUnit(u)
+	}
+}
+
 func (r *Runner) Update(delta float64) {
 	scaledDelta := delta * r.gameSpeedMultiplier
+
+	r.repairDelay -= scaledDelta
+	if r.repairDelay <= 0 {
+		r.repairDelay = r.scene.Rand().FloatRange(1.5, 3.0)
+		r.doRepair()
+	}
 
 	r.camera.Stage.Update()
 
