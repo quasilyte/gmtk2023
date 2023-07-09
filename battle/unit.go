@@ -119,6 +119,8 @@ func (u *unit) IsDisposed() bool {
 	return u.disposed
 }
 
+func (u *unit) IsMCV() bool { return u.stats == gamedata.MCVUnitStats }
+
 func (u *unit) IsCommander() bool { return u.stats == gamedata.CommanderUnitStats }
 
 func (u *unit) IsConstructor() bool { return u.stats == gamedata.ConstructorUnitStats }
@@ -579,9 +581,9 @@ func (u *unit) moveToWaypoint(delta float64) {
 				site := u.world.NewUnit(unitConfig{
 					Stats: extra.siteStats,
 					Pos:   u.pos,
+					Extra: extra.siteExtra,
 				})
 				site.hp = (u.hp / u.maxHP) * site.maxHP
-				site.extra = extra.siteExtra
 				u.EventReselectRequest.Emit(site)
 				site.AddConstructorToSite(u)
 				u.world.runner.AddObject(site)

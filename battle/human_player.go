@@ -18,6 +18,11 @@ type humanPlayer struct {
 
 	camera *viewport.Camera
 
+	harvestDelay   float64
+	normalResource float64
+	energyResource float64
+	numGenerators  int
+
 	progressBar         *progressBar
 	constructorsCounter *ge.Sprite
 	droneSelector       *ge.Sprite
@@ -28,6 +33,10 @@ type humanPlayer struct {
 	activeTankSelectors   []*tankSelector
 
 	unitPanel *unitPanel
+
+	// TODO: this is not the place to store icons.
+	iconConstructor *ebiten.Image
+	iconCommander   *ebiten.Image
 
 	designs *gamedata.PlayerDesigns
 
@@ -53,6 +62,11 @@ func (p *humanPlayer) Init() {
 	p.droneSelector.Visible = false
 	p.camera.Stage.AddSpriteSlightlyAbove(p.droneSelector)
 
+	p.iconConstructor = ebiten.NewImage(unitPanelIconWidth, unitPanelIconHeight)
+	renderSimpleIcon(p.world.scene, p.iconConstructor, assets.ImageDroneConstructor, "60 ♦")
+	p.iconCommander = ebiten.NewImage(unitPanelIconWidth, unitPanelIconHeight)
+	renderSimpleIcon(p.world.scene, p.iconCommander, assets.ImageDroneCommander, "80 ♦")
+
 	p.selectedUnitPath = ge.NewLine(ge.Pos{}, ge.Pos{})
 	p.selectedUnitPath.SetColorScaleRGBA(0x4b, 0xc2, 0x75, 200)
 	p.selectedUnitPath.Width = 2
@@ -71,17 +85,30 @@ func (p *humanPlayer) Init() {
 	p.renderIcons()
 	p.unitPanel = newUnitPanel(p.camera, p.input)
 	p.unitPanel.Init(p.world.scene)
+
+	p.world.EventUnitCreated.Connect(p, func(u *unit) {
+		if !u.IsGenerator() {
+			return
+		}
+		if u.IsConstructionSite() {
+			return
+		}
+		p.numGenerators++
+		u.EventDestroyed.Connect(p, func(u *unit) {
+			p.numGenerators--
+		})
+	})
 }
 
 func (p *humanPlayer) renderIcons() {
 	// TODO: this should be done somewhere else, before the battle starts.
 
-	renderSimpleIcon(p.world.scene, p.designs.Icons[0], assets.ImageGenerator)
+	renderSimpleIcon(p.world.scene, p.designs.Icons[0], assets.ImageGenerator, "")
 
 	renderTowerIcon(p.world.scene, p.designs.Icons[1], p.designs.Towers[0])
 	renderTowerIcon(p.world.scene, p.designs.Icons[2], p.designs.Towers[1])
 
-	renderSimpleIcon(p.world.scene, p.designs.Icons[3], assets.ImageRepairDepot)
+	renderSimpleIcon(p.world.scene, p.designs.Icons[3], assets.ImageRepairDepot, "")
 
 	renderFactoryIcon(p.world.scene, p.designs.Icons[4], p.designs.Tanks[0])
 	renderFactoryIcon(p.world.scene, p.designs.Icons[5], p.designs.Tanks[1])
@@ -92,6 +119,7 @@ func (p *humanPlayer) renderIcons() {
 func (p *humanPlayer) Update(scaledDelta, delta float64) {
 	p.panCamera(delta)
 	p.handleInput()
+	p.maybeHarvest(scaledDelta)
 
 	if len(p.activeTankSelectors) != 0 {
 		stillActive := p.activeTankSelectors[:0]
@@ -106,6 +134,27 @@ func (p *humanPlayer) Update(scaledDelta, delta float64) {
 		}
 		p.activeTankSelectors = stillActive
 	}
+}
+
+func (p *humanPlayer) maybeHarvest(delta float64) {
+	p.harvestDelay = gmath.ClampMin(p.harvestDelay-delta, 0)
+	if p.harvestDelay > 0 {
+		return
+	}
+	p.harvestDelay = 1
+
+	p.normalResource += 5
+
+	nextGeneratorYield := 1.0
+	generated := 0.0
+	for i := 0; i < p.numGenerators; i++ {
+		if nextGeneratorYield <= gmath.Epsilon {
+			break
+		}
+		generated += nextGeneratorYield
+		nextGeneratorYield -= 0.15
+	}
+	p.energyResource += generated
 }
 
 func (p *humanPlayer) executeDeconstructableAction(actionIndex int) bool {
@@ -292,6 +341,11 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 		}
 
 		switch {
+		case u.IsMCV():
+			p.unitPanel.SetButtons([]*ebiten.Image{
+				p.iconConstructor,
+				p.iconCommander,
+			})
 		case u.IsConstructor():
 			p.unitPanel.SetButtons(p.designs.Icons)
 		case u.IsTankFactory():

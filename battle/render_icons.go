@@ -6,6 +6,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/ge"
+	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gmtk2023/assets"
 	"github.com/quasilyte/gmtk2023/gamedata"
 	"github.com/quasilyte/gmtk2023/styles"
@@ -13,7 +14,7 @@ import (
 
 // TODO: these functions should go away from the battle package.
 
-func renderSimpleIcon(scene *ge.Scene, icon *ebiten.Image, img resource.ImageID) {
+func renderSimpleIcon(scene *ge.Scene, icon *ebiten.Image, img resource.ImageID, label string) {
 	icon.Clear()
 	icon.Fill(styles.UnitPanelBgColor)
 
@@ -28,6 +29,17 @@ func renderSimpleIcon(scene *ge.Scene, icon *ebiten.Image, img resource.ImageID)
 		float64((iconHeight-bodyTexture.Data.Bounds().Dy())/2),
 	)
 	icon.DrawImage(bodyTexture.Data, &drawOptions)
+
+	if label != "" {
+		l := ge.NewLabel(assets.BitmapFont1)
+		l.Text = label
+		l.Width = unitPanelIconWidth
+		l.Height = 32
+		l.AlignHorizontal = ge.AlignHorizontalCenter
+		l.AlignVertical = ge.AlignVerticalBottom
+		l.Pos.Offset = gmath.Vec{Y: 32}
+		l.Draw(icon)
+	}
 }
 
 func renderTowerIcon(scene *ge.Scene, icon *ebiten.Image, design *gamedata.UnitStats) {
