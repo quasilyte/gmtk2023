@@ -149,18 +149,30 @@ func (w *worldState) FindSelectable(pos gmath.Vec) *unit {
 		return nil
 	}
 	minDistSqr := math.MaxFloat64
+	minBuildingDistSqr := math.MaxFloat64
 	var closestUnit *unit
+	var closestBuilding *unit
 	for _, u := range w.playerUnits.selectable {
 		distSqr := u.pos.DistanceSquaredTo(pos)
 		if distSqr > (24 * 24) {
 			continue
 		}
-		if distSqr < minDistSqr {
-			minDistSqr = distSqr
-			closestUnit = u
+		if u.IsBuilding() {
+			if distSqr < minBuildingDistSqr {
+				closestBuilding = u
+				minBuildingDistSqr = distSqr
+			}
+		} else {
+			if distSqr < minDistSqr {
+				closestUnit = u
+				minDistSqr = distSqr
+			}
 		}
 	}
-	return closestUnit
+	if closestUnit != nil {
+		return closestUnit
+	}
+	return closestBuilding
 }
 
 func (w *worldState) MayBlockFactory(pos gmath.Vec) bool {

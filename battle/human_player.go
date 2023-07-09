@@ -18,6 +18,8 @@ type humanPlayer struct {
 
 	camera *viewport.Camera
 
+	unstuckDelay float64
+
 	harvestDelay   float64
 	normalResource float64
 	energyResource float64
@@ -101,6 +103,12 @@ func (p *humanPlayer) Update(scaledDelta, delta float64) {
 	p.panCamera(delta)
 	p.handleInput()
 	p.maybeHarvest(scaledDelta)
+
+	p.unstuckDelay -= scaledDelta
+	if p.unstuckDelay <= 0 {
+		p.unstuckDelay = p.world.Rand().FloatRange(0.5, 1.2)
+		p.doUnstuck()
+	}
 
 	// FIXME: this is a hack.
 	if p.selectedUnit != nil {
@@ -219,6 +227,40 @@ func (p *humanPlayer) executeConstructorAction(actionIndex int) bool {
 	}
 	p.selectedUnit.SendTo(pos)
 	return true
+}
+
+func (p *humanPlayer) doUnstuck() {
+	constructor := randIterate(p.world.Rand(), p.world.playerUnits.selectable, func(u *unit) bool {
+		return u.IsConstructor() && u.waypoint.IsZero()
+	})
+	if constructor == nil {
+		return
+	}
+
+	for _, u := range p.world.playerUnits.selectable {
+		if !u.waypoint.IsZero() || u == constructor {
+			continue
+		}
+		if u.pos != constructor.pos {
+			continue
+		}
+
+		offset := randIterate(p.world.Rand(), groupOffsets, func(offset gmath.Vec) bool {
+			probe := u.pos.Add(offset)
+			if p.world.pathgrid.CellIsFree(p.world.pathgrid.PosToCoord(probe)) {
+				return true
+			}
+			return false
+		})
+		if offset.IsZero() {
+			return
+		}
+		constructor.SendTo(constructor.pos.Add(offset))
+		if constructor == p.selectedUnit {
+			p.updateUnitPath(p.selectedUnit)
+		}
+		break
+	}
 }
 
 func (p *humanPlayer) executeUnitAction(actionIndex int) bool {
