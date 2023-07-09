@@ -48,10 +48,17 @@ type unit struct {
 	EventDestroyed          gsignal.Event[*unit]
 	EventConstructorEntered gsignal.Event[*unit]
 	EventReselectRequest    gsignal.Event[*unit]
+	EventProductionProgress gsignal.Event[float64]
 }
 
 type tankFactoryExtra struct {
 	tankDesign *gamedata.UnitStats
+
+	productionDelay float64
+
+	percentage   float64
+	progress     float64 // production progress value
+	goalProgress float64
 }
 
 type constructorEntryTarget struct {
@@ -101,6 +108,11 @@ func (u *unit) IsDisposed() bool {
 func (u *unit) IsCommander() bool { return u.stats == gamedata.CommanderUnitStats }
 
 func (u *unit) IsConstructor() bool { return u.stats == gamedata.ConstructorUnitStats }
+
+func (u *unit) IsTankFactory() bool {
+	_, ok := u.extra.(*tankFactoryExtra)
+	return ok
+}
 
 func (u *unit) IsConstructionSite() bool {
 	_, ok := u.extra.(*constructionSiteExtra)
@@ -183,9 +195,13 @@ func (u *unit) Init(scene *ge.Scene) {
 	if u.stats.Creep {
 		u.sprite.SetHue(gmath.DegToRad(80))
 	}
-	if u.IsConstructionSite() {
+
+	switch extra := u.extra.(type) {
+	case *constructionSiteExtra:
 		u.sprite.Shader = scene.NewShader(assets.ShaderConstructionLarge)
 		u.sprite.Shader.SetFloatValue("Time", 0.15)
+	case *tankFactoryExtra:
+		extra.goalProgress = extra.tankDesign.Body.ProductionTime + extra.tankDesign.Turret.ProductionTime
 	}
 
 	if u.stats.Turret != nil {
@@ -203,8 +219,11 @@ func (u *unit) Update(delta float64) {
 		u.anim.Tick(delta)
 	}
 
-	if u.IsConstructionSite() {
-		u.updateConstructionSite(delta)
+	switch extra := u.extra.(type) {
+	case *constructionSiteExtra:
+		u.updateConstructionSite(delta, extra)
+	case *tankFactoryExtra:
+		u.updateTankFactory(delta, extra)
 	}
 
 	u.updatePos()
@@ -258,8 +277,31 @@ func (u *unit) AddConstructorToSite(constructor *unit) bool {
 	return true
 }
 
-func (u *unit) updateConstructionSite(delta float64) {
-	extra := u.extra.(*constructionSiteExtra)
+func (u *unit) updateTankFactory(delta float64, extra *tankFactoryExtra) {
+	const productionStep = 0.1
+	extra.productionDelay -= delta
+	if extra.productionDelay > 0 {
+		return
+	}
+	extra.productionDelay = productionStep
+
+	extra.progress += productionStep
+	if extra.progress < extra.goalProgress {
+		extra.percentage = extra.progress / extra.goalProgress
+		u.EventProductionProgress.Emit(extra.percentage)
+		return
+	}
+	// Tank ready!
+	extra.progress = 0
+	extra.percentage = 0
+	newUnit := u.world.NewUnit(unitConfig{
+		Stats: extra.tankDesign,
+		Pos:   u.pos.Add(gmath.Vec{Y: gamedata.CellSize}),
+	})
+	u.world.runner.AddObject(newUnit)
+}
+
+func (u *unit) updateConstructionSite(delta float64, extra *constructionSiteExtra) {
 	if extra.progress >= extra.maxProgress {
 		return // Not enough constructors to continue
 	}
@@ -288,9 +330,9 @@ func (u *unit) updateConstructionSite(delta float64) {
 			Pos:   u.pos,
 		})
 		building.hp = building.maxHP * totalPercentage
-		u.world.runner.AddObject(building)
-		building.group = u.group
 		building.extra = extra.newUnitExtra
+		building.group = u.group
+		u.world.runner.AddObject(building)
 		u.EventReselectRequest.Emit(building)
 		u.Dispose()
 		return
@@ -376,6 +418,10 @@ func (u *unit) setDstRotation(v gmath.Rad) {
 }
 
 func (u *unit) sendConstructorTo(pos gmath.Vec) {
+	if _, ok := u.extra.(*constructorEntryTarget); ok {
+		u.extra = nil
+	}
+
 	u.waypoint = u.world.pathgrid.AlignPos(pos)
 }
 

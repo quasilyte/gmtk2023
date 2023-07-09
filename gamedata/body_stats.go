@@ -10,6 +10,8 @@ type BodyStats struct {
 	Texture resource.Image
 	Image   resource.ImageID
 
+	ProductionTime float64
+
 	TurretOffset float64
 
 	Speed         float64
@@ -30,45 +32,50 @@ var (
 )
 
 var WheelsBodyStats = &BodyStats{
-	TurretOffset:  -1,
-	Size:          unitSizeSmall,
-	HP:            5,
-	RotationSpeed: 1.0,
-	Speed:         140,
+	ProductionTime: 3,
+	TurretOffset:   -1,
+	Size:           unitSizeSmall,
+	HP:             5,
+	RotationSpeed:  1.0,
+	Speed:          140,
 }
 
 var ScoutBodyStats = &BodyStats{
-	TurretOffset:  -1,
-	Size:          unitSizeSmall,
-	HP:            20,
-	RotationSpeed: 1.8,
-	Speed:         100,
+	ProductionTime: 3,
+	TurretOffset:   -1,
+	Size:           unitSizeSmall,
+	HP:             20,
+	RotationSpeed:  1.8,
+	Speed:          100,
 }
 
 var FighterBodyStats = &BodyStats{
-	TurretOffset:  -1,
-	Size:          unitSizeMedium,
-	HP:            35,
-	RotationSpeed: 2.0,
-	Speed:         80,
+	ProductionTime: 5,
+	TurretOffset:   -1,
+	Size:           unitSizeMedium,
+	HP:             35,
+	RotationSpeed:  2.0,
+	Speed:          80,
 }
 
 var HunterBodyStats = &BodyStats{
-	TurretOffset:  -1,
-	Size:          unitSizeBig,
-	HP:            40,
-	RotationSpeed: 1.6,
-	Speed:         110,
-	Heavy:         true,
+	ProductionTime: 12,
+	TurretOffset:   -1,
+	Size:           unitSizeBig,
+	HP:             40,
+	RotationSpeed:  1.6,
+	Speed:          110,
+	Heavy:          true,
 }
 
 var DestroyerBodyStats = &BodyStats{
-	TurretOffset:  -1,
-	Size:          unitSizeBig,
-	HP:            120,
-	RotationSpeed: 1,
-	Speed:         50,
-	Heavy:         true,
+	ProductionTime: 20,
+	TurretOffset:   -1,
+	Size:           unitSizeBig,
+	HP:             120,
+	RotationSpeed:  1,
+	Speed:          50,
+	Heavy:          true,
 }
 
 var BunkerBodyStats = &BodyStats{

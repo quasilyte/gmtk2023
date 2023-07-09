@@ -7,7 +7,8 @@ import (
 )
 
 var (
-	HealthBarColor = ge.RGB(0x26cd61)
+	HealthBarColor   = ge.RGB(0x26cd61)
+	ProgressBarColor = ge.RGB(0x8b95d6)
 
 	UnitPanelBgColor        = withAlpha(InterfaceBgColor, 150)
 	UnitPanelBgOutlineColor = withAlpha(HealthBarColor, 200)

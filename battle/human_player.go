@@ -18,6 +18,7 @@ type humanPlayer struct {
 
 	camera *viewport.Camera
 
+	progressBar         *progressBar
 	constructorsCounter *ge.Sprite
 	droneSelector       *ge.Sprite
 	selectedUnit        *unit
@@ -57,6 +58,10 @@ func (p *humanPlayer) Init() {
 	p.selectedUnitPath.Width = 2
 	p.selectedUnitPath.Visible = false
 	p.camera.Stage.AddGraphicsSlightlyAbove(p.selectedUnitPath)
+
+	p.progressBar = newProgressBar()
+	p.progressBar.Init(p.world.scene, p.camera.Stage)
+	p.progressBar.SetVisibility(false)
 
 	p.constructorsCounter = ge.NewSprite(p.world.scene.Context())
 	p.constructorsCounter.Visible = false
@@ -242,12 +247,14 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 		p.selectedUnit.EventDestroyed.Disconnect(p)
 		p.selectedUnit.EventConstructorEntered.Disconnect(p)
 		p.selectedUnit.EventReselectRequest.Disconnect(p)
+		p.selectedUnit.EventProductionProgress.Disconnect(p)
 		p.unitPanel.SetButtons(nil)
 	}
 
 	p.selectedUnit = u
 
 	p.constructorsCounter.Visible = false
+	p.progressBar.SetVisibility(false)
 	p.droneSelector.Visible = u != nil
 	p.updateUnitPath(u)
 
@@ -265,6 +272,11 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 		switch {
 		case u.IsConstructor():
 			p.unitPanel.SetButtons(p.designs.Icons[:7])
+		case u.IsTankFactory():
+			p.progressBar.SetVisibility(true)
+			p.progressBar.SetPos(&u.spritePos)
+			p.progressBar.SetValue(u.extra.(*tankFactoryExtra).percentage)
+			p.unitPanel.SetButtons([]*ebiten.Image{p.world.Scene().LoadImage(assets.ImageUIDeconstuctIcon).Data})
 		case u.IsConstructionSite():
 			p.constructorsCounter.Visible = true
 			p.constructorsCounter.Pos.Base = &u.spritePos
@@ -292,6 +304,11 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 		p.selectedUnit.EventReselectRequest.Connect(p, func(u *unit) {
 			p.setSelectedUnit(u)
 		})
+		if p.selectedUnit.IsTankFactory() {
+			p.selectedUnit.EventProductionProgress.Connect(p, func(percentage float64) {
+				p.progressBar.SetValue(percentage)
+			})
+		}
 		if p.selectedUnit.IsConstructionSite() {
 			p.selectedUnit.EventConstructorEntered.Connect(p, func(u *unit) {
 				p.updateConsnstructorsCounter(u)
