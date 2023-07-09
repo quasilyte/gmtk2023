@@ -4,6 +4,7 @@ import (
 	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmtk2023/assets"
 	"github.com/quasilyte/gmtk2023/gamedata"
@@ -58,13 +59,22 @@ func renderFactoryIcon(scene *ge.Scene, icon *ebiten.Image, design *gamedata.Uni
 	iconHeight := icon.Bounds().Dy()
 
 	var drawOptions ebiten.DrawImageOptions
+	var factoryFrameRect image.Rectangle
+	var factoryTexture resource.Image
 	if design.Body.Heavy {
 		drawOptions.GeoM.Translate(1, 1)
-		icon.DrawImage(scene.LoadImage(assets.ImageHeavyTankFactory).Data, &drawOptions)
+		factoryTexture = scene.LoadImage(assets.ImageHeavyTankFactory)
+		factoryFrameRect = image.Rectangle{
+			Max: image.Point{X: int(factoryTexture.DefaultFrameWidth), Y: factoryTexture.Data.Bounds().Dy()},
+		}
 	} else {
 		drawOptions.GeoM.Translate(4, 4)
-		icon.DrawImage(scene.LoadImage(assets.ImageTankFactory).Data, &drawOptions)
+		factoryTexture = scene.LoadImage(assets.ImageTankFactory)
+		factoryFrameRect = image.Rectangle{
+			Max: image.Point{X: int(factoryTexture.DefaultFrameWidth), Y: factoryTexture.Data.Bounds().Dy()},
+		}
 	}
+	icon.DrawImage(factoryTexture.Data.SubImage(factoryFrameRect).(*ebiten.Image), &drawOptions)
 
 	drawOptions.GeoM.Reset()
 	drawOptions.GeoM.Translate(float64(iconWidth-50), float64(iconHeight-50))

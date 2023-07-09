@@ -40,6 +40,8 @@ type turretConfig struct {
 
 	Pos *gmath.Vec
 
+	InitialRotation gmath.Rad
+
 	Owner *unit
 }
 
@@ -48,6 +50,7 @@ func newTurret(world *worldState, config turretConfig) *turret {
 		world:      world,
 		owner:      config.Owner,
 		config:     config,
+		rotation:   config.InitialRotation,
 		stats:      config.Owner.stats.Turret,
 		frameWidth: config.Image.DefaultFrameWidth,
 	}
@@ -63,7 +66,7 @@ func (t *turret) Init(scene *ge.Scene) {
 		t.sprite.SetHue(gmath.DegToRad(80))
 	}
 
-	t.setRotation(scene.Rand().Rad())
+	t.setRotation(t.rotation)
 }
 
 func (t *turret) IsDisposed() bool {

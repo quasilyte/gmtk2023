@@ -30,7 +30,7 @@ type unit struct {
 	dstRotation   gmath.Rad
 
 	sprite *ge.Sprite
-	anim   *ge.Animation
+	// anim   *ge.Animation
 
 	turret *turret
 
@@ -55,6 +55,8 @@ type tankFactoryExtra struct {
 	tankDesign *gamedata.UnitStats
 
 	productionDelay float64
+
+	releasingUnitTime float64
 
 	percentage   float64
 	progress     float64 // production progress value
@@ -82,8 +84,9 @@ type constructionSiteExtra struct {
 }
 
 type unitConfig struct {
-	Stats *gamedata.UnitStats
-	Pos   gmath.Vec
+	Stats    *gamedata.UnitStats
+	Pos      gmath.Vec
+	Rotation gmath.Rad
 }
 
 func newUnit(world *worldState, config unitConfig) *unit {
@@ -91,6 +94,7 @@ func newUnit(world *worldState, config unitConfig) *unit {
 		stats:      config.Stats,
 		world:      world,
 		pos:        config.Pos,
+		rotation:   config.Rotation,
 		frameWidth: config.Stats.Body.Texture.DefaultFrameWidth,
 	}
 	u.maxHP = config.Stats.Body.HP
@@ -176,11 +180,11 @@ func (u *unit) Init(scene *ge.Scene) {
 	if u.stats.Body.Image != assets.ImageNone {
 		u.sprite = scene.NewSprite(u.stats.Body.Image)
 		u.sprite.Pos.Base = &u.spritePos
-		if u.sprite.ImageWidth() != u.sprite.FrameWidth {
-			u.anim = ge.NewRepeatedAnimation(u.sprite, -1)
-			u.anim.SetAnimationSpan(0.5)
-		}
-		if u.stats.Movement == gamedata.UnitMovementHover {
+		// if u.sprite.ImageWidth() != u.sprite.FrameWidth {
+		// 	u.anim = ge.NewRepeatedAnimation(u.sprite, -1)
+		// 	u.anim.SetAnimationSpan(0.5)
+		// }
+		if u.stats.Movement == gamedata.UnitMovementHover || u.stats.Movement == gamedata.UnitMovementNone {
 			u.world.Stage().AddSpriteSlightlyAbove(u.sprite)
 		} else {
 			u.world.Stage().AddSprite(u.sprite)
@@ -206,18 +210,21 @@ func (u *unit) Init(scene *ge.Scene) {
 
 	if u.stats.Turret != nil {
 		u.turret = newTurret(u.world, turretConfig{
-			Image: u.stats.Turret.Texture,
-			Pos:   &u.turretPos,
-			Owner: u,
+			Image:           u.stats.Turret.Texture,
+			Pos:             &u.turretPos,
+			Owner:           u,
+			InitialRotation: u.rotation + gmath.Rad(scene.Rand().FloatRange(-0.4, 0.4)),
 		})
 		u.world.runner.AddObject(u.turret)
 	}
+
+	u.setRotation(u.rotation) // update the frame
 }
 
 func (u *unit) Update(delta float64) {
-	if u.anim != nil {
-		u.anim.Tick(delta)
-	}
+	// if u.anim != nil {
+	// 	u.anim.Tick(delta)
+	// }
 
 	switch extra := u.extra.(type) {
 	case *constructionSiteExtra:
@@ -278,6 +285,15 @@ func (u *unit) AddConstructorToSite(constructor *unit) bool {
 }
 
 func (u *unit) updateTankFactory(delta float64, extra *tankFactoryExtra) {
+	if extra.releasingUnitTime > 0 {
+		extra.releasingUnitTime -= delta
+		if extra.releasingUnitTime <= 0 {
+			extra.releasingUnitTime = 0
+			u.sprite.FrameOffset.X = 0
+		}
+		return
+	}
+
 	const productionStep = 0.1
 	extra.productionDelay -= delta
 	if extra.productionDelay > 0 {
@@ -295,10 +311,14 @@ func (u *unit) updateTankFactory(delta float64, extra *tankFactoryExtra) {
 	extra.progress = 0
 	extra.percentage = 0
 	newUnit := u.world.NewUnit(unitConfig{
-		Stats: extra.tankDesign,
-		Pos:   u.pos.Add(gmath.Vec{Y: gamedata.CellSize}),
+		Stats:    extra.tankDesign,
+		Pos:      u.pos,
+		Rotation: math.Pi / 2,
 	})
+	newUnit.SendTo(u.pos.Add(gmath.Vec{Y: gamedata.CellSize}))
 	u.world.runner.AddObject(newUnit)
+	extra.releasingUnitTime = 3.5
+	u.sprite.FrameOffset.X = u.sprite.FrameWidth
 }
 
 func (u *unit) updateConstructionSite(delta float64, extra *constructionSiteExtra) {
@@ -402,11 +422,7 @@ func (u *unit) SendTo(pos gmath.Vec) {
 		}
 		u.path = p.Steps
 		alignedPos := u.world.pathgrid.AlignPos(u.pos)
-		if alignedPos.DistanceSquaredTo(u.pos) < 1 {
-			u.waypoint = posMove(u.pos, u.path.Next())
-		} else {
-			u.waypoint = alignedPos
-		}
+		u.waypoint = posMove(alignedPos, u.path.Next())
 		u.finalWaypoint = pos
 		u.setDstRotation(u.pos.AngleToPoint(u.waypoint).Normalized())
 	}
