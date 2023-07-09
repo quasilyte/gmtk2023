@@ -42,6 +42,8 @@ type turretConfig struct {
 
 	InitialRotation gmath.Rad
 
+	Above bool
+
 	Owner *unit
 }
 
@@ -60,7 +62,12 @@ func (t *turret) Init(scene *ge.Scene) {
 	t.sprite = ge.NewSprite(scene.Context())
 	t.sprite.SetImage(t.config.Image)
 	t.sprite.Pos.Base = t.config.Pos
-	t.world.Stage().AddSprite(t.sprite)
+
+	if t.config.Above {
+		t.world.Stage().AddGraphicsSlightlyAbove(t.sprite)
+	} else {
+		t.world.Stage().AddSprite(t.sprite)
+	}
 
 	if t.owner.stats.Creep {
 		t.sprite.SetHue(gmath.DegToRad(80))

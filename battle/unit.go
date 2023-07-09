@@ -142,6 +142,9 @@ func (u *unit) IsSimpleDeconstructible() bool {
 	if u.stats == gamedata.GeneratorUnitStats {
 		return true
 	}
+	if u.stats == gamedata.RepairDepotUnitStats {
+		return true
+	}
 
 	switch u.extra.(type) {
 	case *tankFactoryExtra, *constructionSiteExtra:
@@ -188,9 +191,12 @@ func (u *unit) Init(scene *ge.Scene) {
 		// 	u.anim = ge.NewRepeatedAnimation(u.sprite, -1)
 		// 	u.anim.SetAnimationSpan(0.5)
 		// }
-		if u.stats.Movement == gamedata.UnitMovementHover || u.stats.Movement == gamedata.UnitMovementNone {
+		switch u.stats.Movement {
+		case gamedata.UnitMovementHover:
+			u.world.Stage().AddSpriteAbove(u.sprite)
+		case gamedata.UnitMovementNone:
 			u.world.Stage().AddSpriteSlightlyAbove(u.sprite)
-		} else {
+		default:
 			u.world.Stage().AddSprite(u.sprite)
 		}
 	} else {
@@ -207,7 +213,7 @@ func (u *unit) Init(scene *ge.Scene) {
 	switch extra := u.extra.(type) {
 	case *constructionSiteExtra:
 		u.sprite.Shader = scene.NewShader(assets.ShaderConstructionLarge)
-		u.sprite.Shader.SetFloatValue("Time", 0.15)
+		u.sprite.Shader.SetFloatValue("Time", 0.05)
 	case *tankFactoryExtra:
 		extra.goalProgress = extra.tankDesign.Body.ProductionTime + extra.tankDesign.Turret.ProductionTime
 	}
@@ -217,6 +223,7 @@ func (u *unit) Init(scene *ge.Scene) {
 			Image:           u.stats.Turret.Texture,
 			Pos:             &u.turretPos,
 			Owner:           u,
+			Above:           u.stats.Movement == gamedata.UnitMovementNone,
 			InitialRotation: u.rotation + gmath.Rad(scene.Rand().FloatRange(-0.4, 0.4)),
 		})
 		u.world.runner.AddObject(u.turret)
@@ -336,7 +343,7 @@ func (u *unit) updateConstructionSite(delta float64, extra *constructionSiteExtr
 
 	extra.progress += delta
 	extra.percentage = extra.progress / extra.goalProgress
-	u.sprite.Shader.SetFloatValue("Time", extra.percentage+0.15)
+	u.sprite.Shader.SetFloatValue("Time", extra.percentage+0.05)
 	if extra.progress >= extra.goalProgress {
 		stats := u.stats
 		if statsOverride, ok := extra.newUnitExtra.(*gamedata.UnitStats); ok {

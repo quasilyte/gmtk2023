@@ -13,11 +13,11 @@ import (
 
 // TODO: these functions should go away from the battle package.
 
-func renderGeneratorIcon(scene *ge.Scene, icon *ebiten.Image) {
+func renderSimpleIcon(scene *ge.Scene, icon *ebiten.Image, img resource.ImageID) {
 	icon.Clear()
 	icon.Fill(styles.UnitPanelBgColor)
 
-	bodyTexture := scene.LoadImage(assets.ImageGenerator)
+	bodyTexture := scene.LoadImage(img)
 
 	iconWidth := icon.Bounds().Dx()
 	iconHeight := icon.Bounds().Dy()

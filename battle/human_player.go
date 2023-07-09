@@ -57,7 +57,7 @@ func (p *humanPlayer) Init() {
 	p.selectedUnitPath.SetColorScaleRGBA(0x4b, 0xc2, 0x75, 200)
 	p.selectedUnitPath.Width = 2
 	p.selectedUnitPath.Visible = false
-	p.camera.Stage.AddGraphicsSlightlyAbove(p.selectedUnitPath)
+	p.camera.Stage.AddGraphicsAbove(p.selectedUnitPath)
 
 	p.progressBar = newProgressBar()
 	p.progressBar.Init(p.world.scene, p.camera.Stage)
@@ -65,8 +65,8 @@ func (p *humanPlayer) Init() {
 
 	p.constructorsCounter = ge.NewSprite(p.world.scene.Context())
 	p.constructorsCounter.Visible = false
-	p.constructorsCounter.Pos.Offset.Y = 10
-	p.camera.Stage.AddSpriteSlightlyAbove(p.constructorsCounter)
+	p.constructorsCounter.Pos.Offset.Y = -16
+	p.camera.Stage.AddSpriteAbove(p.constructorsCounter)
 
 	p.renderIcons()
 	p.unitPanel = newUnitPanel(p.camera, p.input)
@@ -76,15 +76,17 @@ func (p *humanPlayer) Init() {
 func (p *humanPlayer) renderIcons() {
 	// TODO: this should be done somewhere else, before the battle starts.
 
-	renderGeneratorIcon(p.world.scene, p.designs.Icons[0])
+	renderSimpleIcon(p.world.scene, p.designs.Icons[0], assets.ImageGenerator)
 
 	renderTowerIcon(p.world.scene, p.designs.Icons[1], p.designs.Towers[0])
 	renderTowerIcon(p.world.scene, p.designs.Icons[2], p.designs.Towers[1])
 
-	renderFactoryIcon(p.world.scene, p.designs.Icons[3], p.designs.Tanks[0])
-	renderFactoryIcon(p.world.scene, p.designs.Icons[4], p.designs.Tanks[1])
-	renderFactoryIcon(p.world.scene, p.designs.Icons[5], p.designs.Tanks[2])
-	renderFactoryIcon(p.world.scene, p.designs.Icons[6], p.designs.Tanks[3])
+	renderSimpleIcon(p.world.scene, p.designs.Icons[3], assets.ImageRepairDepot)
+
+	renderFactoryIcon(p.world.scene, p.designs.Icons[4], p.designs.Tanks[0])
+	renderFactoryIcon(p.world.scene, p.designs.Icons[5], p.designs.Tanks[1])
+	renderFactoryIcon(p.world.scene, p.designs.Icons[6], p.designs.Tanks[2])
+	renderFactoryIcon(p.world.scene, p.designs.Icons[7], p.designs.Tanks[3])
 }
 
 func (p *humanPlayer) Update(scaledDelta, delta float64) {
@@ -132,8 +134,11 @@ func (p *humanPlayer) executeConstructorAction(actionIndex int) bool {
 		stats = gamedata.TowerConstruction
 		newUnitExtra = p.designs.Towers[index]
 		time = p.designs.Towers[index].Turret.ProductionTime * 3
-	case 3, 4, 5, 6:
-		index := actionIndex - 3
+	case 3:
+		stats = gamedata.RepairDepotUnitStats
+		time = stats.ConstructionTime
+	case 4, 5, 6, 7:
+		index := actionIndex - 4
 		stats = gamedata.TankFactoryUnitStats
 		newUnitExtra = &tankFactoryExtra{tankDesign: p.designs.Tanks[index]}
 		time = stats.ConstructionTime
@@ -271,7 +276,7 @@ func (p *humanPlayer) setSelectedUnit(u *unit) {
 
 		switch {
 		case u.IsConstructor():
-			p.unitPanel.SetButtons(p.designs.Icons[:7])
+			p.unitPanel.SetButtons(p.designs.Icons)
 		case u.IsTankFactory():
 			p.progressBar.SetVisibility(true)
 			p.progressBar.SetPos(&u.spritePos)

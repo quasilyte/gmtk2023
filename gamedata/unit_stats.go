@@ -49,6 +49,18 @@ var GeneratorUnitStats = &UnitStats{
 	ConstructionTime:   15,
 }
 
+var RepairDepotUnitStats = &UnitStats{
+	Movement: UnitMovementNone,
+	Body: &BodyStats{
+		HP:    100,
+		Image: assets.ImageRepairDepot,
+		Size:  unitSizeMedium,
+	},
+	Selectable:         true,
+	ConstructorsNeeded: 2,
+	ConstructionTime:   25,
+}
+
 var TankFactoryUnitStats = &UnitStats{
 	Movement: UnitMovementNone,
 	Body: &BodyStats{
@@ -59,7 +71,7 @@ var TankFactoryUnitStats = &UnitStats{
 	Selectable:         true,
 	Large:              true,
 	ConstructorsNeeded: 2,
-	ConstructionTime:   20,
+	ConstructionTime:   30,
 }
 
 var HeavyTankFactoryUnitStats = &UnitStats{
@@ -72,7 +84,7 @@ var HeavyTankFactoryUnitStats = &UnitStats{
 	Selectable:         true,
 	Large:              true,
 	ConstructorsNeeded: 3,
-	ConstructionTime:   40,
+	ConstructionTime:   60,
 }
 
 var ConstructorUnitStats = &UnitStats{

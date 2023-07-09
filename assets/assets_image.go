@@ -40,6 +40,7 @@ func registerImageResources(ctx *ge.Context) {
 		ImageDroneCommander:   {Path: "image/drone/commander.png"},
 
 		ImageGenerator:        {Path: "image/building/generator.png"},
+		ImageRepairDepot:      {Path: "image/building/repair_depot.png"},
 		ImageTankFactory:      {Path: "image/building/tank_factory.png", FrameWidth: 46},
 		ImageHeavyTankFactory: {Path: "image/building/heavy_tank_factory.png", FrameWidth: 52},
 
@@ -93,6 +94,7 @@ const (
 	ImageDroneCommander
 
 	ImageGenerator
+	ImageRepairDepot
 	ImageTankFactory
 	ImageHeavyTankFactory
 
