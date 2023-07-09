@@ -37,6 +37,8 @@ func registerAudioResources(ctx *ge.Context) {
 		AudioShotHurricane3:    {Path: "audio/shot_hurricane3.wav", Volume: -0.3},
 
 		AudioShotGatling: {Path: "audio/shot_gatling.wav", Volume: -0.8},
+
+		AudioMusicTrack1: {Path: "audio/music/wrath_of_the_djinn.ogg", Volume: -0.8},
 	}
 
 	for id, res := range audioResources {
@@ -93,4 +95,6 @@ const (
 	AudioShotHurricane3
 
 	AudioShotGatling
+
+	AudioMusicTrack1
 )

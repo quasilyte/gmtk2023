@@ -5,6 +5,7 @@ import (
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gmtk2023/assets"
 	"github.com/quasilyte/gmtk2023/battle"
+	"github.com/quasilyte/gmtk2023/controls"
 	"github.com/quasilyte/gmtk2023/gamedata"
 	"github.com/quasilyte/gmtk2023/session"
 	"github.com/quasilyte/gmtk2023/viewport"
@@ -39,6 +40,8 @@ func (c *BattleController) Init(scene *ge.Scene) {
 		},
 	}
 
+	scene.Audio().PlayMusic(assets.AudioMusicTrack1)
+
 	bg := ge.NewTiledBackground(scene.Context())
 	bg.LoadTileset(scene.Context(), worldRect.Width(), 1080.0/2, assets.ImageBackgroundTiles, assets.RawBackgroundTileset)
 
@@ -52,4 +55,13 @@ func (c *BattleController) Init(scene *ge.Scene) {
 	scene.AddObject(c.runner)
 }
 
-func (c *BattleController) Update(delta float64) {}
+func (c *BattleController) Update(delta float64) {
+	if c.state.Input.ActionIsJustPressed(controls.ActionBack) {
+		c.back()
+	}
+}
+
+func (c *BattleController) back() {
+	c.scene.Audio().PauseCurrentMusic()
+	c.scene.Context().ChangeScene(NewPlayController(c.state))
+}
