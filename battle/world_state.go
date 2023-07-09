@@ -215,6 +215,18 @@ func (w *worldState) FindConstructionSitePos(pos gmath.Vec) gmath.Vec {
 	return gmath.Vec{}
 }
 
+func (w *worldState) FindConstructionSiteAt(pos gmath.Vec) *unit {
+	for _, u := range w.playerUnits.selectable {
+		if !u.IsConstructionSite() {
+			continue
+		}
+		if u.pos.DistanceSquaredTo(pos) < (32 * 32) {
+			return u
+		}
+	}
+	return nil
+}
+
 func (w *worldState) FindConstructor(pos gmath.Vec) *unit {
 	if len(w.playerUnits.selectable) == 0 {
 		return nil

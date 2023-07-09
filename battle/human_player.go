@@ -296,9 +296,16 @@ func (p *humanPlayer) handleInput() {
 		if p.selectedUnit.stats.Movement != gamedata.UnitMovementNone {
 			if info, ok := p.input.JustPressedActionInfo(controls.ActionSendUnit); ok {
 				worldPos := p.camera.AbsPos(info.Pos)
+				playGlobalSound(p.world, assets.AudioUnitAck1)
 				p.selectedUnit.SendTo(worldPos)
 				p.updateUnitPath(p.selectedUnit)
-				playGlobalSound(p.world, assets.AudioUnitAck1)
+				if p.selectedUnit.IsConstructor() {
+					constructionSite := p.world.FindConstructionSiteAt(worldPos)
+					if constructionSite != nil {
+						p.selectedUnit.extra = &constructorEntryTarget{site: constructionSite}
+					}
+				}
+				return
 			}
 		}
 
