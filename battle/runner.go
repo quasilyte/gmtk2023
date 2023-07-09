@@ -200,6 +200,15 @@ func (r *Runner) Init(scene *ge.Scene) {
 		Pos:   gmath.Vec{X: (40 * 28) - 20, Y: (40 * 8) - 20},
 		Stats: enemyBunkerStats,
 	}))
+
+	creepFactory1 := r.world.NewUnit(unitConfig{
+		Pos:   gmath.Vec{X: (40 * 28) - 20, Y: (40 * 10) - 20},
+		Stats: gamedata.CreepTankFactoryUnitStats,
+	})
+	creepFactory1.extra = &tankFactoryExtra{
+		tankDesign: enemyTankStats,
+	}
+	r.AddObject(creepFactory1)
 }
 
 func (r *Runner) Update(delta float64) {

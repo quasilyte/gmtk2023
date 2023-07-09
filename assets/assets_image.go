@@ -43,6 +43,7 @@ func registerImageResources(ctx *ge.Context) {
 		ImageRepairDepot:      {Path: "image/building/repair_depot.png"},
 		ImageTankFactory:      {Path: "image/building/tank_factory.png", FrameWidth: 46},
 		ImageHeavyTankFactory: {Path: "image/building/heavy_tank_factory.png", FrameWidth: 52},
+		ImageCreepTankFactory: {Path: "image/building/creep_tank_factory.png", FrameWidth: 52},
 
 		ImageProjectileLightCannon: {Path: "image/projectile/projectile_light_cannon.png"},
 		ImageProjectileGatling:     {Path: "image/projectile/projectile_gatling.png"},
@@ -97,6 +98,7 @@ const (
 	ImageRepairDepot
 	ImageTankFactory
 	ImageHeavyTankFactory
+	ImageCreepTankFactory
 
 	ImageProjectileLightCannon
 	ImageProjectileGatling

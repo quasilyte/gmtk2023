@@ -61,6 +61,16 @@ var RepairDepotUnitStats = &UnitStats{
 	ConstructionTime:   25,
 }
 
+var CreepTankFactoryUnitStats = &UnitStats{
+	Movement: UnitMovementNone,
+	Body: &BodyStats{
+		HP:    175,
+		Image: assets.ImageCreepTankFactory,
+		Size:  unitSizeVeryBig,
+	},
+	Creep: true,
+}
+
 var TankFactoryUnitStats = &UnitStats{
 	Movement: UnitMovementNone,
 	Body: &BodyStats{
