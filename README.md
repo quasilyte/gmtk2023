@@ -2,6 +2,8 @@
 
 A game submitted to [GMTK 2023](https://itch.io/jam/gmtk-2023) game jam.
 
+Play in browser: https://quasilyte.itch.io/assemblox
+
 ## Running the game
 
 1. Install Ebitengine system dependencies for your OS.
